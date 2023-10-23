@@ -7,27 +7,28 @@ import {
 import './App.css';
 
 function Character() {
-  const navigate = useNavigate();
-
-  const { ipcRenderer } = window.electron;
-  ipcRenderer.on('sub', () => {
-    navigate('/sub');
-  });
-
   return <div className="test">hello</div>;
 }
 
-function Sub() {
-  return <div className="sub">is sub</div>;
+function MyApp() {
+  const navigate = useNavigate();
+  const { ipcRenderer } = window.electron;
+  ipcRenderer.on('sub', (path) => {
+    navigate(`/${path}`);
+  });
+
+  return (
+    <Routes>
+      <Route path="/" element={<Character />} />
+      <Route path="/closed" element={null} />
+    </Routes>
+  );
 }
 
 export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Character />} />
-        <Route path="/sub" element={null} />
-      </Routes>
+      <MyApp />
     </Router>
   );
 }

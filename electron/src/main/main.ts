@@ -9,12 +9,12 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import createMainWindow from './mainWindow';
+import createSubWindow from './subWindow';
+import interWindowCommunication from './interWindow';
 
 class AppUpdater {
   constructor() {
@@ -25,6 +25,7 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let subWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -62,93 +63,9 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 150,
-    height: 150,
-    icon: getAssetPath('icon.png'),
-    webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
-      nodeIntegration: true,
-      sandbox: false,
-    },
-    transparent: true,
-    frame: false,
-    alwaysOnTop: true,
-  });
-
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
-
-  mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
-  });
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
-    return { action: 'deny' };
-  });
-
-  const subWindow = new BrowserWindow({
-    width: 500,
-    height: 500,
-    webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
-    },
-    frame: false,
-    movable: false,
-    alwaysOnTop: true,
-    transparent: true,
-  });
-
-  subWindow.loadURL(resolveHtmlPath('index.html'));
-
-  mainWindow.on('blur', () => {
-    console.log('윈도우창 잃음 ');
-  });
-
-  subWindow.on('ready-to-show', () => {
-    subWindow.webContents.send('sub');
-  });
-
-  mainWindow.on('move', () => {
-    const rect = mainWindow?.getBounds();
-    if (rect) {
-      const { x, y } = rect;
-      subWindow.setBounds({
-        x: x + 10,
-        y: y + 10,
-        width: 200,
-        height: 200,
-      });
-    }
-  });
+  mainWindow = createMainWindow(app);
+  subWindow = createSubWindow(app);
+  interWindowCommunication(mainWindow, subWindow);
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
@@ -162,6 +79,7 @@ const createWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  globalShortcut.unregisterAll();
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -175,6 +93,11 @@ app
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
+    });
+
+    const register = globalShortcut.register('CommandOrControl+Alt+I', () => {
+      mainWindow?.webContents.toggleDevTools();
+      subWindow?.webContents.toggleDevTools();
     });
   })
   .catch(console.log);
