@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
 /**
@@ -71,14 +72,19 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 150,
+    height: 150,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      nodeIntegration: true,
+      sandbox: false,
     },
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -105,6 +111,43 @@ const createWindow = async () => {
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
+  });
+
+  const subWindow = new BrowserWindow({
+    width: 500,
+    height: 500,
+    webPreferences: {
+      preload: app.isPackaged
+        ? path.join(__dirname, 'preload.js')
+        : path.join(__dirname, '../../.erb/dll/preload.js'),
+    },
+    frame: false,
+    movable: false,
+    alwaysOnTop: true,
+    transparent: true,
+  });
+
+  subWindow.loadURL(resolveHtmlPath('index.html'));
+
+  mainWindow.on('blur', () => {
+    console.log('윈도우창 잃음 ');
+  });
+
+  subWindow.on('ready-to-show', () => {
+    subWindow.webContents.send('sub');
+  });
+
+  mainWindow.on('move', () => {
+    const rect = mainWindow?.getBounds();
+    if (rect) {
+      const { x, y } = rect;
+      subWindow.setBounds({
+        x: x + 10,
+        y: y + 10,
+        width: 200,
+        height: 200,
+      });
+    }
   });
 
   // Remove this if your app does not use auto updates
