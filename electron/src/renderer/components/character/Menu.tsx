@@ -1,12 +1,24 @@
+import { useEffect, useRef } from 'react';
 import * as S from './Menu.style';
 
-function Menu() {
+type TMenu = {
+  index: number;
+  numOfMenu: number;
+};
+
+function Menu({ index, numOfMenu }: TMenu) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log(index);
+  }, [index]);
+
   return (
-    <S.Wrapper>
-      <div>1</div>
-      <div>2</div>
-      <div>3</div>
-      <div>4</div>
+    <S.Wrapper ref={wrapperRef}>
+      <S.MenuItem>1</S.MenuItem>
+      <S.MenuItem>2</S.MenuItem>
+      <S.MenuItem>3</S.MenuItem>
+      <S.MenuItem>4</S.MenuItem>
     </S.Wrapper>
   );
 }
