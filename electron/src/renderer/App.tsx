@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import './App.css';
 import Character from './pages/Character';
+import JobTime from './pages/JobTime';
 
 function Test() {
   return <div className="sub">sub</div>;
@@ -22,6 +23,7 @@ function MyApp() {
     <Routes>
       <Route path="/" element={<Character />} />
       <Route path="/closed" element={<Test />} />
+      <Route path="/jobtime" element={<JobTime />} />
     </Routes>
   );
 }

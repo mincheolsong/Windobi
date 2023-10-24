@@ -4,8 +4,8 @@ import { App, BrowserWindow, shell } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
 
-const width = 400;
-const height = 400;
+const width = 200;
+const height = 200;
 
 const createMainWindow = (app: App): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
