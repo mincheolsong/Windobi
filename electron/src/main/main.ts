@@ -12,6 +12,8 @@
 import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { Worker } from 'worker_threads';
+import path from 'path';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import interWindowCommunication from './interWindow';
@@ -101,3 +103,12 @@ app
     });
   })
   .catch(console.log);
+
+// 프로그램 시간 계산하기
+const jobTimeThread = new Worker(path.join(__dirname, 'jobTime.js'));
+jobTimeThread.on('message', (activeMap: Map<string, any>) => {
+  // activeMap.forEach((value, key, map) => {
+  //   console.log(key);
+  // });
+
+});
