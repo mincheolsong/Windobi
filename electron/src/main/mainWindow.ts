@@ -31,6 +31,8 @@ const createMainWindow = (app: App): BrowserWindow => {
     transparent: true,
     frame: false,
     alwaysOnTop: true,
+    x: 1200,
+    y: 700,
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -44,6 +46,8 @@ const createMainWindow = (app: App): BrowserWindow => {
     } else {
       mainWindow.show();
     }
+
+    mainWindow.webContents.closeDevTools();
   });
 
   // Open urls in the user's browser

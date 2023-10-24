@@ -10,6 +10,10 @@ function Character() {
   return <div className="test">hello</div>;
 }
 
+function Test() {
+  return <div className="sub">sub</div>;
+}
+
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
@@ -20,7 +24,7 @@ function MyApp() {
   return (
     <Routes>
       <Route path="/" element={<Character />} />
-      <Route path="/closed" element={null} />
+      <Route path="/closed" element={<Test />} />
     </Routes>
   );
 }
