@@ -5,10 +5,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-
-function Character() {
-  return <div className="test">hello</div>;
-}
+import Character from './pages/Character';
 
 function Test() {
   return <div className="sub">sub</div>;

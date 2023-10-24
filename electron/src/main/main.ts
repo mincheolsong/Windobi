@@ -95,7 +95,7 @@ app
       if (mainWindow === null) createWindow();
     });
 
-    const register = globalShortcut.register('CommandOrControl+Alt+I', () => {
+    globalShortcut.register('CommandOrControl+Alt+I', () => {
       mainWindow?.webContents.toggleDevTools();
       subWindow?.webContents.toggleDevTools();
     });

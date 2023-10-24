@@ -12,8 +12,8 @@ const createSubWindow = (app: App): BrowserWindow => {
   };
 
   const subWindow = new BrowserWindow({
-    width: 200,
-    height: 200,
+    width: 500,
+    height: 500,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
