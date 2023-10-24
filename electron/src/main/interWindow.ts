@@ -1,4 +1,4 @@
-import { BrowserWindow, screen } from 'electron';
+import { BrowserWindow, screen, ipcMain } from 'electron';
 import { throttle, delay } from 'lodash';
 
 type Area = 1 | 2 | 3 | 4;
@@ -39,7 +39,7 @@ const getArea = (main: BrowserWindow): Area => {
 
 const onMoveEvent = (main: BrowserWindow, sub: BrowserWindow) => {
   const INTER_SECOND = 5;
-  const REFRESH_TIME = 500;
+  const REFRESH_TIME = 250;
   const MAX_TICK = REFRESH_TIME / INTER_SECOND;
 
   const onChangeMove = throttle(() => {
@@ -70,10 +70,12 @@ const onMoveEvent = (main: BrowserWindow, sub: BrowserWindow) => {
     }
 
     const update = (tick: number) => {
-      sub.setPosition(
-        prevX + Math.floor(((afterX - prevX) / MAX_TICK) * (tick + 1)),
-        prevY + Math.floor(((afterY - prevY) / MAX_TICK) * (tick + 1)),
-      );
+      sub.setBounds({
+        x: prevX + Math.floor(((afterX - prevX) / MAX_TICK) * (tick + 1)),
+        y: prevY + Math.floor(((afterY - prevY) / MAX_TICK) * (tick + 1)),
+        width: subWidth,
+        height: subHeight,
+      });
     };
 
     for (let i = 1; i <= MAX_TICK; i += 1) {
@@ -83,9 +85,9 @@ const onMoveEvent = (main: BrowserWindow, sub: BrowserWindow) => {
 
   main.on('move', () => {
     onChangeMove();
-    setTimeout(() => {
-      sub.setSize(subWidth, subHeight);
-    }, REFRESH_TIME);
+    // setTimeout(() => {
+    //   sub.setSize(subWidth, subHeight);
+    // }, REFRESH_TIME);
   });
 };
 
@@ -101,6 +103,13 @@ const interWindowCommunication = (main: BrowserWindow, sub: BrowserWindow) => {
   halfHeight = displayHeight / 2;
 
   onMoveEvent(main, sub);
+
+  ipcMain.on('size', (event, arg) => {
+    const { width, height } = arg;
+    subWidth = width;
+    subHeight = height;
+    sub.setSize(subWidth, subHeight);
+  });
 };
 
 export default interWindowCommunication;

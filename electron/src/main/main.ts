@@ -1,14 +1,5 @@
-/* eslint-disable no-unsafe-optional-chaining */
-/* eslint global-require: off, no-console: off, promise/always-return: off */
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `npm run build` or `npm run build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
+/* eslint-disable promise/always-return */
+/* eslint-disable global-require */
 import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -17,6 +8,8 @@ import path from 'path';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import interWindowCommunication from './interWindow';
+
+const { getAll } = require('./jobTimeDB');
 
 class AppUpdater {
   constructor() {
@@ -29,10 +22,15 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+// ipcMain.on('ipc-example', async (event, arg) => {
+//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
+//   console.log(msgTemplate(arg));
+//   event.reply('ipc-example', msgTemplate('pong'));
+// });
+
+ipcMain.on('test', async (event, arg) => {
+  const result = await getAll();
+  event.reply('test', result);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -92,8 +90,6 @@ app
   .then(() => {
     createWindow();
     app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
 
@@ -101,14 +97,11 @@ app
       mainWindow?.webContents.toggleDevTools();
       subWindow?.webContents.toggleDevTools();
     });
+    globalShortcut.register('CommandOrControl+Alt+O', () => {
+      subWindow.webContents.send('sub', 'jobtime');
+    });
   })
   .catch(console.log);
 
 // 프로그램 시간 계산하기
 const jobTimeThread = new Worker(path.join(__dirname, 'jobTime.js'));
-jobTimeThread.on('message', (activeMap: Map<string, any>) => {
-  // activeMap.forEach((value, key, map) => {
-  //   console.log(key);
-  // });
-
-});
