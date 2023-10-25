@@ -34,7 +34,7 @@ class Character {
       height: winHeight,
     });
 
-    this.direction = 'left';
+    this.direction = 'stop';
     this.maxWidth = maxWidth;
     this.maxHeight = maxHeight;
   }
