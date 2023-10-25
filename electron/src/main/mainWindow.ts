@@ -3,6 +3,9 @@
 import { App, BrowserWindow, shell } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
+import Character from './chracter/Character';
+import moveScheduling from './chracter/moveScheduling';
+import moving from './chracter/moving';
 
 const width = 200;
 const height = 200;
@@ -47,6 +50,21 @@ const createMainWindow = (app: App): BrowserWindow => {
     } else {
       mainWindow.show();
     }
+
+    const { screen } = require('electron');
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width, height } = primaryDisplay.workAreaSize;
+    // 스크린의 크기를 받아오기
+
+    const character: Character = new Character(
+      mainWindow,
+      height,
+      width,
+      100,
+      110,
+    );
+    let characterMoving = setInterval(moving, 30, character);
+    let scheduling = setInterval(moveScheduling, 2000, character);
 
     mainWindow.webContents.closeDevTools();
   });
