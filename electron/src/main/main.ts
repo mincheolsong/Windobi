@@ -100,7 +100,7 @@ app
       subWindow?.webContents.toggleDevTools();
     });
     globalShortcut.register('CommandOrControl+Alt+O', () => {
-      subWindow.webContents.send('sub', 'jobtime');
+      subWindow?.webContents.send('sub', 'jobtime');
     });
   })
   .catch(console.log);

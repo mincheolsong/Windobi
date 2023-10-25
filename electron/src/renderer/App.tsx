@@ -8,6 +8,7 @@ import './App.css';
 import Character from './pages/Character';
 import JobTime from './pages/JobTime';
 
+
 function Test() {
   return <div className="sub">sub</div>;
 }
