@@ -9,7 +9,7 @@ import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import interWindowCommunication from './interWindow';
 
-const { getAll } = require('./jobTimeDB');
+const { dbInstance } = require('./jobTimeDB');
 
 class AppUpdater {
   constructor() {
@@ -28,8 +28,10 @@ let subWindow: BrowserWindow | null = null;
 //   event.reply('ipc-example', msgTemplate('pong'));
 // });
 
+dbInstance.init();
+
 ipcMain.on('test', async (event, arg) => {
-  const result = await getAll();
+  const result = await dbInstance.getAll();
   event.reply('test', result);
 });
 
