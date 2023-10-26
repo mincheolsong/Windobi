@@ -7,7 +7,7 @@ import {
 import './App.css';
 import Character from './pages/Character';
 import JobTime from './pages/JobTime';
-
+import SubWindow from './layout/SubWindow';
 
 function Test() {
   return <div className="sub">sub</div>;
@@ -23,8 +23,22 @@ function MyApp() {
   return (
     <Routes>
       <Route path="/" element={<Character />} />
-      <Route path="/closed" element={<Test />} />
-      <Route path="/jobtime" element={<JobTime />} />
+      <Route
+        path="/closed"
+        element={
+          <SubWindow>
+            <Test />
+          </SubWindow>
+        }
+      />
+      <Route
+        path="/jobtime"
+        element={
+          <SubWindow>
+            <JobTime />
+          </SubWindow>
+        }
+      />
     </Routes>
   );
 }
