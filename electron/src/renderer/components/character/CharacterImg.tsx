@@ -1,10 +1,16 @@
 // import { styled } from 'styled-components';
+import React from 'react';
 import icon1 from '../../../../assets/character/chungmyeong/shime2.png';
 import icon2 from '../../../../assets/character/chungmyeong/shime3.png';
 
 function CharacterImg() {
   return (
-    <img width="100" alt="icon" src={icon2} />
+    <img
+      width="100"
+      alt="icon"
+      src={icon2}
+      style={{ WebkitUserDrag: 'none' }}
+    />
   );
 }
 
