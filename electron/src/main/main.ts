@@ -7,9 +7,15 @@ import { Worker } from 'worker_threads';
 import path from 'path';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
-import interWindowCommunication from './interWindow';
+import createMenuWindow from './menuWindow';
+import {
+  interWindowCommunication,
+  interMenuWindowCommunication,
+} from './interWindow';
+import { head } from 'lodash';
 
 const { dbInstance } = require('./jobTimeDB');
+const electron = require('electron');
 
 class AppUpdater {
   constructor() {
@@ -21,6 +27,13 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
+let menuWindow: BrowserWindow | null = null;
+let isMenuOn = false;
+// ipcMain.on('ipc-example', async (event, arg) => {
+//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
+//   console.log(msgTemplate(arg));
+//   event.reply('ipc-example', msgTemplate('pong'));
+// });
 
 dbInstance.init();
 
@@ -39,6 +52,64 @@ ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
   } catch (e) {}
+});
+
+ipcMain.on('windowMoving', (event, arg) => {
+  mainWindow?.setBounds({
+    width: 100,
+    height: 100,
+    x: arg.mouseX - 50, //always changes in runtime
+    y: arg.mouseY - 50,
+  });
+});
+let menuWidth;
+let menuHeight;
+
+// 캐릭터 오른쪽 클릭 시 toggleMenu를 send함 (위치 : Character.tsx)
+ipcMain.on('toggleMenu', async (event, arg) => {
+  if (isMenuOn) {
+    menuWindow?.hide();
+
+    // const {
+    //   x: mainX,
+    //   y: mainY,
+    //   width: mainWidth,
+    //   height: mainHeight,
+    // } = mainWindow?.getBounds();
+    // menuWidth = 0;
+    // menuHeight = 0;
+    // menuWindow?.setBounds({
+    //   width: 0,
+    //   height: 0,
+    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
+    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
+    // });
+
+    isMenuOn = false;
+  } else {
+    menuWindow?.show();
+
+    mainWindow?.show();
+
+    // const {
+    //   x: mainX,
+    //   y: mainY,
+    //   width: mainWidth,
+    //   height: mainHeight,
+    // } = mainWindow?.getBounds();
+
+    // menuWidth = 400;
+    // menuHeight = 400;
+    // menuWindow?.setBounds({
+    //   width: 400,
+    //   height: 400,
+    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
+    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
+    // });
+
+    // mainWindow?.focus();
+    isMenuOn = true;
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -73,8 +144,10 @@ const createWindow = async () => {
 
   mainWindow = createMainWindow(app);
   subWindow = createSubWindow(app);
-  interWindowCommunication(mainWindow, subWindow);
+  menuWindow = createMenuWindow(app);
 
+  interWindowCommunication(mainWindow, subWindow);
+  interMenuWindowCommunication(mainWindow, menuWindow);
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -104,6 +177,7 @@ app
     globalShortcut.register('CommandOrControl+Alt+I', () => {
       mainWindow?.webContents.toggleDevTools();
       subWindow?.webContents.toggleDevTools();
+      menuWindow?.webContents.toggleDevTools();
     });
     globalShortcut.register('CommandOrControl+Alt+O', () => {
       subWindow?.webContents.send('sub', 'jobtime');

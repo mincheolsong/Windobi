@@ -5,6 +5,11 @@ import CharacterImg from '../components/character/CharacterImg';
 
 function Chracter() {
   const [index, setIndex] = useState<number>(0);
+
+  let mouseX;
+  let mouseY;
+  let isMove = false;
+
   const numOfMenu = 8;
 
   const keyEvent = (e: KeyboardEvent) => {
@@ -25,18 +30,50 @@ function Chracter() {
     }
   };
 
+  // 캐릭터를 오른쪽 클릭하면 메뉴를 바로 펼쳐야 함
+  const rightClick = () => {
+    window.electron.ipcRenderer.sendMessage('toggleMenu', {});
+  };
+
+  const moveCharacter = (e: MouseEvent) => {
+    if (isMove) {
+      mouseX = e.screenX;
+      mouseY = e.screenY;
+      window.electron.ipcRenderer.sendMessage('windowMoving', {
+        mouseX,
+        mouseY,
+      });
+    }
+  };
+
   useEffect(() => {
     document.addEventListener('keydown', keyEvent);
-
+    document.addEventListener('contextmenu', rightClick);
     return () => {
       document.removeEventListener('keydown', keyEvent);
+      document.removeEventListener('contextmenu', rightClick);
     };
   }, []);
 
   return (
-    <S.Wrapper>
+    <S.Wrapper
+
+      onMouseDown={(e) => {
+        isMove = true;
+        mouseX = e.screenX;
+        mouseY = e.screenY;
+        window.electron.ipcRenderer.sendMessage('windowMoving', {
+          mouseX,
+          mouseY,
+        });
+      }}
+      onMouseUp={() => {
+        isMove = false;
+        window.electron.ipcRenderer.sendMessage('windowMoveDone');
+      }}
+      onMouseMove={moveCharacter}
+    >
       <CharacterImg />
-      {/* <Menu /> */}
     </S.Wrapper>
   );
 }

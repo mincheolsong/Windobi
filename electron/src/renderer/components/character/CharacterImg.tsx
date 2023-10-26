@@ -65,7 +65,14 @@ function CharacterImg() {
     }
   });
 
-  return <img width="100" alt="icon" src={stopImg} />;
+  return (
+    <img
+      width="100"
+      alt="icon"
+      src={stopImg}
+      style={{ WebkitUserDrag: 'none' }}
+    />
+  );
 }
 
 export default CharacterImg;
