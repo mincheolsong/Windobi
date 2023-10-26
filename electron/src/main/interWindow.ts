@@ -9,6 +9,9 @@ let halfHeight = 0;
 let subWidth = 0;
 let subHeight = 0;
 
+let menuWidth = 100;
+let menuHeight = 100;
+
 const getArea = (main: BrowserWindow): Area => {
   const { x, y, width, height } = main.getBounds();
 
@@ -112,4 +115,79 @@ const interWindowCommunication = (main: BrowserWindow, sub: BrowserWindow) => {
   });
 };
 
-export default interWindowCommunication;
+const onMenuEvent = (main: BrowserWindow, menu: BrowserWindow) => {
+  const INTER_SECOND = 5;
+  const REFRESH_TIME = 10;
+  const MAX_TICK = REFRESH_TIME / INTER_SECOND;
+
+  const onChangeMove = throttle(() => {
+    const {
+      x: mainX,
+      y: mainY,
+      width: mainWidth,
+      height: mainHeight,
+    } = main.getBounds();
+
+    const update = () => {
+      menu.setBounds({
+        x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
+        y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
+        width: menuWidth,
+        height: menuHeight,
+      });
+    };
+
+    for (let i = 1; i <= MAX_TICK; i += 1) {
+      delay(update, INTER_SECOND * i, i);
+    }
+  }, REFRESH_TIME);
+
+  main.on('move', () => {
+    onChangeMove();
+  });
+};
+
+const interMenuWindowCommunication = (
+  main: BrowserWindow,
+  menu: BrowserWindow,
+) => {
+  menuWidth = menu.getBounds().width;
+  menuHeight = menu.getBounds().height;
+
+  onMenuEvent(main, menu);
+  ipcMain.on('sizeUpMenuWindow', (event, arg) => {
+    const {
+      x: mainX,
+      y: mainY,
+      width: mainWidth,
+      height: mainHeight,
+    } = main.getBounds();
+    menuWidth = 400;
+    menuHeight = 400;
+    menu.setBounds({
+      width: 400,
+      height: 400,
+      x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
+      y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
+    });
+  });
+
+  ipcMain.on('sizeDownMenuWindow', (event, arg) => {
+    const {
+      x: mainX,
+      y: mainY,
+      width: mainWidth,
+      height: mainHeight,
+    } = main.getBounds();
+    menuWidth = 0;
+    menuHeight = 0;
+    menu.setBounds({
+      width: 0,
+      height: 0,
+      x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
+      y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
+    });
+  });
+};
+
+export { interWindowCommunication, interMenuWindowCommunication };

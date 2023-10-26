@@ -5,6 +5,11 @@ import CharacterImg from '../components/character/CharacterImg';
 
 function Chracter() {
   const [index, setIndex] = useState<number>(0);
+
+  let mouseX;
+  let mouseY;
+  let isMove = false;
+
   const numOfMenu = 8;
 
   const keyEvent = (e: KeyboardEvent) => {
@@ -22,21 +27,56 @@ function Chracter() {
       e.key === 'w'
     ) {
       setIndex((prev) => (numOfMenu + (prev + 1)) % numOfMenu);
+    } else if (e.key === 'm') {
+      window.electron.ipcRenderer.sendMessage('toggleMenu', {});
+    }
+  };
+
+  const rightClick = () => {
+    window.electron.ipcRenderer.sendMessage('toggleMenu', {});
+  };
+  
+  const moveCharacter = (e: MouseEvent) => {
+    if (isMove) {
+      mouseX = e.screenX;
+      mouseY = e.screenY;
+      window.electron.ipcRenderer.sendMessage('windowMoving', {
+        mouseX,
+        mouseY,
+      });
     }
   };
 
   useEffect(() => {
     document.addEventListener('keydown', keyEvent);
-
+    document.addEventListener('contextmenu', rightClick);
     return () => {
       document.removeEventListener('keydown', keyEvent);
+      document.removeEventListener('contextmenu', rightClick);
     };
   }, []);
 
   return (
-    <S.Wrapper>
+    <S.Wrapper
+      onWheel={(e) => {
+        console.log(e.deltaY);
+      }}
+      onMouseDown={(e) => {
+        isMove = true;
+        mouseX = e.screenX;
+        mouseY = e.screenY;
+        window.electron.ipcRenderer.sendMessage('windowMoving', {
+          mouseX,
+          mouseY,
+        });
+      }}
+      onMouseUp={() => {
+        isMove = false;
+        window.electron.ipcRenderer.sendMessage('windowMoveDone');
+      }}
+      onMouseMove={moveCharacter}
+    >
       <CharacterImg />
-      {/* <Menu /> */}
     </S.Wrapper>
   );
 }
