@@ -6,13 +6,14 @@ export type Channels =
   | 'ipc-example'
   | 'sub'
   | 'job-time'
-  | 'character-move'
   | 'size'
   | 'windowMoving'
   | 'windowMoveDone'
   | 'toggleMenu'
   | 'closeMenuWindow'
-  | 'sizeUpMenuWindow';
+  | 'sizeUpMenuWindow'
+  | 'application'
+  | 'character-move';
 
 const electronHandler = {
   ipcRenderer: {

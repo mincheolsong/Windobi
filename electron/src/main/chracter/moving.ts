@@ -12,7 +12,6 @@ function move(character: Character) {
   // 좌우 이동
 
   if (character.direction === 'left') {
-    // console.log("before:: curX: ", curX, " curY: ", curY, "diff: ", diff);
     nextX = curX - diff;
     nextY = curY;
     if (nextX < 0) {
@@ -40,7 +39,7 @@ function move(character: Character) {
   if (character.direction === 'up') {
     nextX = curX;
     nextY = curY - diff;
-    if (nextY > 0){
+    if (nextY > 0) {
       character.direction = 'stop';
       nextX = curX;
       nextY = curY;
@@ -58,7 +57,6 @@ function move(character: Character) {
   character.curY = nextY;
   character.transition = false;
 }
-
 
 function moving(character: Character) {
   // 좌우 이동

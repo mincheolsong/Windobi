@@ -66,7 +66,6 @@ let menuWidth;
 let menuHeight;
 ipcMain.on('toggleMenu', async (event, arg) => {
   if (isMenuOn) {
-    console.log('hide');
     menuWindow?.hide();
 
     const {
@@ -86,7 +85,6 @@ ipcMain.on('toggleMenu', async (event, arg) => {
 
     isMenuOn = false;
   } else {
-    console.log('show');
     menuWindow?.show();
 
     const {
