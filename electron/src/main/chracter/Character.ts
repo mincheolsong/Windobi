@@ -12,6 +12,7 @@ class Character {
   winHeight: number;
   maxWidth: number;
   maxHeight: number;
+  transition: boolean;
 
   constructor(
     mainWindow: BrowserWindow,
@@ -37,6 +38,7 @@ class Character {
     this.direction = 'stop';
     this.maxWidth = maxWidth;
     this.maxHeight = maxHeight;
+    this.transition = false;
   }
 }
 

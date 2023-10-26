@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import stopImg from '../../../../assets/character/chungmyeong/shime1.png';
 import left1 from '../../../../assets/character/chungmyeong/shime2.png';
 import left2 from '../../../../assets/character/chungmyeong/shime3.png';
+import up1  from '../../../../assets/character/chungmyeong/shime13.png';
+import up2  from '../../../../assets/character/chungmyeong/shime14.png';
 
 function CharacterImg() {
   let animation: any = null;
@@ -30,9 +32,18 @@ function CharacterImg() {
     }
   }
 
+  function up() {
+    if (image) {
+      image.src = flag ? up1 : up2;
+      flag = !flag;
+      // image.style.transform = `scaleX(-1)`;
+    }
+  }
+
+
   useEffect(() => {
     image = document.querySelector('img');
-    animation = setInterval(stop, 400);
+    animation = setInterval(stop, 300);
     console.log('animation : ', animation);
   }, []);
 
@@ -49,31 +60,14 @@ function CharacterImg() {
       case 'stop':
         animation = setInterval(stop, 300);
         break;
+      case 'up':
+        animation = setInterval(up, 300);
+        break;
     }
   });
 
   return <img width="100" alt="icon" src={stopImg} />;
 }
 
-// window.electron.ipcRenderer.on('character-move', (value: any) => {
-//   // value : direction
-//   console.log('변화!!', value);
-//   console.log('animation : ', animation);
-//   clearInterval(animation);
-//   switch (direction) {
-//     case 'left':
-//       animation = setInterval(left, 400);
-//       break;
-//     case 'right':
-//       animation = setInterval(right, 400);
-//       break;
-//     case 'stop':
-//       animation = setInterval(stop, 400);
-//       break;
-//   }
-// });
-// 방향 전환
-// image.style.transform = `scaleX(-1)`;
-// image.style.transform = `scaleX(1)`;
 
 export default CharacterImg;
