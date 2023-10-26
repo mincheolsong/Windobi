@@ -16,6 +16,7 @@ function moveScheduling(character: Character) {
           flag = false;
           character.direction = 'left';
           character.mainWindow.webContents.send('character-move', 'left');
+          console.log("send left")
         }
         break;
       case 1:
@@ -24,12 +25,14 @@ function moveScheduling(character: Character) {
           flag = false;
           character.direction = 'right';
           character.mainWindow.webContents.send('character-move', 'right');
+          console.log("send right")
         }
         break;
       case 2:
         flag = false;
         character.direction = 'stop';
         character.mainWindow.webContents.send('character-move', 'stop');
+        console.log("send stop")
         break;
     }
   }
