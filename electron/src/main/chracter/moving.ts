@@ -2,13 +2,14 @@ import { Rectangle } from 'electron';
 import Character from './Character';
 
 function moving(character: Character) {
-  // 좌우 이동
-  const diff = 2; // 움직이는 정도
+  let diff = 2; // 움직이는 정도
   const bound: Rectangle = character.mainWindow.getBounds();
   const curX: number = bound.x;
   const curY: number = bound.y;
   let nextX: number = 0;
   let nextY: number = 0;
+
+  // 좌우 이동
 
   if (character.direction === 'left') {
     // console.log("before:: curX: ", curX, " curY: ", curY, "diff: ", diff);
