@@ -120,7 +120,7 @@ class JobTimeDB {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 6);
 
-    const target = this.dataToNumber(weekAgo);
+    const target = this.dateToNumber(weekAgo);
 
     return new Promise((resolve, reject) => {
       return this.db.all(
