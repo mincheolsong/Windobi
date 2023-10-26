@@ -179,11 +179,11 @@ const interMenuWindowCommunication = (
       width: mainWidth,
       height: mainHeight,
     } = main.getBounds();
-    menuWidth = 0;
-    menuHeight = 0;
+    menuWidth = 100;
+    menuHeight = 100;
     menu.setBounds({
-      width: 0,
-      height: 0,
+      width: 100,
+      height: 100,
       x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
       y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
     });

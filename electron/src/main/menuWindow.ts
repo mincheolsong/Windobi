@@ -1,9 +1,10 @@
 import { App, BrowserWindow } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
+import { BrowserView } from 'electron/main';
 
-const width = 100;
-const height = 100;
+const width = 400;
+const height = 400;
 const createMenuWindow = (app: App): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
@@ -28,7 +29,8 @@ const createMenuWindow = (app: App): BrowserWindow => {
     transparent: true,
     skipTaskbar: true,
     show: false,
-    resizable: true,
+    resizable: false,
+    
   });
 
   menuWindow.loadURL(resolveHtmlPath('index.html'));
