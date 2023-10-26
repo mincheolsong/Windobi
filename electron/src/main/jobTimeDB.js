@@ -105,7 +105,7 @@ class JobTimeDB {
 
     return new Promise((resolve, reject) => {
       return this.db.all(
-        `SELECT application, active_time, icon, day FROM ${TABLE_NAME} WHERE day = ${target}`,
+        `SELECT application, active_time, icon, path, day FROM ${TABLE_NAME} WHERE day = ${target}`,
         (err, rows) => {
           if (err) {
             return reject(err);
@@ -124,7 +124,7 @@ class JobTimeDB {
 
     return new Promise((resolve, reject) => {
       return this.db.all(
-        `SELECT application, active_time, icon, day FROM ${TABLE_NAME} where day >= ${target}`,
+        `SELECT application, active_time, icon, path, day FROM ${TABLE_NAME} where day >= ${target}`,
         (err, rows) => {
           if (err) {
             return reject(err);

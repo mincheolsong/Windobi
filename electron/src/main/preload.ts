@@ -7,6 +7,7 @@ export type Channels =
   | 'sub'
   | 'job-time'
   | 'size'
+  | 'application'
   | 'character-move';
 
 const electronHandler = {
