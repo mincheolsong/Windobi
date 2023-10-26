@@ -31,6 +31,7 @@ class JobTimeDB {
         application TEXT,
         active_time INTEGER,
         icon TEXT,
+        path TEXT,
         day INTEGER
       )`,
     );
@@ -38,7 +39,7 @@ class JobTimeDB {
 
   dateToNumber(day) {
     const numberDate =
-      day.getFullYear() * 10000 + day.getMonth() * 100 + day.getDate();
+      day.getFullYear() * 10000 + (day.getMonth() + 1) * 100 + day.getDate();
     return numberDate;
   }
 
@@ -50,13 +51,14 @@ class JobTimeDB {
         application: key,
         active_time: value.tick * tickTime,
         icon: value.icon,
+        path: value.path,
         day: now,
       });
     });
-    const sql = `INSERT INTO ${TABLE_NAME} (application, active_time, icon, day) VALUES ${activeArray
+    const sql = `INSERT INTO ${TABLE_NAME} (application, active_time, icon, path, day) VALUES ${activeArray
       .map(
         (active) =>
-          `('${active.application}', ${active.active_time}, '${active.icon}', ${active.day})`,
+          `('${active.application}', ${active.active_time}, '${active.icon}', '${active.path}', ${active.day})`,
       )
       .join(',')}`;
     this.db.run(sql, (err) => {
@@ -77,8 +79,8 @@ class JobTimeDB {
 
     const result = [];
     combined.forEach((value) => {
-      const { application, active_time, icon } = value;
-      result.push({ application, active_time, icon });
+      const { application, active_time, icon, path: vPath } = value;
+      result.push({ application, active_time, icon, path: vPath });
     });
 
     return result;
@@ -87,7 +89,7 @@ class JobTimeDB {
   getAll() {
     return new Promise((resolve, reject) => {
       return this.db.all(
-        `SELECT application, active_time, icon, day FROM ${TABLE_NAME}`,
+        `SELECT application, active_time, icon, path, day FROM ${TABLE_NAME}`,
         (err, rows) => {
           if (err) {
             return reject(err);
@@ -104,6 +106,25 @@ class JobTimeDB {
     return new Promise((resolve, reject) => {
       return this.db.all(
         `SELECT application, active_time, icon, day FROM ${TABLE_NAME} WHERE day = ${target}`,
+        (err, rows) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(this.combine(rows));
+        },
+      );
+    });
+  }
+
+  getRecentWeek() {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 6);
+
+    const target = this.dataToNumber(weekAgo);
+
+    return new Promise((resolve, reject) => {
+      return this.db.all(
+        `SELECT application, active_time, icon, day FROM ${TABLE_NAME} where day >= ${target}`,
         (err, rows) => {
           if (err) {
             return reject(err);

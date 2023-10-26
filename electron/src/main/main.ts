@@ -1,6 +1,6 @@
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
-import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
@@ -30,9 +30,21 @@ let subWindow: BrowserWindow | null = null;
 
 dbInstance.init();
 
-ipcMain.on('test', async (event, arg) => {
-  const result = await dbInstance.getAll();
-  event.reply('test', result);
+ipcMain.on('job-time', async (event, type) => {
+  if (type === 'day') {
+    const today = new Date();
+    const result = await dbInstance.getByDay(today);
+    event.reply('job-time', { type, result });
+  } else if (type === 'week') {
+    const result = await dbInstance.getRecentWeek();
+    event.reply('job-time', { type, result });
+  }
+});
+
+ipcMain.on('application', (event, applicationPath) => {
+  try {
+    shell.openExternal(applicationPath);
+  } catch (e) {}
 });
 
 if (process.env.NODE_ENV === 'production') {

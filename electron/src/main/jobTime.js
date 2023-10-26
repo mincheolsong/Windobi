@@ -1,7 +1,7 @@
 const { ActiveWindow } = require('@paymoapp/active-window');
 const { dbInstance } = require('./jobTimeDB');
 
-const TICK_TIME = 1; // TIME_TICK당 한번씩 사용중인 프로그램을 수집
+const TICK_TIME = 10; // TIME_TICK당 한번씩 사용중인 프로그램을 수집
 const SAVE_TICK = 6;
 
 const activeMap = new Map();
@@ -12,12 +12,12 @@ dbInstance.createTable();
 setInterval(() => {
   try {
     const activeWindow = ActiveWindow.getActiveWindow();
-    const { application, icon } = activeWindow;
+    const { application, icon, path } = activeWindow;
     if (activeMap.has(application)) {
       const saved = activeMap.get(application);
       saved.tick += 1;
     } else {
-      activeMap.set(application, { tick: 1, icon });
+      activeMap.set(application, { tick: 1, icon, path });
     }
   } catch (e) {}
 }, TICK_TIME * 1000);
