@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable default-case */
 import { useEffect } from 'react';
 import stopImg from '../../../../assets/character/chungmyeong/shime1.png';
 import left1 from '../../../../assets/character/chungmyeong/shime2.png';
@@ -43,11 +45,9 @@ function CharacterImg() {
   useEffect(() => {
     image = document.querySelector('img');
     animation = setInterval(stop, 300);
-    console.log('animation : ', animation);
   }, []);
 
   window.electron.ipcRenderer.on('character-move', (value: any) => {
-    // value : direction
     clearInterval(animation);
     switch (value) {
       case 'left':
