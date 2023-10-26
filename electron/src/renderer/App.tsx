@@ -8,6 +8,7 @@ import './App.css';
 import Character from './pages/Character';
 import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
+import MenuModal from './components/character/MenuModal';
 
 function Test() {
   return <div className="sub">sub</div>;
@@ -39,6 +40,7 @@ function MyApp() {
           </SubWindow>
         }
       />
+      <Route path="/menu" element={<MenuModal />} />
     </Routes>
   );
 }

@@ -9,6 +9,8 @@ function move(character: Character) {
   let nextX: number = 0;
   let nextY: number = 0;
 
+  // 좌우 이동
+
   if (character.direction === 'left') {
     // console.log("before:: curX: ", curX, " curY: ", curY, "diff: ", diff);
     nextX = curX - diff;
