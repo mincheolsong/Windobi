@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import stopImg from '../../../../assets/character/chungmyeong/shime1.png';
 import left1 from '../../../../assets/character/chungmyeong/shime2.png';
 import left2 from '../../../../assets/character/chungmyeong/shime3.png';
-import up1  from '../../../../assets/character/chungmyeong/shime13.png';
-import up2  from '../../../../assets/character/chungmyeong/shime14.png';
+import up1 from '../../../../assets/character/chungmyeong/shime13.png';
+import up2 from '../../../../assets/character/chungmyeong/shime14.png';
 
 function CharacterImg() {
   let animation: any = null;
@@ -40,7 +40,6 @@ function CharacterImg() {
     }
   }
 
-
   useEffect(() => {
     image = document.querySelector('img');
     animation = setInterval(stop, 300);
@@ -68,6 +67,5 @@ function CharacterImg() {
 
   return <img width="100" alt="icon" src={stopImg} />;
 }
-
 
 export default CharacterImg;
