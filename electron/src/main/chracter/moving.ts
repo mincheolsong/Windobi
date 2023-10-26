@@ -1,8 +1,7 @@
 import { Rectangle } from 'electron';
 import Character from './Character';
 
-function moving(character: Character) {
-  // 좌우 이동
+function move(character: Character) {
   const diff = 2; // 움직이는 정도
   const bound: Rectangle = character.mainWindow.getBounds();
   const curX: number = bound.x;
@@ -36,6 +35,16 @@ function moving(character: Character) {
     nextY = curY;
   }
 
+  if (character.direction === 'up') {
+    nextX = curX;
+    nextY = curY - diff;
+    if (nextY > 0){
+      character.direction = 'stop';
+      nextX = curX;
+      nextY = curY;
+    }
+  }
+
   character.mainWindow.setBounds({
     x: nextX,
     y: nextY,
@@ -45,6 +54,19 @@ function moving(character: Character) {
 
   character.curX = nextX;
   character.curY = nextY;
+  character.transition = false;
 }
 
+
+function moving(character: Character) {
+  // 좌우 이동
+
+  if (character.transition === true) {
+    setTimeout(() => {
+      move(character);
+    }, 200);
+  } else {
+    move(character);
+  }
+}
 export default moving;
