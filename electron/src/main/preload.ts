@@ -7,6 +7,11 @@ export type Channels =
   | 'sub'
   | 'job-time'
   | 'size'
+  | 'windowMoving'
+  | 'windowMoveDone'
+  | 'toggleMenu'
+  | 'closeMenuWindow'
+  | 'sizeUpMenuWindow'
   | 'application'
   | 'character-move';
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import { App, BrowserWindow, shell } from 'electron';
+import { App, BrowserWindow, shell, ipcMain } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
 import Character from './chracter/Character';
@@ -20,6 +20,7 @@ const createMainWindow = (app: App): BrowserWindow => {
   };
 
   const mainWindow = new BrowserWindow({
+    resizable: false,
     show: false,
     width,
     height,
@@ -63,8 +64,20 @@ const createMainWindow = (app: App): BrowserWindow => {
       100,
       110,
     );
+
     let characterMoving = setInterval(moving, 30, character);
     let scheduling = setInterval(moveScheduling, 2000, character);
+
+    // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
+    ipcMain.on('windowMoving', (event, arg) => {
+      clearInterval(characterMoving);
+      clearInterval(scheduling);
+    });
+
+    ipcMain.on('windowMoveDone', (event, arg) => {
+      characterMoving = setInterval(moving, 30, character);
+      scheduling = setInterval(moveScheduling, 2000, character);
+    });
 
     mainWindow.webContents.closeDevTools();
   });
