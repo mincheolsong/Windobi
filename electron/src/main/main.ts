@@ -64,46 +64,50 @@ ipcMain.on('windowMoving', (event, arg) => {
 });
 let menuWidth;
 let menuHeight;
+
+// 캐릭터 오른쪽 클릭 시 toggleMenu를 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenu', async (event, arg) => {
   if (isMenuOn) {
     menuWindow?.hide();
 
-    const {
-      x: mainX,
-      y: mainY,
-      width: mainWidth,
-      height: mainHeight,
-    } = mainWindow?.getBounds();
-    menuWidth = 0;
-    menuHeight = 0;
-    menuWindow?.setBounds({
-      width: 0,
-      height: 0,
-      x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
-      y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
-    });
+    // const {
+    //   x: mainX,
+    //   y: mainY,
+    //   width: mainWidth,
+    //   height: mainHeight,
+    // } = mainWindow?.getBounds();
+    // menuWidth = 0;
+    // menuHeight = 0;
+    // menuWindow?.setBounds({
+    //   width: 0,
+    //   height: 0,
+    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
+    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
+    // });
 
     isMenuOn = false;
   } else {
     menuWindow?.show();
 
-    const {
-      x: mainX,
-      y: mainY,
-      width: mainWidth,
-      height: mainHeight,
-    } = mainWindow?.getBounds();
+    mainWindow?.show();
 
-    menuWidth = 400;
-    menuHeight = 400;
-    menuWindow?.setBounds({
-      width: 400,
-      height: 400,
-      x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
-      y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
-    });
+    // const {
+    //   x: mainX,
+    //   y: mainY,
+    //   width: mainWidth,
+    //   height: mainHeight,
+    // } = mainWindow?.getBounds();
 
-    mainWindow?.focus();
+    // menuWidth = 400;
+    // menuHeight = 400;
+    // menuWindow?.setBounds({
+    //   width: 400,
+    //   height: 400,
+    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
+    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
+    // });
+
+    // mainWindow?.focus();
     isMenuOn = true;
   }
 });

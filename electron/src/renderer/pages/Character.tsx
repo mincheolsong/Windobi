@@ -27,15 +27,14 @@ function Chracter() {
       e.key === 'w'
     ) {
       setIndex((prev) => (numOfMenu + (prev + 1)) % numOfMenu);
-    } else if (e.key === 'm') {
-      window.electron.ipcRenderer.sendMessage('toggleMenu', {});
     }
   };
 
+  // 캐릭터를 오른쪽 클릭하면 메뉴를 바로 펼쳐야 함
   const rightClick = () => {
     window.electron.ipcRenderer.sendMessage('toggleMenu', {});
   };
-  
+
   const moveCharacter = (e: MouseEvent) => {
     if (isMove) {
       mouseX = e.screenX;
@@ -58,9 +57,7 @@ function Chracter() {
 
   return (
     <S.Wrapper
-      onWheel={(e) => {
-        console.log(e.deltaY);
-      }}
+
       onMouseDown={(e) => {
         isMove = true;
         mouseX = e.screenX;

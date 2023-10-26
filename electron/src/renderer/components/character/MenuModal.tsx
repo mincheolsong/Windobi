@@ -3,23 +3,27 @@ import { useEffect, useState, useRef } from 'react';
 import './MenuModal.scss';
 
 function MenuModal() {
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
 
+  useEffect(()=>{
+
+  },[])
   return (
-    <div className={active ? 'menu active' : 'menu'}>
-      <div
+    <div className="menu active">
+      {/* <div
         className="btn trigger"
         onClick={() => {
           if (!active) {
             window.electron.ipcRenderer.sendMessage('sizeUpMenuWindow', {});
           } else {
-            window.electron.ipcRenderer.sendMessage('sizeDownMenuWindow', {});
+            // 메뉴가 x버튼 모양인 경우
+            window.electron.ipcRenderer.sendMessage('toggleMenu', {});
           }
           setActive(!active);
         }}
       >
         <span className="line"></span>
-      </div>
+      </div> */}
       <div className="icons">
         <div className="rotater">
           <div className="btn btn-icon">
