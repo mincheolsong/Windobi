@@ -3,13 +3,22 @@ import { useEffect, useState, useRef } from 'react';
 import './MenuModal.scss';
 
 function MenuModal() {
-  const [active, setActive] = useState(true);
+  const [active, setActive] = useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
+    window.electron.ipcRenderer.on('toggleMenuOn', () => {
+      console.log('toggleMenuOn');
+      setActive(true);
+    });
 
-  },[])
+    window.electron.ipcRenderer.on('toggleMenuClose', () => {
+      console.log('toggleMenuClose');
+      setActive(false);
+    });
+  }, []);
+
   return (
-    <div className="menu active">
+    <div className={active ? 'menu active' : 'menu'}>
       {/* <div
         className="btn trigger"
         onClick={() => {

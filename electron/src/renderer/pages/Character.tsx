@@ -30,9 +30,9 @@ function Chracter() {
     }
   };
 
-  // 캐릭터를 오른쪽 클릭하면 메뉴를 바로 펼쳐야 함
+  // 캐릭터를 오른쪽 클릭하면 메뉴를 펼침
   const rightClick = () => {
-    window.electron.ipcRenderer.sendMessage('toggleMenu', {});
+    window.electron.ipcRenderer.sendMessage('toggleMenuOn', {});
   };
 
   const moveCharacter = (e: MouseEvent) => {
@@ -57,7 +57,6 @@ function Chracter() {
 
   return (
     <S.Wrapper
-
       onMouseDown={(e) => {
         isMove = true;
         mouseX = e.screenX;
