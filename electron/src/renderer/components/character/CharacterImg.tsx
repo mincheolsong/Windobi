@@ -6,6 +6,9 @@ import left1 from '../../../../assets/character/chungmyeong/shime2.png';
 import left2 from '../../../../assets/character/chungmyeong/shime3.png';
 import up1 from '../../../../assets/character/chungmyeong/shime13.png';
 import up2 from '../../../../assets/character/chungmyeong/shime14.png';
+import down1 from '../../../../assets/character/chungmyeong/shime5.png';
+import down2 from '../../../../assets/character/chungmyeong/shime6.png';
+import down3 from '../../../../assets/character/chungmyeong/shime4.png';
 
 function CharacterImg() {
   let animation: any = null;
@@ -41,7 +44,18 @@ function CharacterImg() {
       // image.style.transform = `scaleX(-1)`;
     }
   }
-
+  function down() {
+    if (image) {
+      image.src = flag ? down1 : down2;
+      flag = !flag;
+    }
+  }
+  function downsleep() {
+    if (image) {
+      image.src = down3;
+    }
+  }
+  // 이미지 태그가 바꼈을 때 한번만 실행
   useEffect(() => {
     image = document.querySelector('img');
     animation = setInterval(stop, 300);
@@ -61,6 +75,12 @@ function CharacterImg() {
         break;
       case 'up':
         animation = setInterval(up, 300);
+        break;
+      case 'down':
+        animation = setInterval(down, 300);
+        break;
+      case 'downsleep':
+        animation = setInterval(downsleep, 300);
         break;
     }
   });

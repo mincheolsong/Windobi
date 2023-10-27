@@ -13,6 +13,7 @@ class Character {
   maxWidth: number;
   maxHeight: number;
   transition: boolean;
+  fallTrigger: boolean;
 
   constructor(
     mainWindow: BrowserWindow,
@@ -24,10 +25,10 @@ class Character {
     this.mainWindow = mainWindow;
     this.winWidth = winWidth;
     this.winHeight = winHeight;
-
     this.curX = maxWidth - winWidth;
     this.curY = maxHeight - winHeight;
 
+    // 창의 크기랑 좌표 맞춰주기
     this.mainWindow.setBounds({
       x: this.curX,
       y: this.curY,
@@ -39,6 +40,7 @@ class Character {
     this.maxWidth = maxWidth;
     this.maxHeight = maxHeight;
     this.transition = false;
+    this.fallTrigger = false;
   }
 }
 
