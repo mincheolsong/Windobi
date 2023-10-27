@@ -25,8 +25,8 @@ const { dbInstance: subDbInstance } = require('./subJobTimeDB');
  */
 
 
-const TICK_TIME = 1; // TIME_TICK당 한번씩 사용중인 프로그램을 수집
-const SAVE_TICK = 5;
+const TICK_TIME = 10; // TIME_TICK당 한번씩 사용중인 프로그램을 수집
+const SAVE_TICK = 6;
 
 const activeMap = new Map(); // key: application, value: {tick, icon, path}
 const subActiveMap = new Map(); // key: application, value: Map<sub_application, tick>
