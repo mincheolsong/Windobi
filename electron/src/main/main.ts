@@ -127,9 +127,9 @@ var MailListener = require("mail-listener2");
 console.log("test");
 
 var mailListener = new MailListener({
-  username: "kimssafy5@gmail.com",
-  password: "ssafyssafy123",
-  host: "imap.gmail.com",
+  username: "honeycomb201",
+  password: "ssafy123!@",
+  host: "imap.naver.com",
   port: 993, // imap port
   tls: true,
   connTimeout: 10000, // Default by node-imap
