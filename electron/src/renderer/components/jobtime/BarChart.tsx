@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-use-before-define */
 /* eslint-disable jsx-a11y/alt-text */
@@ -27,9 +28,6 @@ type TBarChart = {
 };
 
 function BarChart({ dailyJobs, weeklyJobs }: TBarChart) {
-  // const [maxTime, setMaxTime] = useState<number>(1);
-  // const [ascJobs, setAscJobs] = useState<Array<IJobTimed>>([]);
-
   const [dailyMax, setDailyMax] = useState<number>(1);
   const [sortedDailyJobs, setSortedDailyJobs] = useState<Array<IJobTimed>>([]);
 
@@ -49,50 +47,51 @@ function BarChart({ dailyJobs, weeklyJobs }: TBarChart) {
     return result;
   };
 
+  const preprocess = useCallback(
+    (
+      jobs: Array<TJob>,
+      setJobs: React.Dispatch<React.SetStateAction<IJobTimed[]>>,
+      setMax: React.Dispatch<React.SetStateAction<number>>,
+    ) => {
+      let max = -1;
+      const filtered = jobs.filter((job) => {
+        return job.active_time >= 60;
+      });
+      filtered.forEach((job) => {
+        max = Math.max(max, job.active_time);
+      });
+      setMax(max);
+
+      const timed = filtered.map((job) => {
+        return {
+          ...job,
+          timeString: timeToString(job.active_time),
+          color: {
+            h: Math.floor(180 - (job.active_time / max) * 180),
+            s: 82,
+            l: 80,
+          },
+        };
+      });
+
+      const sorted = timed.sort((a, b) => {
+        if (a.active_time > b.active_time) return -1;
+        if (a.active_time < b.active_time) return 1;
+        return 0;
+      });
+
+      setJobs(sorted);
+    },
+    [],
+  );
+
   useEffect(() => {
     if (!dailyJobs || !weeklyJobs) {
       return;
     }
     preprocess(dailyJobs, setSortedDailyJobs, setDailyMax);
     preprocess(weeklyJobs, setSortedWeeklyJobs, setWeeklyMax);
-  }, [dailyJobs, weeklyJobs]);
-
-  const preprocess = (
-    jobs: Array<TJob>,
-    setJobs: React.Dispatch<React.SetStateAction<IJobTimed[]>>,
-    setMax: React.Dispatch<React.SetStateAction<number>>,
-  ) => {
-    let max = -1;
-    const filtered = jobs.filter((job) => {
-      return job.active_time >= 60;
-    });
-
-    filtered.forEach((job) => {
-      max = Math.max(max, job.active_time);
-    });
-
-    setMax(max);
-
-    const timed = filtered.map((job) => {
-      return {
-        ...job,
-        timeString: timeToString(job.active_time),
-        color: {
-          h: Math.floor(180 - (job.active_time / max) * 180),
-          s: 82,
-          l: 80,
-        },
-      };
-    });
-
-    const sorted = timed.sort((a, b) => {
-      if (a.active_time > b.active_time) return -1;
-      if (a.active_time < b.active_time) return 1;
-      return 0;
-    });
-
-    setJobs(sorted);
-  };
+  }, [dailyJobs, weeklyJobs, preprocess]);
 
   return (
     <S.Wrapper>
@@ -107,13 +106,15 @@ type TBar = {
   jobs: Array<IJobTimed>;
   max: number;
 };
-
 function Bar({ jobs, max }: TBar) {
   const { ipcRenderer } = window.electron;
 
-  const onClickImage = useCallback((path: string) => {
-    ipcRenderer.sendMessage('application', path);
-  }, []);
+  const executeApplication = useCallback(
+    (path: string) => {
+      ipcRenderer.sendMessage('application', path);
+    },
+    [ipcRenderer],
+  );
 
   return (
     <>
@@ -124,11 +125,11 @@ function Bar({ jobs, max }: TBar) {
               src={job.icon}
               width={30}
               height={30}
-              onClick={() => onClickImage(job.path)}
+              onClick={() => executeApplication(job.path)}
             />
             <S.Bar
               title={job.application}
-              percentage={Math.max((100 * job.active_time) / max, 20)}
+              percentage={Math.max((100 * job.active_time) / max, 15)}
               barcolor={`hsla(${job.color.h}, ${job.color.s}%, ${job.color.l}%, 1)`}
             >
               {job.timeString}

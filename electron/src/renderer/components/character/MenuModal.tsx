@@ -1,13 +1,13 @@
-import { ipcRenderer } from 'electron';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import './MenuModal.scss';
 
 function MenuModal() {
   const [active, setActive] = useState(true);
+  const { ipcRenderer } = window.electron;
 
-  useEffect(()=>{
-
-  },[])
+  // useEffect(() => {
+  //   ipcRenderer.on('');
+  // }, []);
   return (
     <div className="menu active">
       {/* <div

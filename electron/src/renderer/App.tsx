@@ -35,7 +35,7 @@ function MyApp() {
       <Route
         path="/jobtime"
         element={
-          <SubWindow title="사용 시간">
+          <SubWindow title="사용시간">
             <JobTime />
           </SubWindow>
         }
