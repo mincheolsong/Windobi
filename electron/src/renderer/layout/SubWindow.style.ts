@@ -32,6 +32,7 @@ const Body = styled.div`
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  padding-top: 0px;
 
   &::-webkit-scrollbar {
     width: 10px;
