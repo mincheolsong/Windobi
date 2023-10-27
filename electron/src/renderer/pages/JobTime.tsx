@@ -3,16 +3,20 @@ import { useState, useEffect } from 'react';
 import * as S from '../components/jobtime/JobTime.style';
 import BarChart from '../components/jobtime/BarChart';
 
+type TType = 'daily' | 'weekly';
+
 function JobTime() {
-  const [dayJobTime, setDayJobTime] = useState<Array<any>>([]);
-  const [weekJobTime, setWeekJobTime] = useState<Array<any>>([]);
+  const [dailyJobs, setDailyJobs] = useState<Array<any>>([]);
+  const [weeklyJobs, setWeeklyJobs] = useState<Array<any>>([]);
+  const [type, setType] = useState<TType>('daily');
+
   useEffect(() => {
     const { ipcRenderer } = window.electron;
     ipcRenderer.on('job-time', ({ type, result }) => {
       if (type === 'day') {
-        setDayJobTime(result);
+        setDailyJobs(result);
       } else if (type === 'week') {
-        setWeekJobTime(result);
+        setWeeklyJobs(result);
       }
     });
     ipcRenderer.sendMessage('size', { width: 400, height: 300 });
@@ -30,7 +34,7 @@ function JobTime() {
 
   return (
     <S.Wrapper>
-      <BarChart jobs={dayJobTime} />
+      <BarChart dailyJobs={dailyJobs} weeklyJobs={weeklyJobs} />
     </S.Wrapper>
   );
 }
