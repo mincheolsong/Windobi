@@ -1,16 +1,14 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-use-before-define */
+/* eslint-disable jsx-a11y/alt-text */
+import React, { useState, useEffect, useCallback } from 'react';
 import * as S from './BarChart.style';
 
-/* eslint-disable jsx-a11y/alt-text */
 type TJob = {
   application: string;
   active_time: number;
   icon: string;
   path: string;
-};
-
-type TBarChart = {
-  jobs: Array<TJob>;
 };
 
 type TColor = {
@@ -23,12 +21,22 @@ interface IJobTimed extends TJob {
   timeString: string;
   color: TColor;
 }
+type TBarChart = {
+  dailyJobs: Array<TJob>;
+  weeklyJobs: Array<TJob>;
+};
 
-function BarChart({ jobs }: TBarChart) {
-  const [maxTime, setMaxTime] = useState<number>(1);
-  const [ascJobs, setAscJobs] = useState<Array<IJobTimed>>([]);
+function BarChart({ dailyJobs, weeklyJobs }: TBarChart) {
+  // const [maxTime, setMaxTime] = useState<number>(1);
+  // const [ascJobs, setAscJobs] = useState<Array<IJobTimed>>([]);
 
-  const { ipcRenderer } = window.electron;
+  const [dailyMax, setDailyMax] = useState<number>(1);
+  const [sortedDailyJobs, setSortedDailyJobs] = useState<Array<IJobTimed>>([]);
+
+  const [weeklyMax, setWeeklyMax] = useState<number>(1);
+  const [sortedweeklyJobs, setSortedWeeklyJobs] = useState<Array<IJobTimed>>(
+    [],
+  );
 
   const timeToString = (time: number) => {
     const hour = Math.floor(time / 3600);
@@ -42,18 +50,29 @@ function BarChart({ jobs }: TBarChart) {
   };
 
   useEffect(() => {
-    if (!jobs) {
+    if (!dailyJobs || !weeklyJobs) {
       return;
     }
+    preprocess(dailyJobs, setSortedDailyJobs, setDailyMax);
+    preprocess(weeklyJobs, setSortedWeeklyJobs, setWeeklyMax);
+  }, [dailyJobs, weeklyJobs]);
 
+  const preprocess = (
+    jobs: Array<TJob>,
+    setJobs: React.Dispatch<React.SetStateAction<IJobTimed[]>>,
+    setMax: React.Dispatch<React.SetStateAction<number>>,
+  ) => {
     let max = -1;
     const filtered = jobs.filter((job) => {
       return job.active_time >= 60;
     });
+
     filtered.forEach((job) => {
       max = Math.max(max, job.active_time);
     });
-    setMaxTime(max);
+
+    setMax(max);
+
     const timed = filtered.map((job) => {
       return {
         ...job,
@@ -72,36 +91,52 @@ function BarChart({ jobs }: TBarChart) {
       return 0;
     });
 
-    setAscJobs(sorted);
-  }, [jobs]);
-
-  const executeApplication = (path: string) => {
-    ipcRenderer.sendMessage('application', path);
+    setJobs(sorted);
   };
+
   return (
     <S.Wrapper>
       <S.Ul>
-        {ascJobs.map((job) => {
-          return (
-            <S.Li key={job.application}>
-              <S.Image
-                src={job.icon}
-                width={30}
-                height={30}
-                onClick={() => executeApplication(job.path)}
-              />
-              <S.Bar
-                title={job.application}
-                percentage={15 + (85 * job.active_time) / maxTime}
-                barcolor={`hsla(${job.color.h}, ${job.color.s}%, ${job.color.l}%, 1)`}
-              >
-                {job.timeString}
-              </S.Bar>
-            </S.Li>
-          );
-        })}
+        <Bar jobs={sortedDailyJobs} max={dailyMax} />
       </S.Ul>
     </S.Wrapper>
+  );
+}
+
+type TBar = {
+  jobs: Array<IJobTimed>;
+  max: number;
+};
+
+function Bar({ jobs, max }: TBar) {
+  const { ipcRenderer } = window.electron;
+
+  const onClickImage = useCallback((path: string) => {
+    ipcRenderer.sendMessage('application', path);
+  }, []);
+
+  return (
+    <>
+      {jobs.map((job) => {
+        return (
+          <S.Li key={job.application}>
+            <S.Image
+              src={job.icon}
+              width={30}
+              height={30}
+              onClick={() => onClickImage(job.path)}
+            />
+            <S.Bar
+              title={job.application}
+              percentage={Math.max((100 * job.active_time) / max, 20)}
+              barcolor={`hsla(${job.color.h}, ${job.color.s}%, ${job.color.l}%, 1)`}
+            >
+              {job.timeString}
+            </S.Bar>
+          </S.Li>
+        );
+      })}
+    </>
   );
 }
 
