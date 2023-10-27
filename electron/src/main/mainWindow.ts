@@ -67,7 +67,6 @@ const createMainWindow = (app: App): BrowserWindow => {
 
     let characterMoving = setInterval(moving, 30, character);
     let scheduling = setInterval(moveScheduling, 2000, character);
-<<<<<<< HEAD
 
     // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
     ipcMain.on('windowMoving', (event, arg) => {
@@ -80,8 +79,6 @@ const createMainWindow = (app: App): BrowserWindow => {
       scheduling = setInterval(moveScheduling, 2000, character);
     });
 
-=======
->>>>>>> jihoon
     mainWindow.webContents.closeDevTools();
   });
 
