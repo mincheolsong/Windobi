@@ -5,6 +5,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
+import { head } from 'lodash';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import createMenuWindow from './menuWindow';
@@ -12,10 +13,9 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
-import { head } from 'lodash';
 
-const { dbInstance } = require('./jobTimeDB');
 const electron = require('electron');
+const { dbInstance } = require('./jobtime/jobTimeDB');
 
 class AppUpdater {
   constructor() {
@@ -58,7 +58,7 @@ ipcMain.on('windowMoving', (event, arg) => {
   mainWindow?.setBounds({
     width: 100,
     height: 100,
-    x: arg.mouseX - 50, //always changes in runtime
+    x: arg.mouseX - 50, // always changes in runtime
     y: arg.mouseY - 50,
   });
 });
@@ -186,4 +186,4 @@ app
   .catch(console.log);
 
 // 프로그램 시간 계산하기
-const jobTimeThread = new Worker(path.join(__dirname, 'jobTime.js'));
+const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
