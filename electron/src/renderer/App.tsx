@@ -8,6 +8,7 @@ import './App.css';
 import Character from './pages/Character';
 import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
+import Notification from './pages/Notification'
 
 function Test() {
   return <div className="sub">sub</div>;
@@ -36,6 +37,14 @@ function MyApp() {
         element={
           <SubWindow>
             <JobTime />
+          </SubWindow>
+        }
+      />
+      <Route
+        path="/notification"
+        element={
+          <SubWindow>
+            <Notification />
           </SubWindow>
         }
       />
