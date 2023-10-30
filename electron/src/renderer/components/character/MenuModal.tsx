@@ -12,10 +12,12 @@ function MenuModal() {
   useEffect(() => {
     window.electron.ipcRenderer.on('toggleMenuOn', () => {
       setActive(true);
+      window.electron.ipcRenderer.sendMessage('stopMoving');
     });
 
     window.electron.ipcRenderer.on('toggleMenuClose', () => {
       setActive(false);
+      window.electron.ipcRenderer.sendMessage('restartMoving');
     });
   }, []);
 
