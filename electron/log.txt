@@ -1895,3 +1895,95 @@ application : Electron
 application : Electron
 application : Electron
 application : Electron
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : MSYS2 terminal
+application : Visual Studio Code
+application : MSYS2 terminal
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
