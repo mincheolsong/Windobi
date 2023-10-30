@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  padding: 10px;
+  padding-top: 10px;
 `;
 
 const Ul = styled.ul`

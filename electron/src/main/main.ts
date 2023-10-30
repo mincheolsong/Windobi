@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
@@ -5,6 +6,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
+import { head } from 'lodash';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import createMenuWindow from './menuWindow';
@@ -12,10 +14,9 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
-import { head } from 'lodash';
 
-const { dbInstance } = require('./jobTimeDB');
 const electron = require('electron');
+const { dbInstance } = require('./jobtime/jobTimeDB');
 
 export type TWindows = {
   main: BrowserWindow | null;
@@ -50,10 +51,9 @@ global.isBlur = false;
 
 dbInstance.init();
 
-ipcMain.on('job-time', async (event, type) => {
+ipcMain.on('job-time', async (event, type, target) => {
   if (type === 'day') {
-    const today = new Date();
-    const result = await dbInstance.getByDay(today);
+    const result = await dbInstance.getByDay(target);
     event.reply('job-time', { type, result });
   } else if (type === 'week') {
     const result = await dbInstance.getRecentWeek();
@@ -64,16 +64,18 @@ ipcMain.on('job-time', async (event, type) => {
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
+});
+
+ipcMain.on('sub', (event, path) => {
+  subWindow?.webContents.send('sub', path);
 });
 
 ipcMain.on('windowMoving', (event, arg) => {
   mainWindow?.setBounds({
     width: 100,
     height: 100,
-    x: arg.mouseX - 50, //always changes in runtime
+    x: arg.mouseX - 50, // always changes in runtime
     y: arg.mouseY - 50,
   });
 });
@@ -159,4 +161,4 @@ app
   .catch(console.log);
 
 // 프로그램 시간 계산하기
-const jobTimeThread = new Worker(path.join(__dirname, 'jobTime.js'));
+const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
