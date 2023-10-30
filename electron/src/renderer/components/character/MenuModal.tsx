@@ -1,18 +1,20 @@
 import { ipcRenderer } from 'electron';
 import { useEffect, useState, useRef } from 'react';
 import './MenuModal.scss';
+import statisticImg from '../../../../assets/icons/statistics.svg';
+import calendar from '../../../../assets/icons/calendar.svg';
+import alarm from '../../../../assets/icons/alarm.svg';
+import chatGPT from '../../../../assets/icons/chatGPT.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
     window.electron.ipcRenderer.on('toggleMenuOn', () => {
-      console.log('toggleMenuOn');
       setActive(true);
     });
 
     window.electron.ipcRenderer.on('toggleMenuClose', () => {
-      console.log('toggleMenuClose');
       setActive(false);
     });
   }, []);
@@ -36,22 +38,22 @@ function MenuModal() {
       <div className="icons">
         <div className="rotater">
           <div className="btn btn-icon">
-            <i className="fa fa-codepen">a</i>
+            <img className="fa" src={statisticImg}></img>
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <i className="fa fa-facebook">b</i>
+            <img className="fa" src={calendar}></img>
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <i className="fa fa-google-plus">c</i>
+            <img className="fa" src={alarm}></img>
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <i className="fa fa-twitter">d</i>
+            <img className="fa" src={chatGPT}></img>
           </div>
         </div>
         <div className="rotater">
