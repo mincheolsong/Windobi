@@ -1987,3 +1987,14 @@ application : Electron
 application : Electron
 application : Electron
 application : Electron
+application : Electron
+application : MSYS2 terminal
+application : MSYS2 terminal
+application : MSYS2 terminal
+application : MSYS2 terminal
+application : MSYS2 terminal
+application : Electron
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Windows 탐색기
