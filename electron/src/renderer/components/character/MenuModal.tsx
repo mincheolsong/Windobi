@@ -27,6 +27,7 @@ function MenuModal() {
 
   const navigate = (path: string) => {
     ipcRenderer.sendMessage('sub', path);
+    setActive(false);
   };
 
   return (
