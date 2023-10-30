@@ -49,7 +49,7 @@ const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
   // 밖에 클릭하면 메뉴 닫기
   menuWindow.addListener('blur', () => {
     menuWindow?.webContents.send('toggleMenuClose');
-    menuWindow?.webContents.send('windowMoveDone');
+    // menuWindow?.webContents.send('windowMoveDone');
   });
 
   return menuWindow;

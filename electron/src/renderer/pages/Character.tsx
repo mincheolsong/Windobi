@@ -6,9 +6,9 @@ import CharacterImg from '../components/character/CharacterImg';
 function Chracter() {
   const [index, setIndex] = useState<number>(0);
 
-  window.electron.ipcRenderer.on('windowMoveDone', () => {
-    window.electron.ipcRenderer.sendMessage('windowMoveDone');
-  });
+  // window.electron.ipcRenderer.on('windowMoveDone', () => {
+  //   window.electron.ipcRenderer.sendMessage('windowMoveDone');
+  // });
 
   useEffect(() => {
     console.log('Main Window');
