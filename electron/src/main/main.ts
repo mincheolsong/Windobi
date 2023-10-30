@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
@@ -38,10 +39,9 @@ global.isBlur = false;
 
 dbInstance.init();
 
-ipcMain.on('job-time', async (event, type) => {
+ipcMain.on('job-time', async (event, type, target) => {
   if (type === 'day') {
-    const today = new Date();
-    const result = await dbInstance.getByDay(today);
+    const result = await dbInstance.getByDay(target);
     event.reply('job-time', { type, result });
   } else if (type === 'week') {
     const result = await dbInstance.getRecentWeek();
@@ -52,9 +52,11 @@ ipcMain.on('job-time', async (event, type) => {
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
+});
+
+ipcMain.on('sub', (event, path) => {
+  subWindow?.webContents.send('sub', path);
 });
 
 ipcMain.on('windowMoving', (event, arg) => {

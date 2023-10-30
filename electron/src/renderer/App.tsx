@@ -15,6 +15,7 @@ function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
   ipcRenderer.on('sub', (path) => {
+    console.log(`Received: ${path}`);
     navigate(`/${path}`);
   });
 

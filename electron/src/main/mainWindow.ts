@@ -74,6 +74,11 @@ const createMainWindow = (app: App): BrowserWindow => {
       clearInterval(scheduling);
     });
 
+    ipcMain.on('stop-move', () => {
+      clearInterval(characterMoving);
+      clearInterval(scheduling);
+    });
+
     ipcMain.on('windowMoveDone', (event, arg) => {
       characterMoving = setInterval(moving, 30, character);
       scheduling = setInterval(moveScheduling, 2000, character);
