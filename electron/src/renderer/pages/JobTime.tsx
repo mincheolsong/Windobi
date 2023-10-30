@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import ReactSwitch from 'react-switch';
 import * as S from '../components/jobtime/JobTime.style';
 import BarChart from '../components/jobtime/BarChart';
+import PieChart from '../components/jobtime/PieChart';
 
 type TType = 'daily' | 'weekly';
 
@@ -23,7 +24,7 @@ function JobTime() {
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
-    ipcRenderer.sendMessage('size', { width: 700, height: 350 });
+    ipcRenderer.sendMessage('size', { width: 600, height: 350 });
 
     ipcRenderer.on('job-time', ({ type, result }) => {
       if (type === 'day') {
@@ -85,7 +86,9 @@ function JobTime() {
           type={stringType}
         />
       </S.Half>
-      <S.Half>asdf</S.Half>
+      <S.Half>
+        <PieChart jobs={dailyJobs} />
+      </S.Half>
     </S.Wrapper>
   );
 }
