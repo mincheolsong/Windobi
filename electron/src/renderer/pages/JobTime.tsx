@@ -17,6 +17,8 @@ function JobTime() {
   const [stringType, setStringType] = useState<TType>(
     type ? 'daily' : 'weekly',
   );
+  const dateToString = ['일', '월', '화', '수', '목', '금', '토'];
+
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
@@ -51,7 +53,7 @@ function JobTime() {
     // n일 전의 데이터를 불러오기 위해 prevDay가 바뀔때마다
     // 실제 해당 날짜를 계산해주자
     const target = new Date();
-    target.setDate(target.getDate() - prevDay);
+    target.setDate(target.getDate() + prevDay);
     setDay(target);
   }, [prevDay]);
 
@@ -59,6 +61,11 @@ function JobTime() {
     // 보여줘야 할 날짜가 바뀌면 데이터를 갱신받자
     ipcRenderer.sendMessage('job-time', 'day', day);
   }, [day]);
+
+  const dayToString = (day: Date) => {
+    const date = day.getDay();
+    return `${day.getMonth() + 1}월 ${day.getDate()}일 (${dateToString[date]})`;
+  };
 
   return (
     <S.Wrapper>
@@ -72,7 +79,11 @@ function JobTime() {
           uncheckedIcon={<S.TypeText>주간</S.TypeText>}
         />
         <S.Left onClick={() => setPrevDay((prev) => prev - 1)} />
-        <S.Right onClick={() => setPrevDay((prev) => prev + 1)} />
+        {dayToString(day)}
+        <S.Right
+          onClick={() => setPrevDay((prev) => prev + 1)}
+          disabled={prevDay === 0}
+        />
       </S.Header>
       <BarChart
         dailyJobs={dailyJobs}
