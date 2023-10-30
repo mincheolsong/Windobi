@@ -1998,3 +1998,8 @@ application : Visual Studio Code
 application : Electron
 application : Electron
 application : Windows 탐색기
+application : MSYS2 terminal
+application : MSYS2 terminal
+application : MSYS2 terminal
+application : MSYS2 terminal
+application : MSYS2 terminal
