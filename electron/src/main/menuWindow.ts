@@ -1,8 +1,8 @@
 import { App, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
-import { resolveHtmlPath } from './util';
 import { BrowserView } from 'electron/main';
 import { delay } from 'lodash';
+import { resolveHtmlPath } from './util';
 
 const width = 400;
 const height = 400;
@@ -42,6 +42,7 @@ const createMenuWindow = (app: App): BrowserWindow => {
   // 밖에 클릭하면 메뉴 닫기
   menuWindow.addListener('blur', () => {
     menuWindow?.webContents.send('toggleMenuClose');
+    menuWindow?.webContents.send('windowMoveDone');
   });
 
   return menuWindow;

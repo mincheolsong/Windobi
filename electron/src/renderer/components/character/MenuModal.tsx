@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './MenuModal.scss';
+import { useNavigate } from 'react-router-dom';
 import statisticImg from '../../../../assets/icons/statistics.svg';
 import calendar from '../../../../assets/icons/calendar.svg';
 import alarm from '../../../../assets/icons/alarm.svg';
@@ -7,8 +8,10 @@ import chatGPT from '../../../../assets/icons/chatGPT.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
+  const { ipcRenderer } = window.electron;
 
   useEffect(() => {
+    console.log('Menu Window');
     window.electron.ipcRenderer.on('toggleMenuOn', () => {
       setActive(true);
     });
@@ -17,6 +20,10 @@ function MenuModal() {
       setActive(false);
     });
   }, []);
+
+  const navigate = (path: string) => {
+    ipcRenderer.sendMessage('sub', path);
+  };
 
   return (
     <div className={active ? 'menu active' : 'menu'}>
@@ -37,22 +44,26 @@ function MenuModal() {
       <div className="icons">
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={statisticImg}></img>
+            <img
+              className="fa"
+              src={statisticImg}
+              onClick={() => navigate('jobtime')}
+            />
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={calendar}></img>
+            <img className="fa" src={calendar} />
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={alarm}></img>
+            <img className="fa" src={alarm} />
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={chatGPT}></img>
+            <img className="fa" src={chatGPT} />
           </div>
         </div>
         <div className="rotater">
