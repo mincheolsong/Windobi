@@ -9,7 +9,7 @@ import Character from './pages/Character';
 import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
 import Notification from './pages/Notification'
-
+import GlobalFont from './global';
 function Test() {
   return <div className="sub">sub</div>;
 }
@@ -22,6 +22,8 @@ function MyApp() {
   });
 
   return (
+    <>
+    <GlobalFont></GlobalFont>
     <Routes>
       <Route path="/" element={<Character />} />
       <Route
@@ -49,6 +51,7 @@ function MyApp() {
         }
       />
     </Routes>
+    </>
   );
 }
 

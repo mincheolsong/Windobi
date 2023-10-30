@@ -63,8 +63,8 @@ const createMainWindow = (app: App): BrowserWindow => {
       100,
       110,
     );
-    let characterMoving = setInterval(moving, 30, character);
-    let scheduling = setInterval(moveScheduling, 2000, character);
+    // let characterMoving = setInterval(moving, 30, character);
+    // let scheduling = setInterval(moveScheduling, 2000, character);
 
     mainWindow.webContents.closeDevTools();
   });
