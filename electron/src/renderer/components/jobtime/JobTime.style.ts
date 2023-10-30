@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { AiFillCaretLeft, AiFillCaretRight } from 'react-icons/ai';
 
 const Wrapper = styled.div`
@@ -14,7 +14,11 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const Left = styled(AiFillCaretLeft)`
+type TArrow = {
+  disabled: boolean;
+};
+
+const Left = styled(AiFillCaretLeft)<TArrow>`
   font-size: 40px;
   color: #428df5;
 
@@ -24,15 +28,25 @@ const Left = styled(AiFillCaretLeft)`
     transition: all 0.15s ease-in-out;
   }
 `;
-const Right = styled(AiFillCaretRight)`
+const Right = styled(AiFillCaretRight)<TArrow>`
   font-size: 40px;
-  color: #428df5;
 
-  &:hover {
-    cursor: pointer;
-    color: #7ad2f5;
-    transition: all 0.15s ease-in-out;
-  }
+  ${({ disabled }) =>
+    disabled
+      ? css`
+          color: gray;
+          &:hover {
+            cursor: not-allowed;
+          }
+        `
+      : css`
+          color: #428df5;
+          &:hover {
+            cursor: pointer;
+            color: #7ad2f5;
+            transition: all 0.15s ease-in-out;
+          }
+        `}
 `;
 
 const TypeText = styled.div`
