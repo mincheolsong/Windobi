@@ -2019,3 +2019,68 @@ application : Visual Studio Code
 application : Visual Studio Code
 application : Visual Studio Code
 application : Visual Studio Code
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Windows 탐색기
+application : Visual Studio Code
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Visual Studio Code
+application : Visual Studio Code
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
+application : Electron
