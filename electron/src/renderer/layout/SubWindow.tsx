@@ -17,7 +17,9 @@ function SubWindow({ title = '', children }: TSubWindow) {
 
   const onClickClose = useCallback(() => {
     navigate('/closed');
-    ipcRenderer.sendMessage('windowMoveDone');
+    // window.electron.ipcRenderer.sendMessage('restartMoving');
+
+    // ipcRenderer.sendMessage('windowMoveDone');
   }, []);
 
   return (
