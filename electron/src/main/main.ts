@@ -28,7 +28,8 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
 let menuWindow: BrowserWindow | null = null;
-let isMenuOn = false;
+global.isMenuOn = false;
+global.isBlur = false;
 // ipcMain.on('ipc-example', async (event, arg) => {
 //   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
 //   console.log(msgTemplate(arg));
@@ -51,7 +52,9 @@ ipcMain.on('job-time', async (event, type) => {
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 ipcMain.on('windowMoving', (event, arg) => {
@@ -65,51 +68,11 @@ ipcMain.on('windowMoving', (event, arg) => {
 let menuWidth;
 let menuHeight;
 
-// 캐릭터 오른쪽 클릭 시 toggleMenu를 send함 (위치 : Character.tsx)
-ipcMain.on('toggleMenu', async (event, arg) => {
-  if (isMenuOn) {
-    menuWindow?.hide();
-
-    // const {
-    //   x: mainX,
-    //   y: mainY,
-    //   width: mainWidth,
-    //   height: mainHeight,
-    // } = mainWindow?.getBounds();
-    // menuWidth = 0;
-    // menuHeight = 0;
-    // menuWindow?.setBounds({
-    //   width: 0,
-    //   height: 0,
-    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
-    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
-    // });
-
-    isMenuOn = false;
-  } else {
-    menuWindow?.show();
-
-    mainWindow?.show();
-
-    // const {
-    //   x: mainX,
-    //   y: mainY,
-    //   width: mainWidth,
-    //   height: mainHeight,
-    // } = mainWindow?.getBounds();
-
-    // menuWidth = 400;
-    // menuHeight = 400;
-    // menuWindow?.setBounds({
-    //   width: 400,
-    //   height: 400,
-    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
-    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
-    // });
-
-    // mainWindow?.focus();
-    isMenuOn = true;
-  }
+// 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
+ipcMain.on('toggleMenuOn', async (event, arg) => {
+  mainWindow?.show();
+  menuWindow?.show();
+  menuWindow?.webContents.send('toggleMenuOn');
 });
 
 if (process.env.NODE_ENV === 'production') {
