@@ -6,7 +6,6 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
-import { head } from 'lodash';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import createMenuWindow from './menuWindow';

@@ -112,6 +112,42 @@ const interWindowCommunication = (main: BrowserWindow, sub: BrowserWindow) => {
     subWidth = width;
     subHeight = height;
     sub.setSize(subWidth, subHeight);
+
+    const {
+      x: mainX,
+      y: mainY,
+      width: mainWidth,
+      height: mainHeight,
+    } = main.getBounds();
+
+    const area = getArea(main);
+
+    let afterX = 0;
+    let afterY = 0;
+    if (area === 1) {
+      afterX = mainX - subWidth;
+      afterY = mainY + mainHeight;
+    } else if (area === 2) {
+      afterX = mainX + mainWidth;
+      afterY = mainY + mainHeight;
+    } else if (area === 3) {
+      afterX = mainX + mainWidth;
+      afterY = mainY - subHeight;
+    } else if (area === 4) {
+      afterX = mainX - subWidth;
+      afterY = mainY - subHeight;
+    }
+
+    const update = () => {
+      sub.setBounds({
+        x: afterX,
+        y: afterY,
+        width: subWidth,
+        height: subHeight,
+      });
+    };
+
+    update();
   });
 };
 
