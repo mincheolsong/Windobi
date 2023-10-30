@@ -9,10 +9,7 @@ import Character from './pages/Character';
 import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
 import MenuModal from './components/character/MenuModal';
-
-function Test() {
-  return <div className="sub">sub</div>;
-}
+import Closed from './pages/Closed';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -28,7 +25,7 @@ function MyApp() {
         path="/closed"
         element={
           <SubWindow>
-            <Test />
+            <Closed />
           </SubWindow>
         }
       />
