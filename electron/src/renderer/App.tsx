@@ -15,21 +15,13 @@ function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
   ipcRenderer.on('sub', (path) => {
-    console.log(`Received: ${path}`);
     navigate(`/${path}`);
   });
 
   return (
     <Routes>
       <Route path="/" element={<Character />} />
-      <Route
-        path="/closed"
-        element={
-          <SubWindow>
-            <Closed />
-          </SubWindow>
-        }
-      />
+      <Route path="/closed" element={<Closed />} />
       <Route
         path="/jobtime"
         element={
