@@ -9,15 +9,15 @@ function move(character: Character) {
   let nextX: number = 0;
   let nextY: number = 0;
 
-// 좌우 이동
+  // 좌우 이동
 
   if (
     curY < character.maxHeight - character.winHeight &&
-    curY > character.maxHeight - character.winHeight - 50 &&
+    curY > character.maxHeight - character.winHeight - 20 &&
     character.fallTrigger
   ) {
-    character.mainWindow.webContents.send('character-move', 'downsleep');
     character.direction = 'downsleep';
+    character.mainWindow.webContents.send('character-move', 'downsleep');
   }
 
   if (
@@ -68,8 +68,8 @@ function move(character: Character) {
       character.fallTrigger = false;
       nextY = character.maxHeight - 105;
       nextX = curX;
-      character.direction = 'stop';
-      character.mainWindow.webContents.send('character-move', 'stop');
+      character.direction = 'downsleep';
+      character.mainWindow.webContents.send('character-move', 'downsleep');
     } else {
       nextY = curY + 5;
       nextX = curX;
@@ -85,7 +85,7 @@ function move(character: Character) {
       character.mainWindow.webContents.send('character-move', 'stop');
       character.direction = 'stop';
     } else {
-      nextY = curY + 2;
+      nextY = curY + 5;
       nextX = curX;
     }
     character.curX = nextX;

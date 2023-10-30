@@ -15,8 +15,8 @@ const createSubWindow = (app: App, wins: TWindows): BrowserWindow => {
   };
 
   const subWindow = new BrowserWindow({
-    width: 200,
-    height: 200,
+    width: 0,
+    height: 0,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
@@ -28,6 +28,7 @@ const createSubWindow = (app: App, wins: TWindows): BrowserWindow => {
     alwaysOnTop: true,
     transparent: true,
     skipTaskbar: true,
+    resizable: false,
   });
 
   wins.sub = subWindow;

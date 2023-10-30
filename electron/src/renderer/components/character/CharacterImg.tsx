@@ -80,7 +80,7 @@ function CharacterImg() {
         animation = setInterval(down, 300);
         break;
       case 'downsleep':
-        animation = setInterval(downsleep, 300);
+        animation = setInterval(downsleep, 10);
         break;
     }
   });
