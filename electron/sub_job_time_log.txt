@@ -60,3 +60,10 @@ SQLITE_ERROR: incomplete input
 SQLITE_ERROR: incomplete input
 SQLITE_ERROR: incomplete input
 SQLITE_ERROR: incomplete input
+SQLITE_ERROR: incomplete input
+SQLITE_ERROR: incomplete input
+SQLITE_ERROR: incomplete input
+SQLITE_ERROR: incomplete input
+SQLITE_ERROR: incomplete input
+SQLITE_ERROR: incomplete input
+SQLITE_ERROR: incomplete input
