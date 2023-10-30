@@ -1,12 +1,16 @@
 import { App, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
-import { resolveHtmlPath } from './util';
 import { BrowserView } from 'electron/main';
 import { delay } from 'lodash';
+import { TWindows } from './main';
+import { resolveHtmlPath } from './util';
 
 const width = 400;
 const height = 400;
-const createMenuWindow = (app: App): BrowserWindow => {
+
+let windows: TWindows | null;
+
+const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -33,6 +37,9 @@ const createMenuWindow = (app: App): BrowserWindow => {
     resizable: false,
   });
 
+  wins.menu = menuWindow;
+  windows = wins;
+
   menuWindow.loadURL(resolveHtmlPath('index.html'));
   menuWindow.on('ready-to-show', () => {
     menuWindow.webContents.send('sub', 'menu');
@@ -42,6 +49,7 @@ const createMenuWindow = (app: App): BrowserWindow => {
   // 밖에 클릭하면 메뉴 닫기
   menuWindow.addListener('blur', () => {
     menuWindow?.webContents.send('toggleMenuClose');
+    menuWindow?.webContents.send('windowMoveDone');
   });
 
   return menuWindow;

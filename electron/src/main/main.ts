@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
@@ -5,7 +6,6 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
-import { head } from 'lodash';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import createMenuWindow from './menuWindow';
@@ -16,6 +16,18 @@ import {
 
 const electron = require('electron');
 const { dbInstance } = require('./jobtime/jobTimeDB');
+
+export type TWindows = {
+  main: BrowserWindow | null;
+  sub: BrowserWindow | null;
+  menu: BrowserWindow | null;
+};
+
+const windows: TWindows = {
+  main: null,
+  sub: null,
+  menu: null,
+};
 
 class AppUpdater {
   constructor() {
@@ -38,10 +50,9 @@ global.isBlur = false;
 
 dbInstance.init();
 
-ipcMain.on('job-time', async (event, type) => {
+ipcMain.on('job-time', async (event, type, target) => {
   if (type === 'day') {
-    const today = new Date();
-    const result = await dbInstance.getByDay(today);
+    const result = await dbInstance.getByDay(target);
     event.reply('job-time', { type, result });
   } else if (type === 'week') {
     const result = await dbInstance.getRecentWeek();
@@ -52,9 +63,11 @@ ipcMain.on('job-time', async (event, type) => {
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
+});
+
+ipcMain.on('sub', (event, path) => {
+  subWindow?.webContents.send('sub', path);
 });
 
 ipcMain.on('windowMoving', (event, arg) => {
@@ -65,14 +78,12 @@ ipcMain.on('windowMoving', (event, arg) => {
     y: arg.mouseY - 50,
   });
 });
-let menuWidth;
-let menuHeight;
 
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenuOn', async (event, arg) => {
   mainWindow?.show();
   menuWindow?.show();
-  menuWindow?.webContents.send('toggleMenuOn');
+  menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -105,9 +116,9 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  mainWindow = createMainWindow(app);
-  subWindow = createSubWindow(app);
-  menuWindow = createMenuWindow(app);
+  mainWindow = createMainWindow(app, windows);
+  subWindow = createSubWindow(app, windows);
+  menuWindow = createMenuWindow(app, windows);
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);

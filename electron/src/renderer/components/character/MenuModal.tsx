@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/alt-text */
 import { useEffect, useState } from 'react';
 import './MenuModal.scss';
 import statisticImg from '../../../../assets/icons/statistics.svg';
@@ -7,52 +10,50 @@ import chatGPT from '../../../../assets/icons/chatGPT.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
+  const { ipcRenderer } = window.electron;
 
   useEffect(() => {
+    console.log('Menu Window');
     window.electron.ipcRenderer.on('toggleMenuOn', () => {
       setActive(true);
+      window.electron.ipcRenderer.sendMessage('stopMoving');
     });
 
     window.electron.ipcRenderer.on('toggleMenuClose', () => {
       setActive(false);
+      window.electron.ipcRenderer.sendMessage('restartMoving');
     });
   }, []);
 
+  const navigate = (path: string) => {
+    ipcRenderer.sendMessage('sub', path);
+  };
+
   return (
     <div className={active ? 'menu active' : 'menu'}>
-      {/* <div
-        className="btn trigger"
-        onClick={() => {
-          if (!active) {
-            window.electron.ipcRenderer.sendMessage('sizeUpMenuWindow', {});
-          } else {
-            // 메뉴가 x버튼 모양인 경우
-            window.electron.ipcRenderer.sendMessage('toggleMenu', {});
-          }
-          setActive(!active);
-        }}
-      >
-        <span className="line"></span>
-      </div> */}
       <div className="icons">
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={statisticImg}></img>
+            <img
+              className="fa"
+              src={statisticImg}
+              onClick={() => navigate('jobtime')}
+            />
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={calendar}></img>
+            <img className="fa" src={calendar} />
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={alarm}></img>
+            <img className="fa" src={alarm} />
           </div>
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <img className="fa" src={chatGPT}></img>
+            <img className="fa" src={chatGPT} />
           </div>
         </div>
         <div className="rotater">
