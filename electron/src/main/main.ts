@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
@@ -12,10 +13,21 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
-import { head } from 'lodash';
 
-const { dbInstance } = require('./jobTimeDB');
 const electron = require('electron');
+const { dbInstance } = require('./jobtime/jobTimeDB');
+
+export type TWindows = {
+  main: BrowserWindow | null;
+  sub: BrowserWindow | null;
+  menu: BrowserWindow | null;
+};
+
+const windows: TWindows = {
+  main: null,
+  sub: null,
+  menu: null,
+};
 
 class AppUpdater {
   constructor() {
@@ -28,7 +40,8 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
 let menuWindow: BrowserWindow | null = null;
-let isMenuOn = false;
+global.isMenuOn = false;
+global.isBlur = false;
 // ipcMain.on('ipc-example', async (event, arg) => {
 //   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
 //   console.log(msgTemplate(arg));
@@ -37,10 +50,9 @@ let isMenuOn = false;
 
 dbInstance.init();
 
-ipcMain.on('job-time', async (event, type) => {
+ipcMain.on('job-time', async (event, type, target) => {
   if (type === 'day') {
-    const today = new Date();
-    const result = await dbInstance.getByDay(today);
+    const result = await dbInstance.getByDay(target);
     event.reply('job-time', { type, result });
   } else if (type === 'week') {
     const result = await dbInstance.getRecentWeek();
@@ -54,62 +66,24 @@ ipcMain.on('application', (event, applicationPath) => {
   } catch (e) {}
 });
 
+ipcMain.on('sub', (event, path) => {
+  subWindow?.webContents.send('sub', path);
+});
+
 ipcMain.on('windowMoving', (event, arg) => {
   mainWindow?.setBounds({
     width: 100,
     height: 100,
-    x: arg.mouseX - 50, //always changes in runtime
+    x: arg.mouseX - 50, // always changes in runtime
     y: arg.mouseY - 50,
   });
 });
-let menuWidth;
-let menuHeight;
 
-// 캐릭터 오른쪽 클릭 시 toggleMenu를 send함 (위치 : Character.tsx)
-ipcMain.on('toggleMenu', async (event, arg) => {
-  if (isMenuOn) {
-    menuWindow?.hide();
-
-    // const {
-    //   x: mainX,
-    //   y: mainY,
-    //   width: mainWidth,
-    //   height: mainHeight,
-    // } = mainWindow?.getBounds();
-    // menuWidth = 0;
-    // menuHeight = 0;
-    // menuWindow?.setBounds({
-    //   width: 0,
-    //   height: 0,
-    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
-    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
-    // });
-
-    isMenuOn = false;
-  } else {
-    menuWindow?.show();
-
-    mainWindow?.show();
-
-    // const {
-    //   x: mainX,
-    //   y: mainY,
-    //   width: mainWidth,
-    //   height: mainHeight,
-    // } = mainWindow?.getBounds();
-
-    // menuWidth = 400;
-    // menuHeight = 400;
-    // menuWindow?.setBounds({
-    //   width: 400,
-    //   height: 400,
-    //   x: mainX - Math.floor(menuWidth / 2) + Math.floor(mainWidth / 2),
-    //   y: mainY - Math.floor(menuHeight / 2) + Math.floor(mainHeight / 2),
-    // });
-
-    // mainWindow?.focus();
-    isMenuOn = true;
-  }
+// 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
+ipcMain.on('toggleMenuOn', async (event, arg) => {
+  mainWindow?.show();
+  menuWindow?.show();
+  menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -142,9 +116,9 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  mainWindow = createMainWindow(app);
-  subWindow = createSubWindow(app);
-  menuWindow = createMenuWindow(app);
+  mainWindow = createMainWindow(app, windows);
+  subWindow = createSubWindow(app, windows);
+  menuWindow = createMenuWindow(app, windows);
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);
@@ -186,4 +160,4 @@ app
   .catch(console.log);
 
 // 프로그램 시간 계산하기
-const jobTimeThread = new Worker(path.join(__dirname, 'jobTime.js'));
+const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));

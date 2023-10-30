@@ -9,11 +9,14 @@ export type Channels =
   | 'size'
   | 'windowMoving'
   | 'windowMoveDone'
-  | 'toggleMenu'
+  | 'toggleMenuOn'
+  | 'toggleMenuClose'
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
   | 'application'
-  | 'character-move';
+  | 'character-move'
+  | 'stopMoving'
+  | 'restartMoving';
 
 const electronHandler = {
   ipcRenderer: {
