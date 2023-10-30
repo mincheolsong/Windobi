@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import close from '../../../../assets/icons/Close.png';
 
 
 
@@ -9,15 +10,17 @@ const Wrapper = styled.div`
 `;
 
 const Mail = styled.div`
-
+  display: flex;
+  width: 100%;
+  // background-color: red;
 `;
 
 const MailWrapper = styled.div`
   border-radius: 5px;
   display: flex;
-  width: 470px;
+  width: 100%;
   height: 70px;
-  background-color: rgba(255,255,255, 1);
+  background-color: rgba(255, 255, 255, 1);
   align-items: center;
 `
 
@@ -41,6 +44,7 @@ const Contents = styled.div`
 const ContentsDiv = styled.div`
   display: flex;
   flex-flow: row wrap;
+  justify-content: space-between;
   width: 390px;
   height: 23px;
   // background-color: rgba(123,123,123,100);
@@ -63,6 +67,7 @@ const Title = styled.div`
   align-items: center;
   width: 390px;
   height: 37px;
+  cursor: pointer;
 `;
 
 const Text = styled.div`
@@ -77,9 +82,19 @@ const Time = styled.div`
   padding: 5px;
   font-family: GmarketSansTTFMedium;
   font-size: 11px;
-  width: 240px;
+  width: 50px;
   text-align: right;
+  cursor: pointer;
+  position: relative;
   // background-color: rgba(255,255,125,0.8);
+  transition: padding 0.3s ease;
+
+  &:hover {
+    padding: 2px 5px;
+  }
+  .icon {
+    font-size: 15px; /* 아이콘 크기 조절 */
+  }
 `;
 
 export { Mail, Wrapper, MailWrapper, Icon, Sender, Contents, Time, ContentsDiv, Text, Title };
