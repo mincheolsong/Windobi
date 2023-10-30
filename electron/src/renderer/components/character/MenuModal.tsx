@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/alt-text */
 import { useEffect, useState } from 'react';
 import './MenuModal.scss';
-import { useNavigate } from 'react-router-dom';
 import statisticImg from '../../../../assets/icons/statistics.svg';
 import calendar from '../../../../assets/icons/calendar.svg';
 import alarm from '../../../../assets/icons/alarm.svg';
@@ -27,20 +29,6 @@ function MenuModal() {
 
   return (
     <div className={active ? 'menu active' : 'menu'}>
-      {/* <div
-        className="btn trigger"
-        onClick={() => {
-          if (!active) {
-            window.electron.ipcRenderer.sendMessage('sizeUpMenuWindow', {});
-          } else {
-            // 메뉴가 x버튼 모양인 경우
-            window.electron.ipcRenderer.sendMessage('toggleMenu', {});
-          }
-          setActive(!active);
-        }}
-      >
-        <span className="line"></span>
-      </div> */}
       <div className="icons">
         <div className="rotater">
           <div className="btn btn-icon">
