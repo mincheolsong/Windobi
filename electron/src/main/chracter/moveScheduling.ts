@@ -7,8 +7,10 @@ const max = 3;
 
 function moveScheduling(character: Character) {
   let flag = true;
-  while (flag) {
+  let flag2 = character.fallTrigger;
+  while (flag && !flag2) {
     const rand = Math.floor(Math.random() * max);
+    // rand값에 따라 (0,1,2) 멈추거나(2) 오른쪽가거나(1) 왼쪽으로 가기(0)
     switch (rand) {
       case 0:
         if (character.curX > 0) {
@@ -29,6 +31,7 @@ function moveScheduling(character: Character) {
         }
         break;
       case 2:
+        // 이미지2개 번갈아가면서 띄우기
         flag = false;
         if (character.direction !== 'stop') character.transition = true;
         character.direction = 'stop';
@@ -36,6 +39,8 @@ function moveScheduling(character: Character) {
         break;
     }
   }
+
+
 }
 
 export default moveScheduling;

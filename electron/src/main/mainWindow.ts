@@ -91,21 +91,6 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
       }
     });
 
-    // ipcMain.on('windowMoving', (event, arg) => {
-    //   clearInterval(characterMoving);
-    //   clearInterval(scheduling);
-    // });
-
-    // ipcMain.on('toggleMenuOn', (event, arg) => {
-    //   clearInterval(characterMoving);
-    //   clearInterval(scheduling);
-    // });
-
-    // ipcMain.on('windowMoveDone', (event, arg) => {
-    //   characterMoving = setInterval(moving, 30, character);
-    //   scheduling = setInterval(moveScheduling, 2000, character);
-    // });
-
     mainWindow.webContents.closeDevTools();
   });
 

@@ -9,8 +9,26 @@ function move(character: Character) {
   let nextX: number = 0;
   let nextY: number = 0;
 
-  // 좌우 이동
+// 좌우 이동
 
+  if (
+    curY < character.maxHeight - character.winHeight &&
+    curY > character.maxHeight - character.winHeight - 50 &&
+    character.fallTrigger
+  ) {
+    character.mainWindow.webContents.send('character-move', 'downsleep');
+    character.direction = 'downsleep';
+  }
+
+  if (
+    character.direction !== 'downsleep' &&
+    curY < character.maxHeight - character.winHeight &&
+    !character.fallTrigger
+  ) {
+    character.fallTrigger = true;
+    character.direction = 'down';
+    character.mainWindow.webContents.send('character-move', 'down');
+  }
   if (character.direction === 'left') {
     nextX = curX - diff;
     nextY = curY;
@@ -45,7 +63,34 @@ function move(character: Character) {
       nextY = curY;
     }
   }
-
+  if (character.direction === 'down') {
+    if (curY > character.maxHeight - 105) {
+      character.fallTrigger = false;
+      nextY = character.maxHeight - 105;
+      nextX = curX;
+      character.direction = 'stop';
+      character.mainWindow.webContents.send('character-move', 'stop');
+    } else {
+      nextY = curY + 5;
+      nextX = curX;
+    }
+    character.curX = nextX;
+    character.curY = nextY;
+  }
+  if (character.direction === 'downsleep') {
+    if (curY > character.maxHeight - 105) {
+      character.fallTrigger = false;
+      nextY = character.maxHeight - 105;
+      nextX = curX;
+      character.mainWindow.webContents.send('character-move', 'stop');
+      character.direction = 'stop';
+    } else {
+      nextY = curY + 2;
+      nextX = curX;
+    }
+    character.curX = nextX;
+    character.curY = nextY;
+  }
   character.mainWindow.setBounds({
     x: nextX,
     y: nextY,

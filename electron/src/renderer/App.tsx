@@ -9,15 +9,13 @@ import Character from './pages/Character';
 import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
 import MenuModal from './components/character/MenuModal';
-
-function Test() {
-  return <div className="sub">sub</div>;
-}
+import Closed from './pages/Closed';
 
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
   ipcRenderer.on('sub', (path) => {
+    console.log(`Received: ${path}`);
     navigate(`/${path}`);
   });
 
@@ -28,14 +26,14 @@ function MyApp() {
         path="/closed"
         element={
           <SubWindow>
-            <Test />
+            <Closed />
           </SubWindow>
         }
       />
       <Route
         path="/jobtime"
         element={
-          <SubWindow>
+          <SubWindow title="사용시간">
             <JobTime />
           </SubWindow>
         }
