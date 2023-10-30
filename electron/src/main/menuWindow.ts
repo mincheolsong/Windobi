@@ -3,10 +3,14 @@ import path from 'path';
 import { resolveHtmlPath } from './util';
 import { BrowserView } from 'electron/main';
 import { delay } from 'lodash';
+import { TWindows } from './main';
 
 const width = 400;
 const height = 400;
-const createMenuWindow = (app: App): BrowserWindow => {
+
+let windows: TWindows | null;
+
+const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -32,6 +36,9 @@ const createMenuWindow = (app: App): BrowserWindow => {
     show: false,
     resizable: false,
   });
+
+  wins.menu = menuWindow;
+  windows = wins;
 
   menuWindow.loadURL(resolveHtmlPath('index.html'));
   menuWindow.on('ready-to-show', () => {

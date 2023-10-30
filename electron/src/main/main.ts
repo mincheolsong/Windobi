@@ -17,6 +17,18 @@ import { head } from 'lodash';
 const { dbInstance } = require('./jobTimeDB');
 const electron = require('electron');
 
+export type TWindows = {
+  main: BrowserWindow | null;
+  sub: BrowserWindow | null;
+  menu: BrowserWindow | null;
+};
+
+const windows: TWindows = {
+  main: null,
+  sub: null,
+  menu: null,
+};
+
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -65,14 +77,12 @@ ipcMain.on('windowMoving', (event, arg) => {
     y: arg.mouseY - 50,
   });
 });
-let menuWidth;
-let menuHeight;
 
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenuOn', async (event, arg) => {
   mainWindow?.show();
   menuWindow?.show();
-  menuWindow?.webContents.send('toggleMenuOn');
+  menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -105,9 +115,9 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  mainWindow = createMainWindow(app);
-  subWindow = createSubWindow(app);
-  menuWindow = createMenuWindow(app);
+  mainWindow = createMainWindow(app, windows);
+  subWindow = createSubWindow(app, windows);
+  menuWindow = createMenuWindow(app, windows);
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);

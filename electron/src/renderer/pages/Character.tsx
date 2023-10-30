@@ -43,6 +43,7 @@ function Chracter() {
         mouseX,
         mouseY,
       });
+      window.electron.ipcRenderer.sendMessage('stopMoving');
     }
   };
 
@@ -58,17 +59,23 @@ function Chracter() {
   return (
     <S.Wrapper
       onMouseDown={(e) => {
-        isMove = true;
-        mouseX = e.screenX;
-        mouseY = e.screenY;
-        window.electron.ipcRenderer.sendMessage('windowMoving', {
-          mouseX,
-          mouseY,
-        });
+        if (e.button === 0) {
+          // 왼쪽 마우스 다운
+          isMove = true;
+          // mouseX = e.screenX;
+          // mouseY = e.screenY;
+          // window.electron.ipcRenderer.sendMessage('windowMoving', {
+          //   mouseX,
+          //   mouseY,
+          // });
+        }
       }}
-      onMouseUp={() => {
-        isMove = false;
-        window.electron.ipcRenderer.sendMessage('windowMoveDone');
+      onMouseUp={(e) => {
+        if (e.button === 0) {
+          // 왼쪽 마우스 업
+          isMove = false;
+          window.electron.ipcRenderer.sendMessage('restartMoving');
+        }
       }}
       onMouseMove={moveCharacter}
     >
