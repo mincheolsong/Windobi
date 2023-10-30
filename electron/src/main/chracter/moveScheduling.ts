@@ -39,8 +39,6 @@ function moveScheduling(character: Character) {
         break;
     }
   }
-
-
 }
 
 export default moveScheduling;
