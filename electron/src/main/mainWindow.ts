@@ -6,11 +6,16 @@ import { resolveHtmlPath } from './util';
 import Character from './chracter/Character';
 import moveScheduling from './chracter/moveScheduling';
 import moving from './chracter/moving';
+import { TWindows } from './main';
 
 const width = 200;
 const height = 200;
 
-const createMainWindow = (app: App): BrowserWindow => {
+let windows: TWindows | null;
+let characterMoving: NodeJS.Timer | null;
+let scheduling: NodeJS.Timer | null;
+
+const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -40,6 +45,9 @@ const createMainWindow = (app: App): BrowserWindow => {
     y: 0,
   });
 
+  wins.main = mainWindow;
+  windows = wins;
+
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -65,18 +73,22 @@ const createMainWindow = (app: App): BrowserWindow => {
       110,
     );
 
-    let characterMoving = setInterval(moving, 30, character);
-    let scheduling = setInterval(moveScheduling, 2000, character);
+    characterMoving = setInterval(moving, 30, character);
+    scheduling = setInterval(moveScheduling, 2000, character);
 
     // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
-    ipcMain.on('windowMoving', (event, arg) => {
+
+    ipcMain.on('stopMoving', () => {
       clearInterval(characterMoving);
       clearInterval(scheduling);
+      characterMoving = null;
+      scheduling = null;
     });
-
-    ipcMain.on('windowMoveDone', (event, arg) => {
-      characterMoving = setInterval(moving, 30, character);
-      scheduling = setInterval(moveScheduling, 2000, character);
+    ipcMain.on('restartMoving', () => {
+      if (characterMoving == null && scheduling == null) {
+        characterMoving = setInterval(moving, 30, character);
+        scheduling = setInterval(moveScheduling, 2000, character);
+      }
     });
 
     mainWindow.webContents.closeDevTools();
