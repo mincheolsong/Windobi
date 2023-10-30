@@ -5,4 +5,15 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-export { Wrapper };
+const TypeText = styled.div`
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  font-weight: bold;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export { Wrapper, TypeText };

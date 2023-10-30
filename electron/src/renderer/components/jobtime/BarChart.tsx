@@ -22,12 +22,16 @@ interface IJobTimed extends TJob {
   timeString: string;
   color: TColor;
 }
+
+type TType = 'daily' | 'weekly';
+
 type TBarChart = {
   dailyJobs: Array<TJob>;
   weeklyJobs: Array<TJob>;
+  type: TType;
 };
 
-function BarChart({ dailyJobs, weeklyJobs }: TBarChart) {
+function BarChart({ dailyJobs, weeklyJobs, type }: TBarChart) {
   const [dailyMax, setDailyMax] = useState<number>(1);
   const [sortedDailyJobs, setSortedDailyJobs] = useState<Array<IJobTimed>>([]);
 
@@ -96,7 +100,10 @@ function BarChart({ dailyJobs, weeklyJobs }: TBarChart) {
   return (
     <S.Wrapper>
       <S.Ul>
-        <Bar jobs={sortedDailyJobs} max={dailyMax} />
+        <Bar
+          jobs={type === 'daily' ? sortedDailyJobs : sortedweeklyJobs}
+          max={type === 'daily' ? dailyMax : weeklyMax}
+        />
       </S.Ul>
     </S.Wrapper>
   );

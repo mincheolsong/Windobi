@@ -1,4 +1,5 @@
 import { styled } from 'styled-components';
+import { AiFillCloseCircle } from 'react-icons/ai';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -21,18 +22,44 @@ const Header = styled.div`
   justify-content: center;
   align-items: center;
 
+  position: fixed;
+  z-index: 10;
+
   background-color: rgb(11, 108, 255);
 
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 `;
 
+const Close = styled.div`
+  position: fixed;
+  width: 26px;
+  height: 26px;
+  right: 20px;
+
+  background-color: red;
+  border-radius: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgb(220, 0, 0);
+  }
+`;
+
 const Body = styled.div`
+  padding-top: 40px;
+  padding-left: 10px;
+  padding-right: 10px;
+
   width: 100%;
+  // height: calc(100% - 35px);
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
-  padding-top: 0px;
 
   &::-webkit-scrollbar {
     width: 10px;
@@ -48,4 +75,4 @@ const Body = styled.div`
   }
 `;
 
-export { Wrapper, Header, Body };
+export { Wrapper, Header, Close, Body };
