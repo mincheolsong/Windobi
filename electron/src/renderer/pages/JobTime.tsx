@@ -1,6 +1,8 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactSwitch from 'react-switch';
 import * as S from '../components/jobtime/JobTime.style';
 import BarChart from '../components/jobtime/BarChart';
@@ -17,12 +19,11 @@ function JobTime() {
   const [stringType, setStringType] = useState<TType>(
     type ? 'daily' : 'weekly',
   );
-  const dateToString = ['일', '월', '화', '수', '목', '금', '토'];
 
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
-    ipcRenderer.sendMessage('size', { width: 400, height: 300 });
+    ipcRenderer.sendMessage('size', { width: 700, height: 350 });
 
     ipcRenderer.on('job-time', ({ type, result }) => {
       if (type === 'day') {
@@ -62,35 +63,62 @@ function JobTime() {
     ipcRenderer.sendMessage('job-time', 'day', day);
   }, [day]);
 
-  const dayToString = (day: Date) => {
-    const date = day.getDay();
-    return `${day.getMonth() + 1}월 ${day.getDate()}일 (${dateToString[date]})`;
+  return (
+    <S.Wrapper>
+      <S.Half>
+        <S.Header>
+          <ReactSwitch
+            checked={type}
+            onChange={setType}
+            onColor="#428df5"
+            offColor="#7ad2f5"
+            checkedIcon={<S.TypeText>일간</S.TypeText>}
+            uncheckedIcon={<S.TypeText>주간</S.TypeText>}
+          />
+          {stringType === 'daily' && (
+            <Selector day={day} setPrevDay={setPrevDay} prevDay={prevDay} />
+          )}
+        </S.Header>
+        <BarChart
+          dailyJobs={dailyJobs}
+          weeklyJobs={weeklyJobs}
+          type={stringType}
+        />
+      </S.Half>
+      <S.Half>asdf</S.Half>
+    </S.Wrapper>
+  );
+}
+
+// 화살표를 통해 일간 통계를 볼때 날짜를 선택할 수 있도록 해주자
+type TSelector = {
+  day: Date;
+  prevDay: number;
+  setPrevDay: React.Dispatch<React.SetStateAction<number>>;
+};
+
+function Selector({ day, prevDay, setPrevDay }: TSelector) {
+  const dateToString = ['일', '월', '화', '수', '목', '금', '토'];
+
+  const dayToString = (targetDay: Date) => {
+    const month = targetDay.getMonth() + 1;
+    const date = targetDay.getDate();
+    const day = dateToString[targetDay.getDay()];
+    return `${month}월 ${date}일 (${day})`;
   };
 
   return (
-    <S.Wrapper>
-      <S.Header>
-        <ReactSwitch
-          checked={type}
-          onChange={setType}
-          onColor="#428df5"
-          offColor="#7ad2f5"
-          checkedIcon={<S.TypeText>일간</S.TypeText>}
-          uncheckedIcon={<S.TypeText>주간</S.TypeText>}
-        />
-        <S.Left onClick={() => setPrevDay((prev) => prev - 1)} />
-        {dayToString(day)}
-        <S.Right
-          onClick={() => setPrevDay((prev) => prev + 1)}
-          disabled={prevDay === 0}
-        />
-      </S.Header>
-      <BarChart
-        dailyJobs={dailyJobs}
-        weeklyJobs={weeklyJobs}
-        type={stringType}
+    <>
+      <S.Left
+        onClick={() => prevDay !== -6 && setPrevDay((prev) => prev - 1)}
+        disabled={prevDay === -6}
       />
-    </S.Wrapper>
+      {dayToString(day)}
+      <S.Right
+        onClick={() => prevDay !== 0 && setPrevDay((prev) => prev + 1)}
+        disabled={prevDay === 0}
+      />
+    </>
   );
 }
 
