@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { useEffect, useState } from 'react';
 import './MenuModal.scss';
-import statisticImg from '../../../../assets/icons/statistics.svg';
+import jobtime from '../../../../assets/icons/jobtime.svg';
 import calendar from '../../../../assets/icons/calendar.svg';
 import alarm from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
@@ -13,6 +13,32 @@ import setting from '../../../../assets/icons/setting.svg';
 function MenuModal() {
   const [active, setActive] = useState(false);
   const { ipcRenderer } = window.electron;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const menuItems = [
+    { jobtime: jobtime },
+    { calendar: calendar },
+    { alarm: alarm },
+    { chatGPT: chatGPT },
+    { setting: setting },
+    { test0: null },
+    { test1: null },
+    { test3: close },
+  ];
+
+  const handleWheel = (event) => {
+    if (event.deltaY > 0) {
+      // Scroll down - move items clockwise
+      setCurrentIndex((currentIndex + 1) % menuItems.length);
+    } else {
+      // Scroll up - move items counterclockwise
+      setCurrentIndex((currentIndex - 1 + menuItems.length) % menuItems.length);
+    }
+  };
+
+  const reorderedItems = [
+    ...menuItems.slice(currentIndex),
+    ...menuItems.slice(0, currentIndex),
+  ];
 
   useEffect(() => {
     console.log('Menu Window');
@@ -22,7 +48,6 @@ function MenuModal() {
     });
 
     ipcRenderer.on('toggleMenuClose', () => {
-
       setActive(false);
       ipcRenderer.sendMessage('restartMoving');
     });
@@ -32,19 +57,25 @@ function MenuModal() {
 
   const navigate = (path: string) => {
     ipcRenderer.sendMessage('sub', path);
-    console.log('navigate');
     setActive(false); // 클릭하면 메뉴를 닫음(애니메이션)
   };
 
   return (
-    <div
-      className={active ? 'menu active' : 'menu'}
-      onWheel={(e) => {
-        console.log(e.deltaY); // -면 위쪽으로 +면 아래쪽
-      }}
-    >
+    <div className={active ? 'menu active' : 'menu'} onWheel={handleWheel}>
       <div className="icons">
-        <div className="rotater">
+        {reorderedItems.map((item, index) => (
+          <div className="rotater" key={index}>
+            <div className="btn btn-icon">
+              <img
+                className="fa"
+                src={item[Object.keys(item)[0]]}
+                onClick={() => navigate(`${Object.keys(item)[0]}`)}
+              />
+            </div>
+          </div>
+        ))}
+
+        {/* <div className="rotater">
           <div className="btn btn-icon">
             <img
               className="fa"
@@ -93,7 +124,7 @@ function MenuModal() {
           <div className="btn btn-icon ">
             <img className="fa " src={close}></img>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
