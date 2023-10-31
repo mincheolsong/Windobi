@@ -142,8 +142,8 @@ const interWindowCommunication = (main: BrowserWindow, sub: BrowserWindow) => {
       sub.setBounds({
         x: afterX,
         y: afterY,
-        width: subWidth,
-        height: subHeight,
+        width: Math.max(subWidth, 1),
+        height: Math.max(subHeight, 1),
       });
     };
 
