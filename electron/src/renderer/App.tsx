@@ -8,6 +8,8 @@ import './App.css';
 import Character from './pages/Character';
 import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
+import Notification from './pages/Notification'
+import GlobalFont from './global';
 import MenuModal from './components/character/MenuModal';
 import Closed from './pages/Closed';
 import Setting from './pages/Setting';
@@ -20,6 +22,8 @@ function MyApp() {
   });
 
   return (
+    <>
+    <GlobalFont></GlobalFont>
     <Routes>
       <Route path="/" element={<Character />} />
       <Route path="/closed" element={<Closed />} />
@@ -28,6 +32,14 @@ function MyApp() {
         element={
           <SubWindow title="사용시간">
             <JobTime />
+          </SubWindow>
+        }
+      />
+      <Route
+        path="/notification"
+        element={
+          <SubWindow>
+            <Notification />
           </SubWindow>
         }
       />
@@ -41,6 +53,7 @@ function MyApp() {
       />
       <Route path="/menu" element={<MenuModal />} />
     </Routes>
+    </>
   );
 }
 
