@@ -25,11 +25,7 @@ function JobTime() {
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
-<<<<<<< HEAD
-    ipcRenderer.sendMessage('size', { width: 600, height: 300 });
-=======
     ipcRenderer.sendMessage('size', { width: 600, height: 350 });
->>>>>>> 1554d1e90201e0096b24d5c4415d3cb12c966a05
 
     ipcRenderer.on('job-time', ({ type, result }) => {
       if (type === 'day') {
