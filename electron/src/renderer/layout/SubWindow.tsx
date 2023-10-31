@@ -19,7 +19,6 @@ function SubWindow({ title = '', children }: TSubWindow) {
     navigate('/closed');
     // window.electron.ipcRenderer.sendMessage('restartMoving');
 
-    // ipcRenderer.sendMessage('windowMoveDone');
   }, []);
 
   return (

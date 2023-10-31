@@ -5,10 +5,16 @@ import { delay } from 'lodash';
 import { TWindows } from './main';
 import { resolveHtmlPath } from './util';
 
-const width = 400;
-const height = 400;
+const width = 300;
+const height = 300;
 
 let windows: TWindows | null;
+
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
 
 const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
@@ -30,7 +36,7 @@ const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
     },
     frame: false,
     movable: false,
-    alwaysOnTop: false,
+    alwaysOnTop: true,
     transparent: true,
     skipTaskbar: true,
     show: false,
@@ -47,9 +53,10 @@ const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
   });
 
   // 밖에 클릭하면 메뉴 닫기
-  menuWindow.addListener('blur', () => {
+  menuWindow.addListener('blur', async (e) => {
     menuWindow?.webContents.send('toggleMenuClose');
-    // menuWindow?.webContents.send('windowMoveDone');
+    await sleep(500);
+    menuWindow.hide();
   });
 
   return menuWindow;
