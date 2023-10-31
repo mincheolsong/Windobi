@@ -9,8 +9,27 @@ function move(character: Character) {
   let nextX: number = 0;
   let nextY: number = 0;
 
+  // 좌우 이동
+
+  if (
+    curY < character.maxHeight - character.winHeight &&
+    curY > character.maxHeight - character.winHeight - 20 &&
+    character.fallTrigger
+  ) {
+    character.direction = 'downsleep';
+    character.mainWindow.webContents.send('character-move', 'downsleep');
+  }
+
+  if (
+    character.direction !== 'downsleep' &&
+    curY < character.maxHeight - character.winHeight &&
+    !character.fallTrigger
+  ) {
+    character.fallTrigger = true;
+    character.direction = 'down';
+    character.mainWindow.webContents.send('character-move', 'down');
+  }
   if (character.direction === 'left') {
-    // console.log("before:: curX: ", curX, " curY: ", curY, "diff: ", diff);
     nextX = curX - diff;
     nextY = curY;
     if (nextX < 0) {
@@ -38,13 +57,40 @@ function move(character: Character) {
   if (character.direction === 'up') {
     nextX = curX;
     nextY = curY - diff;
-    if (nextY > 0){
+    if (nextY > 0) {
       character.direction = 'stop';
       nextX = curX;
       nextY = curY;
     }
   }
-
+  if (character.direction === 'down') {
+    if (curY > character.maxHeight - 105) {
+      character.fallTrigger = false;
+      nextY = character.maxHeight - 105;
+      nextX = curX;
+      character.direction = 'downsleep';
+      character.mainWindow.webContents.send('character-move', 'downsleep');
+    } else {
+      nextY = curY + 5;
+      nextX = curX;
+    }
+    character.curX = nextX;
+    character.curY = nextY;
+  }
+  if (character.direction === 'downsleep') {
+    if (curY > character.maxHeight - 105) {
+      character.fallTrigger = false;
+      nextY = character.maxHeight - 105;
+      nextX = curX;
+      character.mainWindow.webContents.send('character-move', 'stop');
+      character.direction = 'stop';
+    } else {
+      nextY = curY + 5;
+      nextX = curX;
+    }
+    character.curX = nextX;
+    character.curY = nextY;
+  }
   character.mainWindow.setBounds({
     x: nextX,
     y: nextY,
@@ -56,7 +102,6 @@ function move(character: Character) {
   character.curY = nextY;
   character.transition = false;
 }
-
 
 function moving(character: Character) {
   // 좌우 이동

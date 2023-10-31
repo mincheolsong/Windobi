@@ -10,9 +10,9 @@ import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
 import Notification from './pages/Notification'
 import GlobalFont from './global';
-function Test() {
-  return <div className="sub">sub</div>;
-}
+import MenuModal from './components/character/MenuModal';
+import Closed from './pages/Closed';
+import Setting from './pages/Setting';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -26,18 +26,11 @@ function MyApp() {
     <GlobalFont></GlobalFont>
     <Routes>
       <Route path="/" element={<Character />} />
-      <Route
-        path="/closed"
-        element={
-          <SubWindow>
-            <Test />
-          </SubWindow>
-        }
-      />
+      <Route path="/closed" element={<Closed />} />
       <Route
         path="/jobtime"
         element={
-          <SubWindow>
+          <SubWindow title="사용시간">
             <JobTime />
           </SubWindow>
         }
@@ -50,6 +43,15 @@ function MyApp() {
           </SubWindow>
         }
       />
+      <Route
+        path="/setting"
+        element={
+          <SubWindow title="설정">
+            <Setting />
+          </SubWindow>
+        }
+      />
+      <Route path="/menu" element={<MenuModal />} />
     </Routes>
     </>
   );

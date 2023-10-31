@@ -1,8 +1,11 @@
 import { App, BrowserWindow } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
+import { TWindows } from './main';
 
-const createSubWindow = (app: App): BrowserWindow => {
+let windows: TWindows | null;
+
+const createSubWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -12,8 +15,8 @@ const createSubWindow = (app: App): BrowserWindow => {
   };
 
   const subWindow = new BrowserWindow({
-    width: 200,
-    height: 200,
+    width: 0,
+    height: 0,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
@@ -25,7 +28,11 @@ const createSubWindow = (app: App): BrowserWindow => {
     alwaysOnTop: true,
     transparent: true,
     skipTaskbar: true,
+    resizable: false,
   });
+
+  wins.sub = subWindow;
+  windows = wins;
 
   subWindow.loadURL(resolveHtmlPath('index.html'));
   subWindow.on('ready-to-show', () => {

@@ -5,6 +5,15 @@ import CharacterImg from '../components/character/CharacterImg';
 
 function Chracter() {
   const [index, setIndex] = useState<number>(0);
+
+  useEffect(() => {
+    console.log('Main Window');
+  }, []);
+
+  let mouseX;
+  let mouseY;
+  let isMove = false;
+
   const numOfMenu = 8;
 
   const keyEvent = (e: KeyboardEvent) => {
@@ -25,18 +34,56 @@ function Chracter() {
     }
   };
 
+  // 캐릭터를 오른쪽 클릭하면 메뉴를 펼침
+  const rightClick = () => {
+    window.electron.ipcRenderer.sendMessage('toggleMenuOn', {});
+  };
+
+  const moveCharacter = (e: MouseEvent) => {
+    if (isMove) {
+      mouseX = e.screenX;
+      mouseY = e.screenY;
+      window.electron.ipcRenderer.sendMessage('windowMoving', {
+        mouseX,
+        mouseY,
+      });
+      window.electron.ipcRenderer.sendMessage('stopMoving');
+    }
+  };
+
   useEffect(() => {
     document.addEventListener('keydown', keyEvent);
-
+    document.addEventListener('contextmenu', rightClick);
     return () => {
       document.removeEventListener('keydown', keyEvent);
+      document.removeEventListener('contextmenu', rightClick);
     };
   }, []);
 
   return (
-    <S.Wrapper>
+    <S.Wrapper
+      onMouseDown={(e) => {
+        if (e.button === 0) {
+          // 왼쪽 마우스 다운
+          isMove = true;
+          // mouseX = e.screenX;
+          // mouseY = e.screenY;
+          // window.electron.ipcRenderer.sendMessage('windowMoving', {
+          //   mouseX,
+          //   mouseY,
+          // });
+        }
+      }}
+      onMouseUp={(e) => {
+        if (e.button === 0) {
+          // 왼쪽 마우스 업
+          isMove = false;
+          window.electron.ipcRenderer.sendMessage('restartMoving');
+        }
+      }}
+      onMouseMove={moveCharacter}
+    >
       <CharacterImg />
-      {/* <Menu /> */}
     </S.Wrapper>
   );
 }
