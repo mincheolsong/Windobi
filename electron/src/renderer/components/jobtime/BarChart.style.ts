@@ -42,6 +42,11 @@ const Bar = styled.div<TBar>`
   font-weight: bold;
   display: flex;
   align-items: center;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
 `;
 
 export { Wrapper, Ul, Li, Image, Bar };

@@ -5,8 +5,6 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('node:path');
 const fs = require('fs');
 
-const fd = fs.openSync('sub_job_time_log.txt', 'a');
-
 /**
  * @typedef { {
  *  sub_application: string,
@@ -20,7 +18,7 @@ const RESOURCES_PATH =
     ? path.join(__dirname, '../../../assets')
     : path.join(__dirname, '../../../assets');
 
-const DB_FILE = path.join(RESOURCES_PATH, 'database.db');
+const DB_FILE = path.join(RESOURCES_PATH, 'sub_job_time.db');
 
 const TABLE_NAME = 'sub_job_time';
 
@@ -75,10 +73,7 @@ class SubJobTimeDB {
           `('${active.application}', '${active.sub_application}', ${active.active_time}, ${active.day})`,
       )
       .join(',')}`;
-    this.db.run(sql, (err) => {
-      if (err) {
-        fs.writeFileSync(fd, `${err.message}\n`, 'utf-8');
-      }
+    this.db.run(sql, () => {
       activeMap.clear();
     });
   }
@@ -96,8 +91,8 @@ class SubJobTimeDB {
 
     const result = [];
     combined.forEach((value) => {
-      const { application, active_time } = value;
-      result.push({ application, active_time });
+      const { sub_application, active_time } = value;
+      result.push({ sub_application, active_time });
     });
 
     return result;
@@ -114,7 +109,7 @@ class SubJobTimeDB {
 
     return new Promise((resolve, reject) => {
       return this.db.all(
-        `SELECT sub_application, active_time, day FROM ${TABLE_NAME} WHERE day = ${target} AND application = ${application}`,
+        `SELECT sub_application, active_time, day FROM ${TABLE_NAME} WHERE day = ${target} AND application = '${application}'`,
         (err, rows) => {
           if (err) {
             return reject(err);
@@ -138,7 +133,7 @@ class SubJobTimeDB {
 
     return new Promise((resolve, reject) => {
       return this.db.all(
-        `SELECT sub_application, active_time, day FROM ${TABLE_NAME} where day >= ${target} AND application = ${application}`,
+        `SELECT sub_application, active_time, day FROM ${TABLE_NAME} where day >= ${target} AND application = '${application}'`,
         (err, rows) => {
           if (err) {
             return reject(err);

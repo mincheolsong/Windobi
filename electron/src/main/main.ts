@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unsafe-finally */
+/* eslint-disable import/no-cycle */
+/* eslint-disable consistent-return */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
@@ -14,8 +18,8 @@ import {
   interMenuWindowCommunication,
 } from './interWindow';
 
-const electron = require('electron');
 const { dbInstance } = require('./jobtime/jobTimeDB');
+const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
 
 export type TWindows = {
   main: BrowserWindow | null;
@@ -49,6 +53,7 @@ global.isBlur = false;
 // });
 
 dbInstance.init();
+subDbInstance.init();
 
 ipcMain.on('job-time', async (event, type, target) => {
   if (type === 'day') {
@@ -60,10 +65,21 @@ ipcMain.on('job-time', async (event, type, target) => {
   }
 });
 
+ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
+  if (type === 'daily') {
+    return subDbInstance.getByDay(application, date);
+  }
+  if (type === 'weekly') {
+    return subDbInstance.getRecentWeek(application);
+  }
+});
+
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
-  } catch (e) {}
+  } finally {
+    return;
+  }
 });
 
 ipcMain.on('sub', (event, path) => {
@@ -80,7 +96,7 @@ ipcMain.on('windowMoving', (event, arg) => {
 });
 
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
-ipcMain.on('toggleMenuOn', async (event, arg) => {
+ipcMain.on('toggleMenuOn', () => {
   mainWindow?.show();
   menuWindow?.show();
   menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
