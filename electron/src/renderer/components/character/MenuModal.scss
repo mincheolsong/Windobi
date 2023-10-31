@@ -4,6 +4,12 @@
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
 }
+.close-btn {
+  background: rgba(220, 140, 140, 0.7) !important;
+}
+.close-btn:hover {
+  background: rgba(233, 52, 52, 0.7) !important;
+}
 .menu {
   @extend .absolute-center;
   width: 3em;
