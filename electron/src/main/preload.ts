@@ -8,7 +8,6 @@ export type Channels =
   | 'job-time'
   | 'size'
   | 'windowMoving'
-  | 'windowMoveDone'
   | 'toggleMenuOn'
   | 'toggleMenuClose'
   | 'closeMenuWindow'

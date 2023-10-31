@@ -7,6 +7,8 @@ import statisticImg from '../../../../assets/icons/statistics.svg';
 import calendar from '../../../../assets/icons/calendar.svg';
 import alarm from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
+import close from '../../../../assets/icons/close.svg';
+import setting from '../../../../assets/icons/setting.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
@@ -14,24 +16,33 @@ function MenuModal() {
 
   useEffect(() => {
     console.log('Menu Window');
-    window.electron.ipcRenderer.on('toggleMenuOn', () => {
+    ipcRenderer.on('toggleMenuOn', () => {
       setActive(true);
-      window.electron.ipcRenderer.sendMessage('stopMoving');
+      ipcRenderer.sendMessage('stopMoving');
     });
 
-    window.electron.ipcRenderer.on('toggleMenuClose', () => {
+    ipcRenderer.on('toggleMenuClose', () => {
+
       setActive(false);
-      window.electron.ipcRenderer.sendMessage('restartMoving');
+      ipcRenderer.sendMessage('restartMoving');
     });
+
+    //
   }, []);
 
   const navigate = (path: string) => {
     ipcRenderer.sendMessage('sub', path);
-    setActive(false);
+    console.log('navigate');
+    setActive(false); // 클릭하면 메뉴를 닫음(애니메이션)
   };
 
   return (
-    <div className={active ? 'menu active' : 'menu'}>
+    <div
+      className={active ? 'menu active' : 'menu'}
+      onWheel={(e) => {
+        console.log(e.deltaY); // -면 위쪽으로 +면 아래쪽
+      }}
+    >
       <div className="icons">
         <div className="rotater">
           <div className="btn btn-icon">
@@ -59,7 +70,7 @@ function MenuModal() {
         </div>
         <div className="rotater">
           <div className="btn btn-icon">
-            <i className="fa fa-dribbble">e</i>
+            <img className="fa" src={setting} />
           </div>
         </div>
         <div className="rotater">
@@ -72,9 +83,15 @@ function MenuModal() {
             <i className="fa fa-github">g</i>
           </div>
         </div>
-        <div className="rotater">
-          <div className="btn btn-icon">
-            <i className="fa fa-behance">h</i>
+        <div
+          className="rotater "
+          // onClick={() => {
+          //   setActive(false);
+          //   ipcRenderer.sendMessage('restartMoving');
+          // }}
+        >
+          <div className="btn btn-icon ">
+            <img className="fa " src={close}></img>
           </div>
         </div>
       </div>

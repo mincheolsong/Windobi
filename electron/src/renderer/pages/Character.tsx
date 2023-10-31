@@ -6,10 +6,6 @@ import CharacterImg from '../components/character/CharacterImg';
 function Chracter() {
   const [index, setIndex] = useState<number>(0);
 
-  // window.electron.ipcRenderer.on('windowMoveDone', () => {
-  //   window.electron.ipcRenderer.sendMessage('windowMoveDone');
-  // });
-
   useEffect(() => {
     console.log('Main Window');
   }, []);
@@ -40,7 +36,6 @@ function Chracter() {
 
   // 캐릭터를 오른쪽 클릭하면 메뉴를 펼침
   const rightClick = () => {
-    window.electron.ipcRenderer.sendMessage('stop-move'); // 메뉴 누르면 캐릭터 이동 멈추기
     window.electron.ipcRenderer.sendMessage('toggleMenuOn', {});
   };
 
