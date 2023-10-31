@@ -10,6 +10,7 @@ import JobTime from './pages/JobTime';
 import SubWindow from './layout/SubWindow';
 import MenuModal from './components/character/MenuModal';
 import Closed from './pages/Closed';
+import Setting from './pages/Setting';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -27,6 +28,14 @@ function MyApp() {
         element={
           <SubWindow title="사용시간">
             <JobTime />
+          </SubWindow>
+        }
+      />
+      <Route
+        path="/setting"
+        element={
+          <SubWindow title="설정">
+            <Setting />
           </SubWindow>
         }
       />
