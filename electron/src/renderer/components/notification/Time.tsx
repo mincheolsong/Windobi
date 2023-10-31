@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import * as S from './Mail.style';
+import moment from 'moment';
+import 'moment/locale/ko';
 
-function Time(props: { onClick: () => void }) {
+function Time(props: { onClick: () => void; time: Date }) {
+
   const [showIcon, setShowIcon] = useState(false);
   return (
     <S.Time
@@ -10,7 +13,13 @@ function Time(props: { onClick: () => void }) {
       onMouseLeave={() => setShowIcon(false)}
       onClick={props.onClick}
     >
-      {showIcon ? <AiOutlineCloseCircle className="icon" /> : '1시간전'}
+      {showIcon ? (
+        <AiOutlineCloseCircle className="icon" />
+      ) : props.time === null ? (
+        ''
+      ) : (
+        moment(props.time).fromNow()
+      )}
     </S.Time>
   );
 }

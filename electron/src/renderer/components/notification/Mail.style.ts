@@ -1,10 +1,11 @@
 import { styled } from "styled-components";
-import close from '../../../../assets/icons/Close.png';
 
 
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: row;
+  align-items: center;
   width: 100%;
   padding: 10px;
 `;
@@ -22,6 +23,7 @@ const MailWrapper = styled.div`
   height: 70px;
   background-color: rgba(255, 255, 255, 1);
   align-items: center;
+  box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.2);
 `
 
 const Icon = styled.img`
@@ -82,7 +84,7 @@ const Time = styled.div`
   padding: 5px;
   font-family: GmarketSansTTFMedium;
   font-size: 11px;
-  width: 50px;
+  width: 80px;
   text-align: right;
   cursor: pointer;
   position: relative;

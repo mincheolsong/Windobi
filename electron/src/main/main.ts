@@ -47,6 +47,12 @@ ipcMain.on('application', (event, applicationPath) => {
   } catch (e) {}
 });
 
+// let a = 0;
+// ipcMain.handle('test', (e, arg)=>{
+//   a = a + arg;
+//   return a;
+// })
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
