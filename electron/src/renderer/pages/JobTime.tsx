@@ -13,6 +13,7 @@ type TType = 'daily' | 'weekly';
 function JobTime() {
   const [dailyJobs, setDailyJobs] = useState<Array<any>>([]);
   const [weeklyJobs, setWeeklyJobs] = useState<Array<any>>([]);
+  const [selectedApplication, setSelectedApplication] = useState<string>('');
 
   const [prevDay, setPrevDay] = useState<number>(0);
   const [day, setDay] = useState<Date>(new Date());
@@ -24,7 +25,7 @@ function JobTime() {
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
-    ipcRenderer.sendMessage('size', { width: 700, height: 350 });
+    ipcRenderer.sendMessage('size', { width: 600, height: 300 });
 
     ipcRenderer.on('job-time', ({ type, result }) => {
       if (type === 'day') {
@@ -36,8 +37,9 @@ function JobTime() {
     ipcRenderer.sendMessage('job-time', 'day', new Date());
     ipcRenderer.sendMessage('job-time', 'week');
 
+    // 개발 편의를 위해 1분마다 갱신하자
     const timerId = setInterval(() => {
-      ipcRenderer.sendMessage('job-time', 'day');
+      ipcRenderer.sendMessage('job-time', 'day', day);
     }, 1000 * 10);
 
     return () => {
@@ -49,6 +51,7 @@ function JobTime() {
     // 주간 또는 일간에 대한 boolean값을 변경해주면'
     // 이에 따라 string으로 된 type을 변경해주자
     setStringType(type ? 'daily' : 'weekly');
+    setSelectedApplication('');
   }, [type]);
 
   useEffect(() => {
@@ -62,6 +65,7 @@ function JobTime() {
   useEffect(() => {
     // 보여줘야 할 날짜가 바뀌면 데이터를 갱신받자
     ipcRenderer.sendMessage('job-time', 'day', day);
+    setSelectedApplication('');
   }, [day]);
 
   return (
@@ -84,10 +88,15 @@ function JobTime() {
           dailyJobs={dailyJobs}
           weeklyJobs={weeklyJobs}
           type={stringType}
+          setApplication={setSelectedApplication}
         />
       </S.Half>
       <S.Half>
-        <PieChart />
+        <PieChart
+          application={selectedApplication}
+          day={day}
+          type={stringType}
+        />
       </S.Half>
     </S.Wrapper>
   );

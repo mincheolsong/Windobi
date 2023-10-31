@@ -29,4 +29,6 @@ npm-debug.log.*
 *.scss.d.ts
 
 assets/database.db
+assets/job_time.db
+assets/sub_job_time.db
 log.txt

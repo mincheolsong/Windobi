@@ -29,9 +29,10 @@ type TBarChart = {
   dailyJobs: Array<TJob>;
   weeklyJobs: Array<TJob>;
   type: TType;
+  setApplication: React.Dispatch<React.SetStateAction<string>>;
 };
 
-function BarChart({ dailyJobs, weeklyJobs, type }: TBarChart) {
+function BarChart({ dailyJobs, weeklyJobs, type, setApplication }: TBarChart) {
   const [dailyMax, setDailyMax] = useState<number>(1);
   const [sortedDailyJobs, setSortedDailyJobs] = useState<Array<IJobTimed>>([]);
 
@@ -103,6 +104,7 @@ function BarChart({ dailyJobs, weeklyJobs, type }: TBarChart) {
         <Bar
           jobs={type === 'daily' ? sortedDailyJobs : sortedweeklyJobs}
           max={type === 'daily' ? dailyMax : weeklyMax}
+          onClick={setApplication}
         />
       </S.Ul>
     </S.Wrapper>
@@ -112,8 +114,9 @@ function BarChart({ dailyJobs, weeklyJobs, type }: TBarChart) {
 type TBar = {
   jobs: Array<IJobTimed>;
   max: number;
+  onClick: (application: string) => void;
 };
-function Bar({ jobs, max }: TBar) {
+function Bar({ jobs, max, onClick }: TBar) {
   const { ipcRenderer } = window.electron;
 
   const executeApplication = useCallback(
@@ -138,6 +141,7 @@ function Bar({ jobs, max }: TBar) {
               title={job.application}
               percentage={Math.max((100 * job.active_time) / max, 15)}
               barcolor={`hsla(${job.color.h}, ${job.color.s}%, ${job.color.l}%, 1)`}
+              onClick={() => onClick(job.application)}
             >
               {job.timeString}
             </S.Bar>
