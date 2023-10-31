@@ -102,6 +102,12 @@ ipcMain.on('toggleMenuOn', () => {
   menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
 
+// let a = 0;
+// ipcMain.handle('test', (e, arg)=>{
+//   a = a + arg;
+//   return a;
+// })
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -179,6 +185,9 @@ app
     globalShortcut.register('CommandOrControl+Alt+O', () => {
       subWindow?.webContents.send('sub', 'jobtime');
     });
+    globalShortcut.register('CommandOrControl+Alt+P', () => {
+      subWindow?.webContents.send('sub', 'notification');
+    })
   })
   .catch(console.log);
 
