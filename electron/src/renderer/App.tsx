@@ -21,14 +21,7 @@ function MyApp() {
   return (
     <Routes>
       <Route path="/" element={<Character />} />
-      <Route
-        path="/closed"
-        element={
-          <SubWindow>
-            <Closed />
-          </SubWindow>
-        }
-      />
+      <Route path="/closed" element={<Closed />} />
       <Route
         path="/jobtime"
         element={

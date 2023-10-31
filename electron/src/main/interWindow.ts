@@ -111,7 +111,6 @@ const interWindowCommunication = (main: BrowserWindow, sub: BrowserWindow) => {
     const { width, height } = arg;
     subWidth = width;
     subHeight = height;
-    sub.setSize(subWidth, subHeight);
 
     const {
       x: mainX,

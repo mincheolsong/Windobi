@@ -164,6 +164,12 @@ app
       if (mainWindow === null) createWindow();
     });
 
+    globalShortcut.register('CommandOrControl+Alt+U', () => {
+      console.log(mainWindow?.getBounds());
+      console.log(subWindow?.getBounds());
+      console.log(menuWindow?.getBounds());
+    });
+
     globalShortcut.register('CommandOrControl+Alt+I', () => {
       mainWindow?.webContents.toggleDevTools();
       subWindow?.webContents.toggleDevTools();
