@@ -1,47 +1,67 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
-import { AiOutlineCloseCircle } from 'react-icons/ai';
 import naver from '../../../../assets/naver.png';
 import * as S from './Mail.style';
 import Time from './Time';
 
-function MailBox() {
-  const [isHovering, setIsHovering] = useState(false);
-  const handleMouseOver = () => {
-    setIsHovering(true);
-  };
+// async function click(){
+//   let a = await window.electron.ipcRenderer.invoke('test', 1);
+//   alert(a);
+// }
 
-  const handleMouseOut = () => {
-    setIsHovering(false);
-  };
+type TMail = {
+  id: string;
+  title: string;
+  time: Date;
+  sender: string;
+  content: string;
+};
 
-  // useEffect(() => {}, [time]);
+function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch<React.SetStateAction<TMail[]>>}) {
+
+  useEffect(() => {
+    if (!mails || mails.length === 0) return;
+    for (let i = 0; i < mails.length; ++i) {
+      console.log(mails[i].title);
+    }
+  }, [mails]);
 
   return (
-    <S.Wrapper>
-      <S.MailWrapper>
-        <S.Icon src={naver} />
-        <S.Contents>
-          <S.ContentsDiv>
-            <S.Sender>아식스코리아 noreply-asics-korea@asics.co.kr</S.Sender>
-            <Time
-              onClick={() => {
-                alert('ㅎㅇ');
-              }}
-            />
-          </S.ContentsDiv>
-          <S.Title>
-            <S.Text
-              onClick={() => {
-                alert('임시');
-              }}
-            >
-              주식회사 아식스코리아 이용약관 & 개인정보처리방침 개정 안내
-            </S.Text>
-          </S.Title>
-        </S.Contents>
-      </S.MailWrapper>
-    </S.Wrapper>
+    <>
+      {mails.map((mail) => {
+        return (
+          <S.Wrapper key={mail.id}>
+            <S.MailWrapper>
+              <S.Icon src={naver} />
+              <S.Contents>
+                <S.ContentsDiv>
+                  <S.Sender>
+                    {mail.sender}
+                  </S.Sender>
+                  <Time
+                    onClick={() => {
+                      console.log("isItOK?");
+                      setMails((prevMails) => prevMails.filter((m) => m.id !== mail.id));
+                      console.log(mails);
+                    }}
+                    time={mail.time}
+                  />
+                </S.ContentsDiv>
+                <S.Title>
+                  <S.Text
+                    onClick={() => {
+                      alert('임시');
+                    }}
+                  >
+                    {mail.title}
+                  </S.Text>
+                </S.Title>
+              </S.Contents>
+            </S.MailWrapper>
+          </S.Wrapper>
+        );
+      })}
+    </>
   );
 }
 
