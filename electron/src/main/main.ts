@@ -82,6 +82,7 @@ ipcMain.on('application', (event, applicationPath) => {
 });
 
 ipcMain.on('sub', (event, path) => {
+  console.log('path : ' + path);
   subWindow?.webContents.send('sub', path);
 });
 
