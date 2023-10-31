@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
-  padding: 10px;
+  padding-top: 10px;
 `;
 
 const Ul = styled.ul`
@@ -42,6 +42,11 @@ const Bar = styled.div<TBar>`
   font-weight: bold;
   display: flex;
   align-items: center;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
 `;
 
 export { Wrapper, Ul, Li, Image, Bar };

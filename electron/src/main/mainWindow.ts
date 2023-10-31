@@ -1,16 +1,21 @@
 /* eslint-disable no-param-reassign */
 
-import { App, BrowserWindow, shell } from 'electron';
+import { App, BrowserWindow, shell, ipcMain } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
 import Character from './chracter/Character';
 import moveScheduling from './chracter/moveScheduling';
 import moving from './chracter/moving';
+import { TWindows } from './main';
 
 const width = 200;
 const height = 200;
 
-const createMainWindow = (app: App): BrowserWindow => {
+let windows: TWindows | null;
+let characterMoving: NodeJS.Timer | null;
+let scheduling: NodeJS.Timer | null;
+
+const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -20,6 +25,7 @@ const createMainWindow = (app: App): BrowserWindow => {
   };
 
   const mainWindow = new BrowserWindow({
+    resizable: false,
     show: false,
     width,
     height,
@@ -38,6 +44,9 @@ const createMainWindow = (app: App): BrowserWindow => {
     x: 0,
     y: 0,
   });
+
+  wins.main = mainWindow;
+  windows = wins;
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -63,8 +72,24 @@ const createMainWindow = (app: App): BrowserWindow => {
       100,
       110,
     );
-    // let characterMoving = setInterval(moving, 30, character);
-    // let scheduling = setInterval(moveScheduling, 2000, character);
+
+    characterMoving = setInterval(moving, 30, character);
+    scheduling = setInterval(moveScheduling, 2000, character);
+
+    // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
+
+    ipcMain.on('stopMoving', () => {
+      clearInterval(characterMoving);
+      clearInterval(scheduling);
+      characterMoving = null;
+      scheduling = null;
+    });
+    ipcMain.on('restartMoving', () => {
+      if (characterMoving == null && scheduling == null) {
+        scheduling = setInterval(moveScheduling, 2000, character);
+        characterMoving = setInterval(moving, 30, character);
+      }
+    });
 
     mainWindow.webContents.closeDevTools();
   });

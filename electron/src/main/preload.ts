@@ -7,10 +7,16 @@ export type Channels =
   | 'sub'
   | 'job-time'
   | 'size'
+  | 'windowMoving'
+  | 'toggleMenuOn'
+  | 'toggleMenuClose'
+  | 'closeMenuWindow'
+  | 'sizeUpMenuWindow'
+  | 'application'
   | 'character-move'
-
-  // | 'test'
-  ;
+  | 'stopMoving'
+  | 'restartMoving'
+  | 'sub-job-time';
 
 const electronHandler = {
   ipcRenderer: {

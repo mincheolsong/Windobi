@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unsafe-finally */
+/* eslint-disable import/no-cycle */
+/* eslint-disable consistent-return */
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
@@ -7,9 +12,26 @@ import { Worker } from 'worker_threads';
 import path from 'path';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
-import interWindowCommunication from './interWindow';
+import createMenuWindow from './menuWindow';
+import {
+  interWindowCommunication,
+  interMenuWindowCommunication,
+} from './interWindow';
 
-const { dbInstance } = require('./jobTimeDB');
+const { dbInstance } = require('./jobtime/jobTimeDB');
+const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
+
+export type TWindows = {
+  main: BrowserWindow | null;
+  sub: BrowserWindow | null;
+  menu: BrowserWindow | null;
+};
+
+const windows: TWindows = {
+  main: null,
+  sub: null,
+  menu: null,
+};
 
 class AppUpdater {
   constructor() {
@@ -21,6 +43,7 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
+let menuWindow: BrowserWindow | null = null;
 
 // ipcMain.on('ipc-example', async (event, arg) => {
 //   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -29,11 +52,11 @@ let subWindow: BrowserWindow | null = null;
 // });
 
 dbInstance.init();
+subDbInstance.init();
 
-ipcMain.on('job-time', async (event, type) => {
+ipcMain.on('job-time', async (event, type, target) => {
   if (type === 'day') {
-    const today = new Date();
-    const result = await dbInstance.getByDay(today);
+    const result = await dbInstance.getByDay(target);
     event.reply('job-time', { type, result });
   } else if (type === 'week') {
     const result = await dbInstance.getRecentWeek();
@@ -41,10 +64,41 @@ ipcMain.on('job-time', async (event, type) => {
   }
 });
 
+ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
+  if (type === 'daily') {
+    return subDbInstance.getByDay(application, date);
+  }
+  if (type === 'weekly') {
+    return subDbInstance.getRecentWeek(application);
+  }
+});
+
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
-  } catch (e) {}
+  } finally {
+    return;
+  }
+});
+
+ipcMain.on('sub', (event, path) => {
+  subWindow?.webContents.send('sub', path);
+});
+
+ipcMain.on('windowMoving', (event, arg) => {
+  mainWindow?.setBounds({
+    width: 100,
+    height: 100,
+    x: arg.mouseX - 50, // always changes in runtime
+    y: arg.mouseY - 50,
+  });
+});
+
+// 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
+ipcMain.on('toggleMenuOn', () => {
+  mainWindow?.show();
+  menuWindow?.show();
+  menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
 
 // let a = 0;
@@ -83,10 +137,13 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  mainWindow = createMainWindow(app);
-  subWindow = createSubWindow(app);
-  interWindowCommunication(mainWindow, subWindow);
+  mainWindow = createMainWindow(app, windows);
 
+  menuWindow = createMenuWindow(app, windows);
+  subWindow = createSubWindow(app, windows);
+
+  interWindowCommunication(mainWindow, subWindow);
+  interMenuWindowCommunication(mainWindow, menuWindow);
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -113,9 +170,16 @@ app
       if (mainWindow === null) createWindow();
     });
 
+    globalShortcut.register('CommandOrControl+Alt+U', () => {
+      console.log(mainWindow?.getBounds());
+      console.log(subWindow?.getBounds());
+      console.log(menuWindow?.getBounds());
+    });
+
     globalShortcut.register('CommandOrControl+Alt+I', () => {
       mainWindow?.webContents.toggleDevTools();
       subWindow?.webContents.toggleDevTools();
+      menuWindow?.webContents.toggleDevTools();
     });
     globalShortcut.register('CommandOrControl+Alt+O', () => {
       subWindow?.webContents.send('sub', 'jobtime');
@@ -127,4 +191,4 @@ app
   .catch(console.log);
 
 // 프로그램 시간 계산하기
-const jobTimeThread = new Worker(path.join(__dirname, 'jobTime.js'));
+const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
