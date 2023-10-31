@@ -44,8 +44,7 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
 let menuWindow: BrowserWindow | null = null;
-global.isMenuOn = false;
-global.isBlur = false;
+
 // ipcMain.on('ipc-example', async (event, arg) => {
 //   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
 //   console.log(msgTemplate(arg));
@@ -133,8 +132,9 @@ const createWindow = async () => {
   }
 
   mainWindow = createMainWindow(app, windows);
-  subWindow = createSubWindow(app, windows);
+
   menuWindow = createMenuWindow(app, windows);
+  subWindow = createSubWindow(app, windows);
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);

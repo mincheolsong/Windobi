@@ -86,14 +86,9 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
     });
     ipcMain.on('restartMoving', () => {
       if (characterMoving == null && scheduling == null) {
-        characterMoving = setInterval(moving, 30, character);
         scheduling = setInterval(moveScheduling, 2000, character);
+        characterMoving = setInterval(moving, 30, character);
       }
-    });
-
-    ipcMain.on('windowMoveDone', (event, arg) => {
-      characterMoving = setInterval(moving, 30, character);
-      scheduling = setInterval(moveScheduling, 2000, character);
     });
 
     mainWindow.webContents.closeDevTools();
