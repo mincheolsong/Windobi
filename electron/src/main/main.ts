@@ -82,7 +82,6 @@ ipcMain.on('application', (event, applicationPath) => {
 });
 
 ipcMain.on('sub', (event, path) => {
-  console.log('path : ' + path);
   subWindow?.webContents.send('sub', path);
 });
 
@@ -187,7 +186,7 @@ app
     });
     globalShortcut.register('CommandOrControl+Alt+P', () => {
       subWindow?.webContents.send('sub', 'notification');
-    })
+    });
   })
   .catch(console.log);
 
