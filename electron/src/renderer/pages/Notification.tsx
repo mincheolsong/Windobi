@@ -24,6 +24,7 @@ function Notification() {
     let mail = {
       id: "1",
       title: "주식회사 아식스코리아 이용약관 & 개인정보처리방침 개정 안내",
+      // title: "주식회사 아식스코리아 이용약관 ",
       time: new Date(2023, 0, 23, 15, 4),
       sender: "아식스코리아 noreply-asics-korea@asics.co.kr",
       content: "asdfasdfsdaf"
