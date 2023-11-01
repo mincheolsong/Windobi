@@ -9,6 +9,7 @@ import alarm from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
 import news from '../../../../assets/icons/news.svg';
 import setting from '../../../../assets/icons/setting.svg';
+import login from '../../../../assets/icons/login.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
@@ -20,8 +21,8 @@ function MenuModal() {
     { alarm: alarm },
     { chatGPT: chatGPT },
     { setting: setting },
-
     { news: news },
+    { login: login },
   ];
 
   const handleWheel = (event) => {
