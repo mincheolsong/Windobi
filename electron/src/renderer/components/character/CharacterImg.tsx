@@ -1,6 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable default-case */
 import { useEffect } from 'react';
+// import stopImg from '../../../../assets/character/hallow/shime1.png';
+// import left1 from '../../../../assets/character/hallow/shime2.png';
+// import left2 from '../../../../assets/character/hallow/shime3.png';
+// import up1 from '../../../../assets/character/hallow/shime13.png';
+// import up2 from '../../../../assets/character/hallow/shime14.png';
+// import down1 from '../../../../assets/character/hallow/shime5.png';
+// import down2 from '../../../../assets/character/hallow/shime6.png';
+// import down3 from '../../../../assets/character/hallow/shime4.png';
 import stopImg from '../../../../assets/character/chungmyeong/shime1.png';
 import left1 from '../../../../assets/character/chungmyeong/shime2.png';
 import left2 from '../../../../assets/character/chungmyeong/shime3.png';

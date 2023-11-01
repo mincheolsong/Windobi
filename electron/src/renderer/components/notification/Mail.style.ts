@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   width: 100%;
-  padding: 10px;
+  padding: 10px 5px 10px 10px;
 `;
 
 const Mail = styled.div`
@@ -36,7 +36,11 @@ const Icon = styled.img`
 const Contents = styled.div`
   display: flex;
   flex-flow: column wrap;
-  width: 390px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  width: 100%;
   margin: 5px 10px 5px 0px;
   height: 60px;
   background-color: white;
@@ -47,7 +51,8 @@ const ContentsDiv = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  width: 390px;
+
+  width: 100%;
   height: 23px;
   // background-color: rgba(123,123,123,100);
 `;
@@ -60,14 +65,14 @@ const Sender = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  width: 150px;
+  width: 50%;
   // background-color: rgba(10,220,30,0.8);
 `;
 const Title = styled.div`
   padding: 0 4px 9px 6px;
   display: flex;
   align-items: center;
-  width: 390px;
+  width: 100%;
   height: 37px;
   cursor: pointer;
 `;
@@ -84,7 +89,7 @@ const Time = styled.div`
   padding: 5px;
   font-family: GmarketSansTTFMedium;
   font-size: 11px;
-  width: 80px;
+  width: 15%;
   text-align: right;
   cursor: pointer;
   position: relative;
