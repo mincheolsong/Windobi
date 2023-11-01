@@ -17,7 +17,7 @@ function MenuModal() {
   const menuItems = [
     { jobtime: jobtime },
     { calendar: calendar },
-    { alarm: alarm },
+    { notification: alarm },
     { chatGPT: chatGPT },
     { setting: setting },
 
