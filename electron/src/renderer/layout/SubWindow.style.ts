@@ -12,10 +12,11 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
+
   width: 100%;
   height: 35px;
-
-  font-size: 25px;
+  font-family:  NanumBarunGothicBold;
+  font-size: 20px;
   color: white;
 
   display: flex;

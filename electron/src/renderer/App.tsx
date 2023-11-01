@@ -38,7 +38,7 @@ function MyApp() {
       <Route
         path="/notification"
         element={
-          <SubWindow>
+          <SubWindow title="메일 알림">
             <Notification />
           </SubWindow>
         }
