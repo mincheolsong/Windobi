@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
 /* eslint-disable guard-for-in */
