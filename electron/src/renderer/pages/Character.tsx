@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import * as S from '../components/character/Character.style';
-import Menu from '../components/character/Menu';
 import CharacterImg from '../components/character/CharacterImg';
 
 function Chracter() {
