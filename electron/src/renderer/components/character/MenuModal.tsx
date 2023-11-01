@@ -7,7 +7,7 @@ import jobtime from '../../../../assets/icons/jobtime.svg';
 import calendar from '../../../../assets/icons/calendar.svg';
 import alarm from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
-import close from '../../../../assets/icons/close.svg';
+import news from '../../../../assets/icons/news.svg';
 import setting from '../../../../assets/icons/setting.svg';
 
 function MenuModal() {
@@ -20,17 +20,14 @@ function MenuModal() {
     { notification: alarm },
     { chatGPT: chatGPT },
     { setting: setting },
-    { test0: null },
-    { test1: null },
-    { test3: close },
+
+    { news: news },
   ];
 
   const handleWheel = (event) => {
     if (event.deltaY > 0) {
-      // Scroll down - move items clockwise
       setCurrentIndex((currentIndex + 1) % menuItems.length);
     } else {
-      // Scroll up - move items counterclockwise
       setCurrentIndex((currentIndex - 1 + menuItems.length) % menuItems.length);
     }
   };
@@ -51,8 +48,6 @@ function MenuModal() {
       setActive(false);
       ipcRenderer.sendMessage('restartMoving');
     });
-
-    //
   }, []);
 
   const navigate = (path: string) => {
@@ -61,7 +56,11 @@ function MenuModal() {
   };
 
   return (
-    <div className={active ? 'menu active' : 'menu'} onWheel={handleWheel}>
+    <div
+      className={active ? 'menu active' : 'menu'}
+      onWheel={handleWheel}
+      style={{ WebkitUserSelect: 'none' }}
+    >
       <div className="icons">
         {reorderedItems.map((item, index) => (
           <div className="rotater" key={index}>
@@ -74,57 +73,6 @@ function MenuModal() {
             </div>
           </div>
         ))}
-
-        {/* <div className="rotater">
-          <div className="btn btn-icon">
-            <img
-              className="fa"
-              src={statisticImg}
-              onClick={() => navigate('jobtime')}
-            />
-          </div>
-        </div>
-        <div className="rotater">
-          <div className="btn btn-icon">
-            <img className="fa" src={calendar} />
-          </div>
-        </div>
-        <div className="rotater">
-          <div className="btn btn-icon">
-            <img className="fa" src={alarm} />
-          </div>
-        </div>
-        <div className="rotater">
-          <div className="btn btn-icon">
-            <img className="fa" src={chatGPT} />
-          </div>
-        </div>
-        <div className="rotater">
-          <div className="btn btn-icon">
-            <img className="fa" src={setting} />
-          </div>
-        </div>
-        <div className="rotater">
-          <div className="btn btn-icon">
-            <i className="fa fa-linkedin">f</i>
-          </div>
-        </div>
-        <div className="rotater">
-          <div className="btn btn-icon">
-            <i className="fa fa-github">g</i>
-          </div>
-        </div>
-        <div
-          className="rotater "
-          // onClick={() => {
-          //   setActive(false);
-          //   ipcRenderer.sendMessage('restartMoving');
-          // }}
-        >
-          <div className="btn btn-icon ">
-            <img className="fa " src={close}></img>
-          </div>
-        </div> */}
       </div>
     </div>
   );
