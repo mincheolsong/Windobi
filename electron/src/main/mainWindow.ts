@@ -7,6 +7,7 @@ import Character from './chracter/Character';
 import moveScheduling from './chracter/moveScheduling';
 import moving from './chracter/moving';
 import { TWindows } from './main';
+import getMails from './mail';
 
 const width = 200;
 const height = 200;
@@ -90,6 +91,10 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
     //     characterMoving = setInterval(moving, 30, character);
     //   }
     // });
+    let received: [] = [];
+    let timerId = setInterval(getMails, 10000, received, "honeycomb201", "ssafyssafy123", "imap.naver.com");
+
+
 
     mainWindow.webContents.closeDevTools();
   });
