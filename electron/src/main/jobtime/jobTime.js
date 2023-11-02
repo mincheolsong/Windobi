@@ -45,7 +45,7 @@ dbInstance.createTable();
 subDbInstance.init();
 subDbInstance.createTable();
 
-// 짧은 주기마다 현재 활성화된 윈도우를 map에 저장하자
+// 짧은 주기마다 현재 활성화된 윈도우를 map에 저장하자`
 setInterval(() => {
   try {
     const activeWindow = ActiveWindow.getActiveWindow();
@@ -107,9 +107,12 @@ const processSubJobTime = (activeWindow) => {
 // 각각의 확장자에 대해 정의
 function setExtensions() {
   extensionMap.set('js', 'Javascript');
-  extensionMap.set('ts', 'Javascript');
-  extensionMap.set('jsx', 'Javascript');
-  extensionMap.set('tsx', 'Javascript');
+  extensionMap.set('ts', 'Typescript');
+  extensionMap.set('jsx', 'React(JS)');
+  extensionMap.set('tsx', 'React(TS)');
+
+  extensionMap.set('html', 'HTML');
+  extensionMap.set('css', 'CSS');
 
   extensionMap.set('java', 'Java');
   extensionMap.set('jsp', 'Java');
