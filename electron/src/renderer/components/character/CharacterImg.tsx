@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable default-case */
 import { useEffect, useState } from 'react';
@@ -118,6 +119,13 @@ function CharacterImg() {
       }
       const handler = motions[direction];
       timerId = handler();
+    });
+  }, []);
+
+  // 캐릭터 변경 리스너 등록
+  useEffect(() => {
+    ipcRenderer.on('change-character', (character: string) => {
+      setCharacter(character);
     });
   }, []);
 
