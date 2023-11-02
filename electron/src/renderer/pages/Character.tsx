@@ -3,6 +3,16 @@ import * as S from '../components/character/Character.style';
 import CharacterImg from '../components/character/CharacterImg';
 
 function Chracter() {
+  const { ipcRenderer } = window.electron;
+
+  const onMouseDown = () => {
+    ipcRenderer.sendMessage('start-move');
+  };
+
+  const onMouseUp = () => {
+    ipcRenderer.sendMessage('stop-move');
+  };
+
   const [index, setIndex] = useState<number>(0);
 
   useEffect(() => {
@@ -11,27 +21,7 @@ function Chracter() {
 
   let mouseX;
   let mouseY;
-  let isMove = false;
-
-  const numOfMenu = 8;
-
-  const keyEvent = (e: KeyboardEvent) => {
-    if (
-      e.key === 'ArrowLeft' ||
-      e.key === 'ArrowDown' ||
-      e.key === 'a' ||
-      e.key === 's'
-    ) {
-      setIndex((prev) => (numOfMenu + (prev - 1)) % numOfMenu);
-    } else if (
-      e.key === 'ArrowRight' ||
-      e.key === 'ArrowUp' ||
-      e.key === 'd' ||
-      e.key === 'w'
-    ) {
-      setIndex((prev) => (numOfMenu + (prev + 1)) % numOfMenu);
-    }
-  };
+  const isMove = false;
 
   // 캐릭터를 오른쪽 클릭하면 메뉴를 펼침
   const rightClick = () => {
@@ -51,16 +41,15 @@ function Chracter() {
   };
 
   useEffect(() => {
-    document.addEventListener('keydown', keyEvent);
     document.addEventListener('contextmenu', rightClick);
     return () => {
-      document.removeEventListener('keydown', keyEvent);
       document.removeEventListener('contextmenu', rightClick);
     };
   }, []);
 
   return (
-    <S.Wrapper
+    <S.Wrapper onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+      {/* <S.Wrapper
       onMouseDown={(e) => {
         if (e.button === 0) {
           // 왼쪽 마우스 다운
@@ -80,8 +69,7 @@ function Chracter() {
           window.electron.ipcRenderer.sendMessage('restartMoving');
         }
       }}
-      onMouseMove={moveCharacter}
-    >
+    > */}
       <CharacterImg />
     </S.Wrapper>
   );

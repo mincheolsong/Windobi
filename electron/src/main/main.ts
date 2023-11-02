@@ -5,7 +5,14 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  globalShortcut,
+  ipcMain,
+  shell,
+  screen,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
@@ -188,6 +195,33 @@ app
     });
   })
   .catch(console.log);
+
+let moveTimer: ReturnType<typeof setInterval> | null = null;
+ipcMain.on('start-move', () => {
+  moveTimer = setInterval(() => {
+    const { x, y } = screen.getCursorScreenPoint();
+    mainWindow?.setBounds({
+      width: 100,
+      height: 100,
+      x: x - 50,
+      y: y - 50,
+    });
+  }, 10);
+});
+ipcMain.on('stop-move', () => {
+  if (moveTimer) {
+    clearInterval(moveTimer);
+  }
+});
+
+// ipcMain.on('windowMoving', (event, arg) => {
+//   mainWindow?.setBounds({
+//     width: 100,
+//     height: 100,
+//     x: arg.mouseX - 50, // always changes in runtime
+//     y: arg.mouseY - 50,
+//   });
+// });
 
 // 프로그램 시간 계산하기
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
