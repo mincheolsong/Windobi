@@ -16,7 +16,8 @@ export type Channels =
   | 'character-move'
   | 'stopMoving'
   | 'restartMoving'
-  | 'sub-job-time';
+  | 'sub-job-time'
+  | 'env';
 
 const electronHandler = {
   ipcRenderer: {

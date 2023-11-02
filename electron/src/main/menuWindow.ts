@@ -33,6 +33,7 @@ const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      nodeIntegration: true,
     },
     frame: false,
     movable: false,
