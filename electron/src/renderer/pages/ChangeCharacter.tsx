@@ -13,6 +13,9 @@ function ChangeCharacter() {
   ]);
 
   const { ipcRenderer } = window.electron;
+  const changeCharacter = (character: string) => {
+    ipcRenderer.sendMessage('change-character', character);
+  };
 
   // 캐릭터 리스트들을 불러오자
   useEffect(() => {
@@ -42,7 +45,7 @@ function ChangeCharacter() {
     <S.Ul>
       {characters.map((character) => {
         return (
-          <S.Li>
+          <S.Li onClick={() => changeCharacter(character.name)}>
             {character.name}
             <img
               src={character.image}
