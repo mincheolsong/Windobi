@@ -102,6 +102,10 @@ ipcMain.handle('character-list', async () => {
   return characterList;
 });
 
+ipcMain.on('change-character', (event, character) => {
+  mainWindow?.webContents.send('change-character', character);
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
