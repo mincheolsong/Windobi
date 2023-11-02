@@ -1,6 +1,8 @@
 import { Rectangle } from 'electron';
 import Character from './Character';
 
+let prevDirection = '';
+
 function move(character: Character) {
   const diff = 2; // 움직이는 정도
   const bound: Rectangle = character.mainWindow.getBounds();
@@ -17,7 +19,6 @@ function move(character: Character) {
     character.fallTrigger
   ) {
     character.direction = 'downsleep';
-    character.mainWindow.webContents.send('character-move', 'downsleep');
   }
 
   if (
@@ -27,7 +28,7 @@ function move(character: Character) {
   ) {
     character.fallTrigger = true;
     character.direction = 'down';
-    character.mainWindow.webContents.send('character-move', 'down');
+    // character.mainWindow.webContents.send('character-move', 'down');
   }
   if (character.direction === 'left') {
     nextX = curX - diff;
@@ -69,7 +70,7 @@ function move(character: Character) {
       nextY = character.maxHeight - 105;
       nextX = curX;
       character.direction = 'downsleep';
-      character.mainWindow.webContents.send('character-move', 'downsleep');
+      // character.mainWindow.webContents.send('character-move', 'downsleep');
     } else {
       nextY = curY + 5;
       nextX = curX;
@@ -82,7 +83,7 @@ function move(character: Character) {
       character.fallTrigger = false;
       nextY = character.maxHeight - 105;
       nextX = curX;
-      character.mainWindow.webContents.send('character-move', 'stop');
+      // character.mainWindow.webContents.send('character-move', 'stop');
       character.direction = 'stop';
     } else {
       nextY = curY + 5;
@@ -101,6 +102,14 @@ function move(character: Character) {
   character.curX = nextX;
   character.curY = nextY;
   character.transition = false;
+
+  if (prevDirection !== character.direction) {
+    character.mainWindow.webContents.send(
+      'character-move',
+      character.direction,
+    );
+    prevDirection = character.direction;
+  }
 }
 
 function moving(character: Character) {

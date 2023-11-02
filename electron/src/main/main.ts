@@ -10,6 +10,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
+import fs from 'node:fs';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import createMenuWindow from './menuWindow';
@@ -45,12 +46,6 @@ let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
 let menuWindow: BrowserWindow | null = null;
 
-// ipcMain.on('ipc-example', async (event, arg) => {
-//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-//   console.log(msgTemplate(arg));
-//   event.reply('ipc-example', msgTemplate('pong'));
-// });
-
 dbInstance.init();
 subDbInstance.init();
 
@@ -82,7 +77,6 @@ ipcMain.on('application', (event, applicationPath) => {
 });
 
 ipcMain.on('sub', (event, path) => {
-  console.log('path : ' + path);
   subWindow?.webContents.send('sub', path);
 });
 
@@ -102,11 +96,11 @@ ipcMain.on('toggleMenuOn', () => {
   menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
 
-// let a = 0;
-// ipcMain.handle('test', (e, arg)=>{
-//   a = a + arg;
-//   return a;
-// })
+ipcMain.handle('character-list', async () => {
+  const RESOURCE_PATH = 'assets/character';
+  const characterList = fs.readdirSync(RESOURCE_PATH);
+  return characterList;
+});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -171,23 +165,23 @@ app
       if (mainWindow === null) createWindow();
     });
 
-    globalShortcut.register('CommandOrControl+Alt+U', () => {
-      console.log(mainWindow?.getBounds());
-      console.log(subWindow?.getBounds());
-      console.log(menuWindow?.getBounds());
-    });
-
     globalShortcut.register('CommandOrControl+Alt+I', () => {
       mainWindow?.webContents.toggleDevTools();
       subWindow?.webContents.toggleDevTools();
       menuWindow?.webContents.toggleDevTools();
+    });
+    globalShortcut.register('CommandOrControl+Alt+M', () => {
+      mainWindow?.webContents.toggleDevTools();
+    });
+    globalShortcut.register('CommandOrControl+Alt+S', () => {
+      subWindow?.webContents.toggleDevTools();
     });
     globalShortcut.register('CommandOrControl+Alt+O', () => {
       subWindow?.webContents.send('sub', 'jobtime');
     });
     globalShortcut.register('CommandOrControl+Alt+P', () => {
       subWindow?.webContents.send('sub', 'notification');
-    })
+    });
   })
   .catch(console.log);
 
