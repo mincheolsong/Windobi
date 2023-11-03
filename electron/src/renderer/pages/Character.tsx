@@ -46,7 +46,6 @@ function Chracter() {
         mouseX,
         mouseY,
       });
-      window.electron.ipcRenderer.sendMessage('stopMoving');
     }
   };
 
@@ -71,6 +70,7 @@ function Chracter() {
           //   mouseX,
           //   mouseY,
           // });
+          window.electron.ipcRenderer.sendMessage('stopMoving');
         }
       }}
       onMouseUp={(e) => {
