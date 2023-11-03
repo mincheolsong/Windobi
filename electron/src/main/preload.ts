@@ -20,7 +20,9 @@ export type Channels =
   | 'character-list'
   | 'change-character'
   | 'start-move'
-  | 'stop-move';
+  | 'stop-move'
+  | 'set-setting'
+  | 'get-setting';
 
 const electronHandler = {
   ipcRenderer: {
