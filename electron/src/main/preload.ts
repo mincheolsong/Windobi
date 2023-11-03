@@ -17,7 +17,9 @@ export type Channels =
   | 'stopMoving'
   | 'restartMoving'
   | 'sub-job-time'
-  | 'env';
+  | 'env'
+  | 'hideMenuWindow'
+  | 'hideSubWindow';
 
 const electronHandler = {
   ipcRenderer: {

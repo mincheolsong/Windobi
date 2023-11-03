@@ -9,6 +9,7 @@ import alarm from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
 import news from '../../../../assets/icons/news.svg';
 import setting from '../../../../assets/icons/setting.svg';
+import close from '../../../../assets/icons/close.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
@@ -20,7 +21,7 @@ function MenuModal() {
     { notification: alarm },
     { chatGPT: chatGPT },
     { setting: setting },
-
+    { close: close },
     { news: news },
   ];
 
@@ -44,15 +45,21 @@ function MenuModal() {
       ipcRenderer.sendMessage('stopMoving');
     });
 
-    ipcRenderer.on('toggleMenuClose', () => {
-      setActive(false);
-      ipcRenderer.sendMessage('restartMoving');
-    });
+    // ipcRenderer.on('toggleMenuClose', () => {
+    //   setActive(false);
+    //   ipcRenderer.sendMessage('restartMoving');
+    // });
   }, []);
 
   const navigate = (path: string) => {
-    ipcRenderer.sendMessage('sub', path);
     setActive(false); // 클릭하면 메뉴를 닫음(애니메이션)
+    ipcRenderer.sendMessage('hideMenuWindow');
+
+    if (path === 'close') {
+      ipcRenderer.sendMessage('restartMoving');
+    } else {
+      ipcRenderer.sendMessage('sub', path);
+    }
   };
 
   return (

@@ -21,6 +21,12 @@ import {
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
 
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
 export type TWindows = {
   main: BrowserWindow | null;
   sub: BrowserWindow | null;
@@ -87,6 +93,7 @@ ipcMain.on('application', (event, applicationPath) => {
 
 ipcMain.on('sub', (event, path) => {
   subWindow?.webContents.send('sub', path);
+  subWindow?.show();
 });
 
 ipcMain.on('windowMoving', (event, arg) => {
@@ -104,6 +111,10 @@ ipcMain.on('toggleMenuOn', () => {
   menuWindow?.show();
   menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
+
+// ipcMain.on('toggleSubWindowOn', () => {
+//   subWindow?.show();
+// });
 
 // let a = 0;
 // ipcMain.handle('test', (e, arg)=>{
