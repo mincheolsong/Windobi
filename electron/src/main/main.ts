@@ -1,3 +1,4 @@
+/* eslint-disable promise/catch-or-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable import/no-cycle */
@@ -25,6 +26,7 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
+import SettingHandler from './setting/setting';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
@@ -144,7 +146,6 @@ const createWindow = async () => {
   }
 
   mainWindow = createMainWindow(app, windows);
-
   menuWindow = createMenuWindow(app, windows);
   subWindow = createSubWindow(app, windows);
 
@@ -171,7 +172,9 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    createWindow();
+    createWindow().then(() => {
+      SettingHandler(windows);
+    });
     app.on('activate', () => {
       if (mainWindow === null) createWindow();
     });
@@ -214,14 +217,4 @@ ipcMain.on('stop-move', () => {
   }
 });
 
-// ipcMain.on('windowMoving', (event, arg) => {
-//   mainWindow?.setBounds({
-//     width: 100,
-//     height: 100,
-//     x: arg.mouseX - 50, // always changes in runtime
-//     y: arg.mouseY - 50,
-//   });
-// });
-
-// 프로그램 시간 계산하기
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
