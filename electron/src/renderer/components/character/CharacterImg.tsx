@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable default-case */
 import { useEffect, useState } from 'react';
+import SettingDB from '../../../main/setting/settingDB';
 
 type TMotion =
   | 'stop'
@@ -110,8 +111,16 @@ function CharacterImg() {
     },
   };
 
-  // 캐릭터 모션 변경 이벤트가 오면
+  // ipcRenderer 이벤트 등록
   useEffect(() => {
+    (async () => {
+      const savedCharacter = await ipcRenderer.invoke(
+        'get-setting',
+        'character',
+      );
+      setCharacter(savedCharacter);
+    })();
+
     ipcRenderer.on('character-move', (direction: TDirection) => {
       if (timerId !== null) {
         // 그전에 있던 이벤트는 없애고

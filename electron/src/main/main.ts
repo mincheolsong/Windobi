@@ -1,3 +1,4 @@
+/* eslint-disable promise/catch-or-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable import/no-cycle */
@@ -5,7 +6,14 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  globalShortcut,
+  ipcMain,
+  shell,
+  screen,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
@@ -18,6 +26,7 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
+import SettingHandler from './setting/setting';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
@@ -148,7 +157,6 @@ const createWindow = async () => {
   }
 
   mainWindow = createMainWindow(app, windows);
-
   menuWindow = createMenuWindow(app, windows);
   subWindow = createSubWindow(app, windows);
 
@@ -175,7 +183,9 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    createWindow();
+    createWindow().then(() => {
+      SettingHandler(windows);
+    });
     app.on('activate', () => {
       if (mainWindow === null) createWindow();
     });
@@ -200,5 +210,22 @@ app
   })
   .catch(console.log);
 
-// 프로그램 시간 계산하기
+let moveTimer: ReturnType<typeof setInterval> | null = null;
+ipcMain.on('start-move', () => {
+  moveTimer = setInterval(() => {
+    const { x, y } = screen.getCursorScreenPoint();
+    mainWindow?.setBounds({
+      width: 100,
+      height: 100,
+      x: x - 50,
+      y: y - 50,
+    });
+  }, 10);
+});
+ipcMain.on('stop-move', () => {
+  if (moveTimer) {
+    clearInterval(moveTimer);
+  }
+});
+
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
