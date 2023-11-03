@@ -27,6 +27,7 @@ import {
   interMenuWindowCommunication,
 } from './interWindow';
 import SettingHandler from './setting/setting';
+import createTray from './tray/tray';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
@@ -84,6 +85,7 @@ ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
 });
 
 ipcMain.handle('env', async (event, key) => {
+  console.log(process.env.OPENAI_API_KEY);
   return process.env[key];
 });
 
@@ -184,7 +186,9 @@ app
   .whenReady()
   .then(() => {
     createWindow().then(() => {
+      // 윈도우가 만들어지고난 후
       SettingHandler(windows);
+      createTray(app, windows);
     });
     app.on('activate', () => {
       if (mainWindow === null) createWindow();

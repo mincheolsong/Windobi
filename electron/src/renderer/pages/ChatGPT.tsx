@@ -15,6 +15,7 @@ function ChatGPT() {
       'env',
       'OPENAI_API_KEY',
     );
+    console.log(key);
     setOpenai(
       new OpenAI({
         apiKey: key,
@@ -39,11 +40,11 @@ function ChatGPT() {
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: prompt }],
       });
-      //console.log("response", result.data.choices[0].text);
+      // console.log("response", result.data.choices[0].text);
       console.log(result);
       setApiResponse(result.choices[0].message.content);
     } catch (e) {
-      //console.log(e);
+      // console.log(e);
       setApiResponse('Something is going wrong, Please try again.');
     }
     setLoading(false);
