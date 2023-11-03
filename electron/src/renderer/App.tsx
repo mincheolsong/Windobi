@@ -14,6 +14,7 @@ import MenuModal from './components/character/MenuModal';
 import Closed from './pages/Closed';
 import Setting from './pages/Setting';
 import ChangeCharacter from './pages/ChangeCharacter';
+import ChatGPT from './pages/ChatGPT';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -60,6 +61,15 @@ function MyApp() {
             </SubWindow>
           }
         />
+        <Route
+          path="/chatGPT"
+          element={
+            <SubWindow title="ChatGPT">
+              <ChatGPT />
+            </SubWindow>
+          }
+        />
+
         <Route path="/menu" element={<MenuModal />} />
       </Routes>
     </>

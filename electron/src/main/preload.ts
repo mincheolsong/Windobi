@@ -22,7 +22,10 @@ export type Channels =
   | 'start-move'
   | 'stop-move'
   | 'set-setting'
-  | 'get-setting';
+  | 'get-setting'
+  | 'env'
+  | 'hideMenuWindow'
+  | 'hideSubWindow';
 
 const electronHandler = {
   ipcRenderer: {
