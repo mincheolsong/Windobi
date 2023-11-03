@@ -31,6 +31,12 @@ import SettingHandler from './setting/setting';
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
 
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
 export type TWindows = {
   main: BrowserWindow | null;
   sub: BrowserWindow | null;
@@ -77,6 +83,10 @@ ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
   }
 });
 
+ipcMain.handle('env', async (event, key) => {
+  return process.env[key];
+});
+
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
@@ -87,6 +97,7 @@ ipcMain.on('application', (event, applicationPath) => {
 
 ipcMain.on('sub', (event, path) => {
   subWindow?.webContents.send('sub', path);
+  subWindow?.show();
 });
 
 ipcMain.on('windowMoving', (event, arg) => {

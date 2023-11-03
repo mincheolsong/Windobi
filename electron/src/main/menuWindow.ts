@@ -33,6 +33,7 @@ const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      nodeIntegration: true,
     },
     frame: false,
     movable: false,
@@ -52,12 +53,17 @@ const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
     menuWindow.webContents.closeDevTools();
   });
 
-  // 밖에 클릭하면 메뉴 닫기
-  menuWindow.addListener('blur', async (e) => {
-    menuWindow?.webContents.send('toggleMenuClose');
+  ipcMain.on('hideMenuWindow', async () => {
     await sleep(500);
-    menuWindow.hide();
+    menuWindow?.hide();
   });
+
+  // // 밖에 클릭하면 메뉴 닫기
+  // menuWindow.addListener('blur', async (e) => {
+  //   menuWindow?.webContents.send('toggleMenuClose');
+  //   await sleep(500);
+  //   menuWindow.hide();
+  // });
 
   return menuWindow;
 };

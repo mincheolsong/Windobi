@@ -33,3 +33,6 @@ assets/job_time.db
 assets/sub_job_time.db
 assets/setting.json
 log.txt
+
+# openAI key
+.env
