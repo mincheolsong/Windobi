@@ -15,6 +15,7 @@ function ChangeCharacter() {
   const { ipcRenderer } = window.electron;
   const changeCharacter = (character: string) => {
     ipcRenderer.sendMessage('change-character', character);
+    ipcRenderer.sendMessage('set-setting', 'character', character);
   };
 
   // 캐릭터 리스트들을 불러오자

@@ -19,6 +19,10 @@ export type Channels =
   | 'sub-job-time'
   | 'character-list'
   | 'change-character'
+  | 'start-move'
+  | 'stop-move'
+  | 'set-setting'
+  | 'get-setting'
   | 'env'
   | 'hideMenuWindow'
   | 'hideSubWindow';
