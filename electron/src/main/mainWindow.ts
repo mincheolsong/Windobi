@@ -87,12 +87,15 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
     });
     ipcMain.on('restartMoving', () => {
       if (characterMoving == null && scheduling == null) {
-        scheduling = setInterval(moveScheduling, 2000, character);
+        mainWindow.focus();
+
         characterMoving = setInterval(moving, 30, character);
         character.mainWindow.webContents.send(
           'character-move',
           character.direction,
         );
+
+        scheduling = setInterval(moveScheduling, 2000, character);
       }
     });
 
