@@ -1,50 +1,75 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import {
+  MemoryRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from 'react-router-dom';
 import './App.css';
+import Character from './pages/Character';
+import JobTime from './pages/JobTime';
+import SubWindow from './layout/SubWindow';
+import Notification from './pages/Notification';
+import GlobalFont from './global';
+import MenuModal from './components/character/MenuModal';
+import Closed from './pages/Closed';
+import Setting from './pages/Setting';
+import ChangeCharacter from './pages/ChangeCharacter';
 
-function Hello() {
+function MyApp() {
+  const navigate = useNavigate();
+  const { ipcRenderer } = window.electron;
+  ipcRenderer.on('sub', (path) => {
+    navigate(`/${path}`);
+  });
+
   return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="folded hands">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
+    <>
+      <GlobalFont />
+      <Routes>
+        <Route path="/" element={<Character />} />
+        <Route path="/closed" element={<Closed />} />
+        <Route
+          path="/jobtime"
+          element={
+            <SubWindow title="사용시간">
+              <JobTime />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/notification"
+          element={
+            <SubWindow title="메일 알림">
+              <Notification />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/setting"
+          element={
+            <SubWindow title="설정">
+              <Setting />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/changecharacter"
+          element={
+            <SubWindow title="캐릭터 변경">
+              <ChangeCharacter />
+            </SubWindow>
+          }
+        />
+        <Route path="/menu" element={<MenuModal />} />
+      </Routes>
+    </>
   );
 }
 
 export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
+      <MyApp />
     </Router>
   );
 }

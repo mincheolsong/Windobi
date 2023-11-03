@@ -1,19 +1,38 @@
-/* eslint global-require: off, no-console: off, promise/always-return: off */
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `npm run build` or `npm run build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
-import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unsafe-finally */
+/* eslint-disable import/no-cycle */
+/* eslint-disable consistent-return */
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable promise/always-return */
+/* eslint-disable global-require */
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import { Worker } from 'worker_threads';
+import path from 'path';
+import fs from 'node:fs';
+import createMainWindow from './mainWindow';
+import createSubWindow from './subWindow';
+import createMenuWindow from './menuWindow';
+import {
+  interWindowCommunication,
+  interMenuWindowCommunication,
+} from './interWindow';
+
+const { dbInstance } = require('./jobtime/jobTimeDB');
+const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
+
+export type TWindows = {
+  main: BrowserWindow | null;
+  sub: BrowserWindow | null;
+  menu: BrowserWindow | null;
+};
+
+const windows: TWindows = {
+  main: null,
+  sub: null,
+  menu: null,
+};
 
 class AppUpdater {
   constructor() {
@@ -24,11 +43,67 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let subWindow: BrowserWindow | null = null;
+let menuWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+dbInstance.init();
+subDbInstance.init();
+
+ipcMain.on('job-time', async (event, type, target) => {
+  if (type === 'day') {
+    const result = await dbInstance.getByDay(target);
+    event.reply('job-time', { type, result });
+  } else if (type === 'week') {
+    const result = await dbInstance.getRecentWeek();
+    event.reply('job-time', { type, result });
+  }
+});
+
+ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
+  if (type === 'daily') {
+    return subDbInstance.getByDay(application, date);
+  }
+  if (type === 'weekly') {
+    return subDbInstance.getRecentWeek(application);
+  }
+});
+
+ipcMain.on('application', (event, applicationPath) => {
+  try {
+    shell.openExternal(applicationPath);
+  } finally {
+    return;
+  }
+});
+
+ipcMain.on('sub', (event, path) => {
+  subWindow?.webContents.send('sub', path);
+});
+
+ipcMain.on('windowMoving', (event, arg) => {
+  mainWindow?.setBounds({
+    width: 100,
+    height: 100,
+    x: arg.mouseX - 50, // always changes in runtime
+    y: arg.mouseY - 50,
+  });
+});
+
+// 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
+ipcMain.on('toggleMenuOn', () => {
+  mainWindow?.show();
+  menuWindow?.show();
+  menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
+});
+
+ipcMain.handle('character-list', async () => {
+  const RESOURCE_PATH = 'assets/character';
+  const characterList = fs.readdirSync(RESOURCE_PATH);
+  return characterList;
+});
+
+ipcMain.on('change-character', (event, character) => {
+  mainWindow?.webContents.send('change-character', character);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -61,52 +136,13 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
+  mainWindow = createMainWindow(app, windows);
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
+  menuWindow = createMenuWindow(app, windows);
+  subWindow = createSubWindow(app, windows);
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728,
-    icon: getAssetPath('icon.png'),
-    webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
-    },
-  });
-
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
-
-  mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
-  });
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
-    return { action: 'deny' };
-  });
-
+  interWindowCommunication(mainWindow, subWindow);
+  interMenuWindowCommunication(mainWindow, menuWindow);
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -119,6 +155,7 @@ const createWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  globalShortcut.unregisterAll();
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -129,9 +166,28 @@ app
   .then(() => {
     createWindow();
     app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
+    });
+
+    globalShortcut.register('CommandOrControl+Alt+I', () => {
+      mainWindow?.webContents.toggleDevTools();
+      subWindow?.webContents.toggleDevTools();
+      menuWindow?.webContents.toggleDevTools();
+    });
+    globalShortcut.register('CommandOrControl+Alt+M', () => {
+      mainWindow?.webContents.toggleDevTools();
+    });
+    globalShortcut.register('CommandOrControl+Alt+S', () => {
+      subWindow?.webContents.toggleDevTools();
+    });
+    globalShortcut.register('CommandOrControl+Alt+O', () => {
+      subWindow?.webContents.send('sub', 'jobtime');
+    });
+    globalShortcut.register('CommandOrControl+Alt+P', () => {
+      subWindow?.webContents.send('sub', 'notification');
     });
   })
   .catch(console.log);
+
+// 프로그램 시간 계산하기
+const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
