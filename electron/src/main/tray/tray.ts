@@ -27,6 +27,8 @@ function createMenu(tray: Tray, app: App, windows: TWindows) {
     ]);
     tray.setContextMenu(contextMenu);
     windows.main?.hide();
+    windows.sub?.hide();
+    windows.menu?.hide();
   }
 
   function show() {
@@ -36,6 +38,8 @@ function createMenu(tray: Tray, app: App, windows: TWindows) {
     ]);
     tray.setContextMenu(contextMenu);
     windows.main?.show();
+    windows.sub?.show();
+    windows.menu?.show();
   }
 
   function exit() {
