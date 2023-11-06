@@ -4,7 +4,6 @@ import {
   Route,
   useNavigate,
 } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import './App.css';
 import Character from './pages/Character';
 import JobTime from './pages/JobTime';
@@ -15,40 +14,20 @@ import MenuModal from './components/character/MenuModal';
 import Closed from './pages/Closed';
 import Setting from './pages/Setting';
 import TMail from './components/notification/TMail';
+import MailContent from './pages/MailContent';
 
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
-  const [mails, setMails] = useState<Array<any>>([]);
 
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
-    // 메일이 수신 된 경우
-    console.log('received:', mail);
-    // let match = mails.filter((m)=>m.seq == mail.seq);
-    // const temp = mails;
-    // temp.push(mail)
-    // console.log(mails === temp);
-    // if(match.length == 0){
-    //   setMails(temp);
-    // }
-    let match = mails.filter((m) => m.seq == mail.seq);
-    if (match.length == 0) {
-      setMails((prevMails) => [...prevMails, mail]);
-      window.electron.ipcRenderer.sendMessage('mailSending', {mails});
-    }
+    // console.log("mainRenderer Mail 수신", mail);
+    // 메일 수신 알림 주기
   });
-
-  ipcRenderer.on('mailRequest', ()=>{
-    window.electron.ipcRenderer.sendMessage('mailSending', {mails});
-  })
-  useEffect(() => {
-    console.log('MAILS:', mails);
-  }, [mails]);
 
   ipcRenderer.on('sub', (path) => {
     navigate(`/${path}`);
   });
-
 
   return (
     <>
@@ -68,7 +47,7 @@ function MyApp() {
           path="/notification"
           element={
             <SubWindow title="메일 알림">
-              <Notification mails={mails} setMails={setMails} />
+              <Notification />
             </SubWindow>
           }
         />
@@ -77,6 +56,14 @@ function MyApp() {
           element={
             <SubWindow title="설정">
               <Setting />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/mailContent"
+          element={
+            <SubWindow title="메일">
+              <MailContent />
             </SubWindow>
           }
         />
