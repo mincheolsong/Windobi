@@ -9,8 +9,8 @@ import moveScheduling from './chracter/moveScheduling';
 import moving from './chracter/moving';
 import { TWindows } from './main';
 
-const width = 200;
-const height = 200;
+const width = 100;
+const height = 100;
 
 let windows: TWindows | null;
 let characterMoving: NodeJS.Timer | null;
@@ -85,6 +85,7 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
       characterMoving = null;
       scheduling = null;
     });
+
     ipcMain.on('restartMoving', () => {
       if (characterMoving == null && scheduling == null) {
         mainWindow.focus();
