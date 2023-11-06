@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
-function MyPage() {
+function RegistEmail() {
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,
       height: 400,
     });
-  });
+  }, []);
+
   return (
     <div>
-      <div>마이페이지(이메일등록)</div>
+      <div> 이메일 등록 화면 </div>
     </div>
   );
 }
-export default MyPage;
+export default RegistEmail;

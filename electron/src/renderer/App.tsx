@@ -15,6 +15,8 @@ import Closed from './pages/Closed';
 import Setting from './pages/Setting';
 import ChangeCharacter from './pages/ChangeCharacter';
 import ChatGPT from './pages/ChatGPT';
+import MyEmail from './pages/MyEmail';
+import RegistEmail from './pages/RegistEmail';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -69,8 +71,23 @@ function MyApp() {
             </SubWindow>
           }
         />
-
         <Route path="/menu" element={<MenuModal />} />
+        <Route
+          path="/email"
+          element={
+            <SubWindow title="나의 이메일">
+              <MyEmail />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/registemail"
+          element={
+            <SubWindow title="이메일 등록">
+              <RegistEmail />
+            </SubWindow>
+          }
+        />
       </Routes>
     </>
   );
