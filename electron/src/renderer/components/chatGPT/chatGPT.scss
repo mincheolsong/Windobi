@@ -1,0 +1,73 @@
+a {
+  text-decoration: none;
+}
+
+.wrap {
+  min-height: 25rem;
+}
+
+.wrap .chat {
+  display: flex;
+  align-items: flex-start;
+  padding: 5px;
+}
+
+.wrap .chat .icon {
+  position: relative;
+  overflow: hidden;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #eee;
+}
+
+.wrap .chat .icon i {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  font-size: 2.5rem;
+  color: #aaa;
+  transform: translateX(-50%);
+}
+
+.wrap .chat .textbox {
+  position: relative;
+  display: inline-block;
+  max-width: calc(100% - 70px);
+  padding: 10px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.wrap .chat .textbox::before {
+  position: absolute;
+  display: block;
+  top: 0;
+  font-size: 1.5rem;
+}
+
+.wrap .ch1 .textbox {
+  margin-left: 20px;
+  background-color: #74aa9c;
+}
+
+.wrap .ch1 .textbox::before {
+  left: -15px;
+  content: '◀';
+  color: #74aa9c;
+}
+
+.wrap .ch2 {
+  flex-direction: row-reverse;
+}
+
+.wrap .ch2 .textbox {
+  margin-right: 20px;
+  background-color: #f9eb54;
+}
+
+.wrap .ch2 .textbox::before {
+  right: -15px;
+  content: '▶';
+  color: #f9eb54;
+}
