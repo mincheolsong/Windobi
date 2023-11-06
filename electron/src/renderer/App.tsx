@@ -15,6 +15,7 @@ import Closed from './pages/Closed';
 import Setting from './pages/Setting';
 import ChangeCharacter from './pages/ChangeCharacter';
 import ChatGPT from './pages/ChatGPT';
+import AddCharacter from './pages/AddCharacter';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -58,6 +59,14 @@ function MyApp() {
           element={
             <SubWindow title="캐릭터 변경">
               <ChangeCharacter />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/addcharacter"
+          element={
+            <SubWindow title="캐릭터 추가">
+              <AddCharacter />
             </SubWindow>
           }
         />

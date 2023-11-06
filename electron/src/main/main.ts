@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable promise/catch-or-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unsafe-finally */
@@ -120,7 +121,52 @@ ipcMain.on('toggleMenuOn', () => {
 ipcMain.handle('character-list', async () => {
   const RESOURCE_PATH = 'assets/character';
   const characterList = fs.readdirSync(RESOURCE_PATH);
-  return characterList;
+  const result = characterList.map((character) => {
+    const image = fs.readFileSync(
+      path.join(RESOURCE_PATH, character, 'stop', '1.png'),
+      { encoding: 'base64' },
+    );
+
+    return { name: character, image };
+  });
+  return result;
+});
+
+type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
+type TMotionImage = {
+  click: Array<string>;
+  down: Array<string>;
+  move: Array<string>;
+  stop: Array<string>;
+  up: Array<string>;
+};
+ipcMain.handle('character-images', async (event, character: string) => {
+  const RESOURCE_PATH = 'assets/character';
+  const TARGET_DIRECTORY = path.join(RESOURCE_PATH, character);
+  const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'up'];
+  const motionImages: TMotionImage = {
+    click: [],
+    down: [],
+    move: [],
+    stop: [],
+    up: [],
+  };
+  motions.forEach((motion) => {
+    try {
+      const imageList = fs.readdirSync(path.join(TARGET_DIRECTORY, motion));
+      for (const image of imageList) {
+        const base64Image = fs.readFileSync(
+          path.join(TARGET_DIRECTORY, motion, image),
+          { encoding: 'base64' },
+        );
+        motionImages[motion].push(base64Image);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  return motionImages;
 });
 
 ipcMain.on('change-character', (event, character) => {
@@ -215,6 +261,7 @@ app
 
 let moveTimer: ReturnType<typeof setInterval> | null = null;
 ipcMain.on('start-move', () => {
+  mainWindow?.webContents.send('character-move', 'click');
   moveTimer = setInterval(() => {
     const { x, y } = screen.getCursorScreenPoint();
     mainWindow?.setBounds({
