@@ -24,7 +24,7 @@ function MenuModal() {
     { setting: setting },
     { close: close },
     { news: news },
-    { login: login },
+    { email: login },
   ];
 
   const handleWheel = (event) => {
