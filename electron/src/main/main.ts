@@ -86,7 +86,6 @@ ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
 });
 
 ipcMain.handle('env', async (event, key) => {
-  console.log(process.env.OPENAI_API_KEY);
   return process.env[key];
 });
 
