@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable default-case */
@@ -150,7 +151,9 @@ function CharacterImg() {
       alt="icon"
       src={
         images[motion]?.length > 0
-          ? `data:image/png;base64,${images[motion][imageIndex]}`
+          ? images[motion][imageIndex]
+            ? `data:image/png;base64,${images[motion][imageIndex]}`
+            : images[motion][0]
           : ''
       }
       style={{
