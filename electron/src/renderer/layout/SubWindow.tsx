@@ -13,9 +13,12 @@ type TSubWindow = {
 
 function SubWindow({ title = '', children }: TSubWindow) {
   const navigate = useNavigate();
-
+  const { ipcRenderer } = window.electron;
   const onClickClose = useCallback(() => {
-    navigate('/closed');
+    // navigate('/closed');
+    ipcRenderer.sendMessage('restartMoving');
+
+    ipcRenderer.sendMessage('hideSubWindow');
   }, []);
 
   return (
