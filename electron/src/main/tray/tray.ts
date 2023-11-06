@@ -41,7 +41,7 @@ function createMenu(tray: Tray, app: App, windows: TWindows) {
   function exit() {
     if (process.platform !== 'darwin') {
       globalShortcut.unregisterAll();
-      app.exit();
+      app.quit();
     }
   }
 
