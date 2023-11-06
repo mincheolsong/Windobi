@@ -95,18 +95,22 @@ ipcMain.on('windowMoving', (event, arg) => {
   });
 });
 
+ipcMain.on('mailSending', (event, arg) => {
+  console.log("mailSending event Occur!");
+  subWindow?.webContents.send('mailSending', arg.mails);
+});
+
+ipcMain.on('mailRequest', () => {
+  console.log("mailRequesting!!!!!");
+  mainWindow?.webContents.send('mailRequest');
+});
+
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenuOn', () => {
   mainWindow?.show();
   menuWindow?.show();
   menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
-
-// let a = 0;
-// ipcMain.handle('test', (e, arg)=>{
-//   a = a + arg;
-//   return a;
-// })
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

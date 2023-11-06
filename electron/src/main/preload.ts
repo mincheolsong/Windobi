@@ -16,7 +16,10 @@ export type Channels =
   | 'character-move'
   | 'stopMoving'
   | 'restartMoving'
-  | 'sub-job-time';
+  | 'mailReceiving'
+  | 'sub-job-time'
+  | 'mailSending'
+  | 'mailRequest';
 
 const electronHandler = {
   ipcRenderer: {
