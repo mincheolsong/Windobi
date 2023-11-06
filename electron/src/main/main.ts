@@ -261,6 +261,7 @@ app
 
 let moveTimer: ReturnType<typeof setInterval> | null = null;
 ipcMain.on('start-move', () => {
+  mainWindow?.webContents.send('character-move', 'click');
   moveTimer = setInterval(() => {
     const { x, y } = screen.getCursorScreenPoint();
     mainWindow?.setBounds({
