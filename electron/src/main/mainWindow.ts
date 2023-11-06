@@ -86,7 +86,6 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
     });
     ipcMain.on('restartMoving', () => {
       if (characterMoving == null && scheduling == null) {
-        console.log('restart moving!!!!');
         mainWindow.focus();
 
         characterMoving = setInterval(moving, 30, character);
