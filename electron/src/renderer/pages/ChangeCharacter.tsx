@@ -23,22 +23,9 @@ function ChangeCharacter() {
     ipcRenderer.sendMessage('size', { width: 400, height: 400 });
 
     (async () => {
-      const characterList: Array<string> =
+      const characterList: Array<TCharacter> =
         await ipcRenderer.invoke('character-list');
-
-      if (characterList.length !== 0) {
-        const promises = characterList.map(
-          (char) => import(`../../../assets/character/${char}/stop.png`),
-        );
-
-        const images = await Promise.all(promises);
-
-        const result: Array<TCharacter> = [];
-        for (let i = 0; i < images.length; i += 1) {
-          result.push({ name: characterList[i], image: images[i].default });
-        }
-        setCharacters(result);
-      }
+      setCharacters(characterList);
     })();
   }, []);
 
@@ -49,10 +36,10 @@ function ChangeCharacter() {
           <S.Li onClick={() => changeCharacter(character.name)}>
             {character.name}
             <img
-              src={character.image}
+              src={`data:image/png;base64,${character.image}`}
               width={60}
               height={60}
-              alt={character.image}
+              alt={character.name}
             />
           </S.Li>
         );
