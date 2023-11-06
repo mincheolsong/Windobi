@@ -4,7 +4,14 @@
 import { useEffect, useState } from 'react';
 
 type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
-type TDirection = 'left' | 'right' | 'stop' | 'up' | 'down' | 'downsleep';
+type TDirection =
+  | 'left'
+  | 'right'
+  | 'stop'
+  | 'up'
+  | 'down'
+  | 'downsleep'
+  | 'click';
 type TMotionImage = {
   click: Array<string>;
   down: Array<string>;
@@ -19,10 +26,11 @@ type TMotionHandler = {
   up: () => ReturnType<typeof setInterval> | null;
   down: () => ReturnType<typeof setInterval> | null;
   downsleep: () => ReturnType<typeof setInterval> | null;
+  click: () => ReturnType<typeof setInterval> | null;
 };
 
 function CharacterImg() {
-  const TICK = 500;
+  const TICK = 250;
 
   const [character, setCharacter] = useState<string>('');
   const [motion, setMotion] = useState<TMotion>('stop');
@@ -43,6 +51,7 @@ function CharacterImg() {
     up: () => null,
     down: () => null,
     downsleep: () => null,
+    click: () => null,
   };
 
   const { ipcRenderer } = window.electron;
@@ -106,6 +115,11 @@ function CharacterImg() {
       setMotion('down');
       if (images.down.length <= 1) return null;
       return setInterval(indexHandler, TICK, images.down.length);
+    };
+    motionHandler.click = () => {
+      setMotion('click');
+      if (images.click.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.click.length);
     };
 
     const handler = (direction: TDirection) => {
