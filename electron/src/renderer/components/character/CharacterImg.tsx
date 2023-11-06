@@ -153,7 +153,7 @@ function CharacterImg() {
         images[motion]?.length > 0
           ? images[motion][imageIndex]
             ? `data:image/png;base64,${images[motion][imageIndex]}`
-            : images[motion][0]
+            : `data:image/png;base64,${images[motion][0]}`
           : ''
       }
       style={{
