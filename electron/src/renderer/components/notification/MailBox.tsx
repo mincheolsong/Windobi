@@ -11,9 +11,13 @@ import { useNavigate } from 'react-router-dom';
 //   alert(a);
 // }
 
-
-
-function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch<React.SetStateAction<TMail[]>>}) {
+function MailBox({
+  mails,
+  setMails,
+}: {
+  mails: TMail[];
+  setMails: React.Dispatch<React.SetStateAction<TMail[]>>;
+}) {
   const navigate = useNavigate();
   useEffect(() => {
     if (!mails || mails.length === 0) return;
@@ -31,12 +35,12 @@ function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch
               <S.Icon src={naver} />
               <S.Contents>
                 <S.ContentsDiv>
-                  <S.Sender>
-                    {mail.from}
-                  </S.Sender>
+                  <S.Sender>{mail.from}</S.Sender>
                   <Time
                     onClick={() => {
-                      setMails((prevMails) => prevMails.filter((m) => m.seq !== mail.seq));
+                      setMails((prevMails) =>
+                        prevMails.filter((m) => m.seq !== mail.seq),
+                      );
                     }}
                     time={mail.date}
                   />
@@ -44,7 +48,7 @@ function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch
                 <S.Title>
                   <S.Text
                     onClick={() => {
-                      navigate('/jobtime');
+                      navigate('/mailContent', { state: { mail } });
                     }}
                   >
                     {mail.subject}

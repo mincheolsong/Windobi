@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { styled } from "styled-components";
 
 
@@ -6,7 +7,7 @@ const Wrapper = styled.div`
   height: 100%;
   border-radius: 5px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background-color: rgba(255,255,255,1);
 `;
 
@@ -53,4 +54,33 @@ const From = styled.div`
 
   // background-color: blue;
 `;
-export { Wrapper, From, Text, Sender, SenderText };
+
+const Line = styled.div`
+  width: 90%;
+  margin: 0 auto;
+  height: 0.1px;
+  background-color: #ccc; /* You can change the color to your preference */
+`;
+
+const Subject = styled.div`
+  padding: 10px;
+  width: 100%;
+  height: 18%;
+  // background-color: rgba(123,123,123,0.5);
+`;
+
+const Time = styled.div`
+  margin-top: 3px;
+  font-family: GmarketSansTTFLight;
+  width: 100%;
+  font-size: 9px;
+  // background-color: red;
+`;
+
+const Content = styled.div`
+  padding: 10px;
+  font-size: 14px;
+  width: 100%;
+  font-family: GmarketSansTTFLight
+`;
+export { Wrapper, From, Text, Sender, SenderText, Line, Subject, Time, Content };
