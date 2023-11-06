@@ -71,17 +71,29 @@ function MenuModal() {
       style={{ WebkitUserSelect: 'none' }}
     >
       <div className="icons">
-        {reorderedItems.map((item, index) => (
-          <div className="rotater" key={index}>
-            <div className="btn btn-icon">
-              <img
-                className="fa"
-                src={item[Object.keys(item)[0]]}
-                onClick={() => navigate(`${Object.keys(item)[0]}`)}
-              />
+        {reorderedItems.map((item, index) =>
+          Object.keys(item)[0] === 'close' ? (
+            <div className="rotater" key={index}>
+              <div className="btn btn-icon close-btn">
+                <img
+                  className="fa"
+                  src={item[Object.keys(item)[0]]}
+                  onClick={() => navigate(`${Object.keys(item)[0]}`)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div className="rotater" key={index}>
+              <div className="btn btn-icon">
+                <img
+                  className="fa"
+                  src={item[Object.keys(item)[0]]}
+                  onClick={() => navigate(`${Object.keys(item)[0]}`)}
+                />
+              </div>
+            </div>
+          ),
+        )}
       </div>
     </div>
   );

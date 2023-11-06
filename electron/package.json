@@ -99,8 +99,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.15",
-    "@mui/styles": "^5.14.15",
+    "@mui/material": "^5.14.16",
+    "@mui/styles": "^5.14.16",
     "@mui/x-charts": "^6.0.0-alpha.17",
     "@paymoapp/active-window": "^2.0.6",
     "dotenv": "^16.3.1",
