@@ -12,6 +12,7 @@ function Chracter() {
       // 좌클릭인 경우
       canRightClick = false;
       ipcRenderer.sendMessage('start-move');
+      ipcRenderer.sendMessage('stopMoving');
     } else if (e.button === 2) {
       // 우클릭인 경우
       if (!canRightClick) return;
@@ -24,6 +25,7 @@ function Chracter() {
     if (e.button === 0) {
       canRightClick = true;
       ipcRenderer.sendMessage('stop-move');
+      ipcRenderer.sendMessage('restartMoving');
     }
   };
 
