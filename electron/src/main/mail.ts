@@ -1,3 +1,4 @@
+import { BrowserWindow } from 'electron';
 import Imap from 'imap'
 // const Imap = require('imap');
 const MailParser = require("mailparser").MailParser;
@@ -22,8 +23,8 @@ class Mail {
 // 아이디와 패스워드를 어떻게 암호화할것인가?
 // crypto module!!
 let mails: [] = [];
-let received: [] = null;
-function getMails(r: [], user: string, password: string, host: string) {
+let received: [] | null= null;
+function getMails(mainWindow : BrowserWindow , r: [],  user: string, password: string, host: string) {
   received = r;
   // console.log("dd");
 
@@ -67,14 +68,14 @@ function getMails(r: [], user: string, password: string, host: string) {
 
       if (match.length === 0) {
         // 메일 받은 경우 !! 이벤트 발생
-        console.log("Mail Received", mails[i].subject);
+        mainWindow.webContents.send('mailReceiving', mails[i]);
+        console.log("sending:", mails[i]);
       }
     }
 
     for(let i = 0; i < mails.length; ++i){
       received[i] = mails[i];
     }
-
     mails = [];
     // console.log('Connection ended');
   });
