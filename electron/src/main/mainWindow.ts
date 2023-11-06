@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /* eslint-disable no-param-reassign */
 
 import { App, BrowserWindow, shell, ipcMain } from 'electron';
@@ -50,7 +51,7 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', () => {
+  mainWindow.once('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -73,23 +74,30 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
       110,
     );
 
-    // characterMoving = setInterval(moving, 30, character);
-    // scheduling = setInterval(moveScheduling, 2000, character);
+    scheduling = setInterval(moveScheduling, 2000, character);
+    characterMoving = setInterval(moving, 30, character);
 
     // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
 
-    // ipcMain.on('stopMoving', () => {
-    //   clearInterval(characterMoving);
-    //   clearInterval(scheduling);
-    //   characterMoving = null;
-    //   scheduling = null;
-    // });
-    // ipcMain.on('restartMoving', () => {
-    //   if (characterMoving == null && scheduling == null) {
-    //     scheduling = setInterval(moveScheduling, 2000, character);
-    //     characterMoving = setInterval(moving, 30, character);
-    //   }
-    // });
+    ipcMain.on('stopMoving', () => {
+      clearInterval(characterMoving);
+      clearInterval(scheduling);
+      characterMoving = null;
+      scheduling = null;
+    });
+    ipcMain.on('restartMoving', () => {
+      if (characterMoving == null && scheduling == null) {
+        mainWindow.focus();
+
+        characterMoving = setInterval(moving, 30, character);
+        character.mainWindow.webContents.send(
+          'character-move',
+          character.direction,
+        );
+
+        scheduling = setInterval(moveScheduling, 2000, character);
+      }
+    });
 
     mainWindow.webContents.closeDevTools();
   });

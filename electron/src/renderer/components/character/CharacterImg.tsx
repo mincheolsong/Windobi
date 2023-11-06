@@ -1,104 +1,152 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable default-case */
-import { useEffect } from 'react';
-// import stopImg from '../../../../assets/character/hallow/shime1.png';
-// import left1 from '../../../../assets/character/hallow/shime2.png';
-// import left2 from '../../../../assets/character/hallow/shime3.png';
-// import up1 from '../../../../assets/character/hallow/shime13.png';
-// import up2 from '../../../../assets/character/hallow/shime14.png';
-// import down1 from '../../../../assets/character/hallow/shime5.png';
-// import down2 from '../../../../assets/character/hallow/shime6.png';
-// import down3 from '../../../../assets/character/hallow/shime4.png';
-import stopImg from '../../../../assets/character/chungmyeong/shime1.png';
-import left1 from '../../../../assets/character/chungmyeong/shime2.png';
-import left2 from '../../../../assets/character/chungmyeong/shime3.png';
-import up1 from '../../../../assets/character/chungmyeong/shime13.png';
-import up2 from '../../../../assets/character/chungmyeong/shime14.png';
-import down1 from '../../../../assets/character/chungmyeong/shime5.png';
-import down2 from '../../../../assets/character/chungmyeong/shime6.png';
-import down3 from '../../../../assets/character/chungmyeong/shime4.png';
+import { useEffect, useState } from 'react';
+import SettingDB from '../../../main/setting/settingDB';
+
+type TMotion =
+  | 'stop'
+  | 'left1'
+  | 'left2'
+  | 'up1'
+  | 'up2'
+  | 'down1'
+  | 'down2'
+  | 'down3';
+
+type TImages = {
+  stop: string;
+  left1: string;
+  left2: string;
+  up1: string;
+  up2: string;
+  down1: string;
+  down2: string;
+  down3: string;
+};
+
+type TDirection = 'left' | 'right' | 'stop' | 'up' | 'down' | 'downsleep';
 
 function CharacterImg() {
-  let animation: any = null;
-  let image: HTMLImageElement | null = null;
-  let flag = true;
+  const TICK = 250;
 
-  function left() {
-    if (image) {
-      image.src = flag ? left1 : left2;
-      flag = !flag;
-      image.style.transform = `scaleX(1)`;
-    }
-  }
+  const [character, setCharacter] = useState<string>('hanbyul');
+  const [motion, setMotion] = useState<TMotion>('stop');
+  const [images, setImages] = useState<TImages>({
+    stop: '',
+    left1: '',
+    left2: '',
+    up1: '',
+    up2: '',
+    down1: '',
+    down2: '',
+    down3: '',
+  });
+  const [reverse, setReverse] = useState<boolean>(false);
 
-  function right() {
-    if (image) {
-      image.src = flag ? left1 : left2;
-      flag = !flag;
-      image.style.transform = `scaleX(-1)`;
-    }
-  }
+  const { ipcRenderer } = window.electron;
 
-  function stop() {
-    if (image) {
-      image.src = stopImg;
-    }
-  }
+  let timerId: ReturnType<typeof setInterval> | null = null;
 
-  function up() {
-    if (image) {
-      image.src = flag ? up1 : up2;
-      flag = !flag;
-      // image.style.transform = `scaleX(-1)`;
-    }
-  }
-  function down() {
-    if (image) {
-      image.src = flag ? down1 : down2;
-      flag = !flag;
-    }
-  }
-  function downsleep() {
-    if (image) {
-      image.src = down3;
-    }
-  }
-  // 이미지 태그가 바꼈을 때 한번만 실행
+  // 캐릭터가 변경(디렉터리 이름과 매치되어야 함)
+  // 이에 따라 적절한 이미지를 불러오자
   useEffect(() => {
-    image = document.querySelector('img');
-    animation = setInterval(stop, 300);
+    if (!character) return;
+
+    (async () => {
+      const [stop, left1, left2, up1, up2, down1, down2, down3] =
+        await Promise.all([
+          import(`../../../../assets/character/${character}/stop.png`),
+          import(`../../../../assets/character/${character}/left1.png`),
+          import(`../../../../assets/character/${character}/left2.png`),
+          import(`../../../../assets/character/${character}/up1.png`),
+          import(`../../../../assets/character/${character}/up2.png`),
+          import(`../../../../assets/character/${character}/down1.png`),
+          import(`../../../../assets/character/${character}/down2.png`),
+          import(`../../../../assets/character/${character}/down3.png`),
+        ]);
+
+      setImages({
+        stop: stop.default,
+        left1: left1.default,
+        left2: left2.default,
+        up1: up1.default,
+        up2: up2.default,
+        down1: down1.default,
+        down2: down2.default,
+        down3: down3.default,
+      });
+    })();
+  }, [character]);
+
+  // 각 모션에 대해 어떠한 처리를 할지 설정
+  const motions = {
+    left: () => {
+      setReverse(false);
+      return setInterval(() => {
+        setMotion((prev) => (prev === 'left2' ? 'left1' : 'left2'));
+      }, TICK);
+    },
+    right: () => {
+      setReverse(true);
+      return setInterval(() => {
+        setMotion((prev) => (prev === 'left2' ? 'left1' : 'left2'));
+      }, TICK);
+    },
+    stop: () => {
+      setMotion(() => 'stop');
+      return null;
+    },
+    up: () => {
+      return null;
+    },
+    down: () => {
+      return setInterval(() => {
+        setMotion((prev) => (prev === 'down2' ? 'down1' : 'down2'));
+      }, TICK);
+    },
+    downsleep: () => {
+      setMotion(() => 'down3');
+      return null;
+    },
+  };
+
+  // ipcRenderer 이벤트 등록
+  useEffect(() => {
+    (async () => {
+      const savedCharacter = await ipcRenderer.invoke(
+        'get-setting',
+        'character',
+      );
+      setCharacter(savedCharacter);
+    })();
+
+    ipcRenderer.on('character-move', (direction: TDirection) => {
+      if (timerId !== null) {
+        // 그전에 있던 이벤트는 없애고
+        clearInterval(timerId);
+      }
+      const handler = motions[direction];
+      timerId = handler();
+    });
   }, []);
 
-  window.electron.ipcRenderer.on('character-move', (value: any) => {
-    clearInterval(animation);
-    switch (value) {
-      case 'left':
-        animation = setInterval(left, 300);
-        break;
-      case 'right':
-        animation = setInterval(right, 300);
-        break;
-      case 'stop':
-        animation = setInterval(stop, 300);
-        break;
-      case 'up':
-        animation = setInterval(up, 300);
-        break;
-      case 'down':
-        animation = setInterval(down, 300);
-        break;
-      case 'downsleep':
-        animation = setInterval(downsleep, 10);
-        break;
-    }
-  });
+  // 캐릭터 변경 리스너 등록
+  useEffect(() => {
+    ipcRenderer.on('change-character', (character: string) => {
+      setCharacter(character);
+    });
+  }, []);
 
   return (
     <img
       width="100"
       alt="icon"
-      src={stopImg}
-      style={{ WebkitUserDrag: 'none' }}
+      src={images[motion]}
+      style={{
+        WebkitUserDrag: 'none',
+        transform: `scaleX(${reverse ? -1 : 1})`,
+      }}
     />
   );
 }

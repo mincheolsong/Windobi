@@ -18,7 +18,7 @@ const RESOURCES_PATH =
     ? path.join(__dirname, '../../../assets')
     : path.join(process.resourcesPath, 'assets');
 
-const DB_FILE = path.join(RESOURCES_PATH, 'sub_job_time.db');
+const DB_FILE = path.join(RESOURCES_PATH, 'database.db');
 
 const TABLE_NAME = 'sub_job_time';
 
