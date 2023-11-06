@@ -17,6 +17,7 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
+import getMails from './mail';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
@@ -40,6 +41,9 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
+const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
+const mails: [] = []; // 이제껏 수신한 메일들을 보관하는 배열
 
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
@@ -95,15 +99,11 @@ ipcMain.on('windowMoving', (event, arg) => {
   });
 });
 
-ipcMain.on('mailSending', (event, arg) => {
-  console.log("mailSending event Occur!");
-  subWindow?.webContents.send('mailSending', arg.mails);
+ipcMain.on('mailRequest', ()=>{
+  console.log("mail Requesting!!!");
+  subWindow?.webContents.send('mailRequest', mails);
 });
 
-ipcMain.on('mailRequest', () => {
-  console.log("mailRequesting!!!!!");
-  mainWindow?.webContents.send('mailRequest');
-});
 
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenuOn', () => {
@@ -143,9 +143,10 @@ const createWindow = async () => {
   }
 
   mainWindow = createMainWindow(app, windows);
-
   menuWindow = createMenuWindow(app, windows);
   subWindow = createSubWindow(app, windows);
+
+  let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.naver.com");
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);

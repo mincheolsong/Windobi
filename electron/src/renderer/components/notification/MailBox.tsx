@@ -4,6 +4,7 @@ import naver from '../../../../assets/naver.png';
 import * as S from './Mail.style';
 import Time from './Time';
 import TMail from './TMail';
+import { useNavigate } from 'react-router-dom';
 
 // async function click(){
 //   let a = await window.electron.ipcRenderer.invoke('test', 1);
@@ -13,7 +14,7 @@ import TMail from './TMail';
 
 
 function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch<React.SetStateAction<TMail[]>>}) {
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (!mails || mails.length === 0) return;
     for (let i = 0; i < mails.length; ++i) {
@@ -35,9 +36,7 @@ function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch
                   </S.Sender>
                   <Time
                     onClick={() => {
-                      // console.log("isItOK?");
                       setMails((prevMails) => prevMails.filter((m) => m.seq !== mail.seq));
-                      console.log(mails);
                     }}
                     time={mail.date}
                   />
@@ -45,7 +44,7 @@ function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch
                 <S.Title>
                   <S.Text
                     onClick={() => {
-                      alert('임시');
+                      navigate('/jobtime');
                     }}
                   >
                     {mail.subject}

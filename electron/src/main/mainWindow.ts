@@ -16,7 +16,7 @@ let windows: TWindows | null;
 let characterMoving: NodeJS.Timer | null;
 let scheduling: NodeJS.Timer | null;
 
-const createMainWindow = (app: App, wins: TWindows, port1: MessagePortMain): BrowserWindow => {
+const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
@@ -74,25 +74,24 @@ const createMainWindow = (app: App, wins: TWindows, port1: MessagePortMain): Bro
       110,
     );
 
-    characterMoving = setInterval(moving, 30, character);
-    scheduling = setInterval(moveScheduling, 2000, character);
+    // characterMoving = setInterval(moving, 30, character);
+    // scheduling = setInterval(moveScheduling, 2000, character);
 
-    // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
+    // // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
 
-    ipcMain.on('stopMoving', () => {
-      clearInterval(characterMoving);
-      clearInterval(scheduling);
-      characterMoving = null;
-      scheduling = null;
-    });
-    ipcMain.on('restartMoving', () => {
-      if (characterMoving == null && scheduling == null) {
-        scheduling = setInterval(moveScheduling, 2000, character);
-        characterMoving = setInterval(moving, 30, character);
-      }
-    });
-    let received: [] = [];
-    let timerId = setInterval(getMails, 10000, mainWindow, received , "honeycomb201", "ssafyssafy123", "imap.naver.com");
+    // ipcMain.on('stopMoving', () => {
+    //   clearInterval(characterMoving);
+    //   clearInterval(scheduling);
+    //   characterMoving = null;
+    //   scheduling = null;
+    // });
+    // ipcMain.on('restartMoving', () => {
+    //   if (characterMoving == null && scheduling == null) {
+    //     scheduling = setInterval(moveScheduling, 2000, character);
+    //     characterMoving = setInterval(moving, 30, character);
+    //   }
+    // });
+
 
 
     mainWindow.webContents.closeDevTools();

@@ -16,7 +16,7 @@ function MenuModal() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const menuItems = [
     { jobtime: jobtime },
-    { calendar: calendar },
+    { mailContent: calendar },
     { notification: alarm },
     { chatGPT: chatGPT },
     { setting: setting },

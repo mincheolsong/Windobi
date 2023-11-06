@@ -16,9 +16,8 @@ export type Channels =
   | 'character-move'
   | 'stopMoving'
   | 'restartMoving'
-  | 'mailReceiving'
   | 'sub-job-time'
-  | 'mailSending'
+  | 'mailReceiving'
   | 'mailRequest';
 
 const electronHandler = {

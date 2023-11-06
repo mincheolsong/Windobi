@@ -23,8 +23,8 @@ class Mail {
 // 아이디와 패스워드를 어떻게 암호화할것인가?
 // crypto module!!
 let mails: [] = [];
-let received: [] | null= null;
-function getMails(mainWindow : BrowserWindow , r: [],  user: string, password: string, host: string) {
+let received: [] | null = null;
+function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], allMails: [], user: string, password: string, host: string) {
   received = r;
   // console.log("dd");
 
@@ -68,12 +68,14 @@ function getMails(mainWindow : BrowserWindow , r: [],  user: string, password: s
 
       if (match.length === 0) {
         // 메일 받은 경우 !! 이벤트 발생
-        mainWindow.webContents.send('mailReceiving', mails[i]);
-        console.log("sending:", mails[i]);
+        mainWindow.webContents.send('mailReceiving', mails[i]); // 알림을 위해서
+        subWindow.webContents.send('mailReceiving', mails[i]); // 갱신을 위해서
+        allMails.push(mails[i]);
+        // console.log("sending:", mails[i]);
       }
     }
 
-    for(let i = 0; i < mails.length; ++i){
+    for (let i = 0; i < mails.length; ++i) {
       received[i] = mails[i];
     }
     mails = [];
