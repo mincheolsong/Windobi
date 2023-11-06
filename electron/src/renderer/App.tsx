@@ -64,7 +64,7 @@ function MyApp() {
         <Route
           path="/chatGPT"
           element={
-            <SubWindow title="ChatGPT">
+            <SubWindow title="한별이">
               <ChatGPT />
             </SubWindow>
           }
