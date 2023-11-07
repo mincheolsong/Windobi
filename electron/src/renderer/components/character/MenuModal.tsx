@@ -47,6 +47,9 @@ function MenuModal() {
       ipcRenderer.sendMessage('stopMoving');
     });
 
+    ipcRenderer.on('setActiveFalse', () => {
+      setActive(false);
+    });
     // ipcRenderer.on('toggleMenuClose', () => {
     //   setActive(false);
     //   ipcRenderer.sendMessage('restartMoving');

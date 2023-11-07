@@ -15,18 +15,28 @@ const createTray = (app: App, windows: TWindows) => {
   createMenu(tray, app, windows);
 };
 
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
 function createMenu(tray: Tray, app: App, windows: TWindows) {
   const initTemplate: Array<
     Electron.MenuItemConstructorOptions | Electron.MenuItem
   > = [{ label: '종료', type: 'normal', click: exit }];
 
-  function hide() {
+  async function hide() {
     const contextMenu = Menu.buildFromTemplate([
       { label: '보이기', type: 'normal', click: show },
       ...initTemplate,
     ]);
     tray.setContextMenu(contextMenu);
+
+    windows.menu?.webContents.send('setActiveFalse');
+    await sleep(500);
     windows.main?.hide();
+    windows.menu?.hide();
     windows.sub?.hide();
   }
 
