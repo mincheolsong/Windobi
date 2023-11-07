@@ -15,6 +15,11 @@ import Closed from './pages/Closed';
 import Setting from './pages/Setting';
 import TMail from './components/notification/TMail';
 import MailContent from './pages/MailContent';
+import ChangeCharacter from './pages/ChangeCharacter';
+import ChatGPT from './pages/ChatGPT';
+import AddCharacter from './pages/AddCharacter';
+import MyEmail from './pages/MyEmail';
+import RegistEmail from './pages/RegistEmail';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -31,7 +36,7 @@ function MyApp() {
 
   return (
     <>
-      <GlobalFont></GlobalFont>
+      <GlobalFont />
       <Routes>
         <Route path="/" element={<Character />} />
         <Route path="/closed" element={<Closed />} />
@@ -59,20 +64,62 @@ function MyApp() {
             </SubWindow>
           }
         />
+
         <Route
           path="/mailContent"
           element={
             <SubWindow title="메일">
               <MailContent />
+              </SubWindow>
+          }
+        />
+
+        <Route
+          path="/changecharacter"
+          element={
+            <SubWindow title="캐릭터 변경">
+              <ChangeCharacter />
+            </SubWindow>
+          }
+        />
+
+        <Route
+          path="/addcharacter"
+          element={
+            <SubWindow title="캐릭터 추가">
+              <AddCharacter />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/chatGPT"
+          element={
+            <SubWindow title="ChatGPT">
+              <ChatGPT />
             </SubWindow>
           }
         />
         <Route path="/menu" element={<MenuModal />} />
+        <Route
+          path="/email"
+          element={
+            <SubWindow title="나의 이메일">
+              <MyEmail />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/registemail"
+          element={
+            <SubWindow title="이메일 등록">
+              <RegistEmail />
+            </SubWindow>
+          }
+        />
       </Routes>
     </>
   );
 }
-
 export default function App() {
   return (
     <Router>

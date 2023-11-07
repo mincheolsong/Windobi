@@ -9,6 +9,8 @@ import alarm from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
 import news from '../../../../assets/icons/news.svg';
 import setting from '../../../../assets/icons/setting.svg';
+import login from '../../../../assets/icons/login.svg';
+import close from '../../../../assets/icons/close.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
@@ -16,12 +18,13 @@ function MenuModal() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const menuItems = [
     { jobtime: jobtime },
-    { mailContent: calendar },
+    { calendar: calendar },
     { notification: alarm },
     { chatGPT: chatGPT },
     { setting: setting },
-
+    { close: close },
     { news: news },
+    { email: login },
   ];
 
   const handleWheel = (event) => {
@@ -44,15 +47,21 @@ function MenuModal() {
       ipcRenderer.sendMessage('stopMoving');
     });
 
-    ipcRenderer.on('toggleMenuClose', () => {
-      setActive(false);
-      ipcRenderer.sendMessage('restartMoving');
-    });
+    // ipcRenderer.on('toggleMenuClose', () => {
+    //   setActive(false);
+    //   ipcRenderer.sendMessage('restartMoving');
+    // });
   }, []);
 
   const navigate = (path: string) => {
-    ipcRenderer.sendMessage('sub', path);
     setActive(false); // 클릭하면 메뉴를 닫음(애니메이션)
+    ipcRenderer.sendMessage('hideMenuWindow');
+
+    if (path === 'close') {
+      ipcRenderer.sendMessage('restartMoving');
+    } else {
+      ipcRenderer.sendMessage('sub', path);
+    }
   };
 
   return (
@@ -62,17 +71,29 @@ function MenuModal() {
       style={{ WebkitUserSelect: 'none' }}
     >
       <div className="icons">
-        {reorderedItems.map((item, index) => (
-          <div className="rotater" key={index}>
-            <div className="btn btn-icon">
-              <img
-                className="fa"
-                src={item[Object.keys(item)[0]]}
-                onClick={() => navigate(`${Object.keys(item)[0]}`)}
-              />
+        {reorderedItems.map((item, index) =>
+          Object.keys(item)[0] === 'close' ? (
+            <div className="rotater" key={index}>
+              <div className="btn btn-icon close-btn">
+                <img
+                  className="fa"
+                  src={item[Object.keys(item)[0]]}
+                  onClick={() => navigate(`${Object.keys(item)[0]}`)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div className="rotater" key={index}>
+              <div className="btn btn-icon">
+                <img
+                  className="fa"
+                  src={item[Object.keys(item)[0]]}
+                  onClick={() => navigate(`${Object.keys(item)[0]}`)}
+                />
+              </div>
+            </div>
+          ),
+        )}
       </div>
     </div>
   );

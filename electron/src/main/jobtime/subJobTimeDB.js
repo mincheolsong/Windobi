@@ -16,9 +16,9 @@ const fs = require('fs');
 const RESOURCES_PATH =
   process.env.NODE_ENV === 'development'
     ? path.join(__dirname, '../../../assets')
-    : path.join(__dirname, '../../../assets');
+    : path.join(process.resourcesPath, 'assets');
 
-const DB_FILE = path.join(RESOURCES_PATH, 'sub_job_time.db');
+const DB_FILE = path.join(RESOURCES_PATH, 'database.db');
 
 const TABLE_NAME = 'sub_job_time';
 
