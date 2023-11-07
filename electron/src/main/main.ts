@@ -71,7 +71,7 @@ let menuWindow: BrowserWindow | null = null;
 dbInstance.init();
 subDbInstance.init();
 
-ipcMain.on('job-time', async (event, type, target) => {
+ipcMain.on('job-time', async (event, type: 'day' | 'week', target: Date) => {
   if (type === 'day') {
     const result = await dbInstance.getByDay(target);
     event.reply('job-time', { type, result });
@@ -125,6 +125,7 @@ ipcMain.on('mailRequest', () => {
 ipcMain.on('toggleMenuOn', () => {
   mainWindow?.show();
   menuWindow?.show();
+  mainWindow?.moveTop();
   menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
 });
 
@@ -386,5 +387,10 @@ ipcMain.handle(
     return result;
   },
 );
+
+ipcMain.on('character-left-click', () => {
+  mainWindow?.moveTop();
+  menuWindow?.webContents.send('character-left-click');
+});
 
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));

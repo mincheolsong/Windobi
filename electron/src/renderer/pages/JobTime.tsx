@@ -36,15 +36,6 @@ function JobTime() {
     });
     ipcRenderer.sendMessage('job-time', 'day', new Date());
     ipcRenderer.sendMessage('job-time', 'week');
-
-    // 개발 편의를 위해 1분마다 갱신하자
-    const timerId = setInterval(() => {
-      ipcRenderer.sendMessage('job-time', 'day', day);
-    }, 1000 * 10);
-
-    return () => {
-      clearInterval(timerId);
-    };
   }, []);
 
   useEffect(() => {

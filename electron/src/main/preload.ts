@@ -9,7 +9,6 @@ export type Channels =
   | 'size'
   | 'windowMoving'
   | 'toggleMenuOn'
-  | 'toggleMenuClose'
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
   | 'application'
@@ -32,6 +31,7 @@ export type Channels =
   | 'get-image'
   | 'add-character'
   | 'delete-character'
+  | 'character-left-click'
   | 'deleteMail';
 
 const electronHandler = {
