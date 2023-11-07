@@ -58,13 +58,6 @@ const createMenuWindow = (app: App, wins: TWindows): BrowserWindow => {
     menuWindow?.hide();
   });
 
-  // // 밖에 클릭하면 메뉴 닫기
-  // menuWindow.addListener('blur', async (e) => {
-  //   menuWindow?.webContents.send('toggleMenuClose');
-  //   await sleep(500);
-  //   menuWindow.hide();
-  // });
-
   return menuWindow;
 };
 

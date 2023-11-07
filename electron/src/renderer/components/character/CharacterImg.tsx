@@ -1,8 +1,10 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable default-case */
 import { useEffect, useRef, useState } from 'react';
+import { styled } from 'styled-components';
 
 type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
 type TDirection =
@@ -146,7 +148,7 @@ function CharacterImg() {
   }, []);
 
   return (
-    <img
+    <Image
       width="100"
       alt="icon"
       src={
@@ -157,11 +159,14 @@ function CharacterImg() {
           : ''
       }
       style={{
-        WebkitUserDrag: 'none',
         transform: `scaleX(${reverse ? -1 : 1})`,
       }}
     />
   );
 }
+
+const Image = styled.img`
+  -webkit-user-drag: none;
+`;
 
 export default CharacterImg;
