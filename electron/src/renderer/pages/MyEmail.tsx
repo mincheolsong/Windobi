@@ -2,8 +2,11 @@ import { useEffect } from 'react';
 import naverImage from '../../../assets/naver.png';
 import defaultImage from '../../../assets/icon.png';
 import * as S from '../components/myEmail/MailBox.style';
+import { useNavigate } from 'react-router-dom';
+
 
 function MyEmail() {
+  const navigate = useNavigate();
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,
@@ -41,7 +44,6 @@ function MyEmail() {
     // 이메일 삭제 로직 구현
     console.log(email);
   };
-
   return (
     <S.Container>
       {emails.map((email) => (
@@ -53,7 +55,13 @@ function MyEmail() {
           </S.DeleteButton>
         </S.Wrapper>
       ))}
-      <S.button >이메일 등록하기</S.button>
+      <S.button
+        onClick={() => {
+          navigate('/registemail');
+        }}
+      >
+        이메일 등록하기
+      </S.button>
     </S.Container>
   );
 }
