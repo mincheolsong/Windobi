@@ -149,4 +149,5 @@ const dbInstance = new SubJobTimeDB();
 
 module.exports = {
   dbInstance,
+  SubJobTimeDB,
 };
