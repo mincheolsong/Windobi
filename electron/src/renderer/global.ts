@@ -8,8 +8,6 @@ import NanumBarunGothicBold from '../../assets/fonts/NanumBarunGothicBold.ttf';
 import NanumBarunGothicLight from '../../assets/fonts/NanumBarunGothicLight.ttf';
 import NanumBarunGothicUltraLight from '../../assets/fonts/NanumBarunGothicUltraLight.ttf';
 
-
-
 export default createGlobalStyle`
   @font-face {
         font-family: 'GmarketSansTTFBold';

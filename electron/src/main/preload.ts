@@ -18,15 +18,25 @@ export type Channels =
   | 'restartMoving'
   | 'sub-job-time'
   | 'mailReceiving'
-  | 'mailRequest';
+  | 'mailRequest'
+  | 'character-list'
+  | 'character-images'
+  | 'change-character'
+  | 'start-move'
+  | 'stop-move'
+  | 'set-setting'
+  | 'get-setting'
+  | 'env'
+  | 'hideMenuWindow'
+  | 'hideSubWindow';
 
 const electronHandler = {
   ipcRenderer: {
-    sendMessage(channel: Channels, ...args: unknown[]) {
+    sendMessage(channel: Channels, ...args: any[]) {
       ipcRenderer.send(channel, ...args);
     },
-    on(channel: Channels, func: (...args: unknown[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
+    on(channel: Channels, func: (...args: any[]) => void) {
+      const subscription = (_event: IpcRendererEvent, ...args: any[]) =>
         func(...args);
       ipcRenderer.on(channel, subscription);
 
@@ -34,11 +44,17 @@ const electronHandler = {
         ipcRenderer.removeListener(channel, subscription);
       };
     },
-    once(channel: Channels, func: (...args: unknown[]) => void) {
+    once(channel: Channels, func: (...args: any[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
-    invoke(channel: Channels, ...args: unknown[]) {
+    invoke(channel: Channels, ...args: any[]) {
       return ipcRenderer.invoke(channel, ...args);
+    },
+    removeListener(channel: Channels, func: (...args: any[]) => any) {
+      ipcRenderer.removeListener(channel, func);
+    },
+    removeAllListener(channel: Channels) {
+      ipcRenderer.removeAllListeners(channel);
     },
   },
 };

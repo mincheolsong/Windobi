@@ -1,9 +1,14 @@
-import { App, BrowserWindow } from 'electron';
+import { App, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
 import { TWindows } from './main';
 
 let windows: TWindows | null;
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
 
 const createSubWindow = (app: App, wins: TWindows): BrowserWindow => {
   const RESOURCES_PATH = app.isPackaged
@@ -22,6 +27,7 @@ const createSubWindow = (app: App, wins: TWindows): BrowserWindow => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      nodeIntegration: true,
     },
     frame: false,
     movable: false,
@@ -29,6 +35,7 @@ const createSubWindow = (app: App, wins: TWindows): BrowserWindow => {
     transparent: true,
     skipTaskbar: true,
     resizable: false,
+    show: false,
   });
 
   wins.sub = subWindow;
@@ -38,6 +45,10 @@ const createSubWindow = (app: App, wins: TWindows): BrowserWindow => {
   subWindow.on('ready-to-show', () => {
     subWindow.webContents.send('sub', 'closed');
     subWindow.webContents.closeDevTools();
+  });
+
+  ipcMain.on('hideSubWindow', async () => {
+    subWindow?.hide();
   });
 
   return subWindow;

@@ -5,10 +5,10 @@
   transform: translateX(-50%) translateY(-50%);
 }
 .close-btn {
-  background: rgba(220, 140, 140, 0.7) !important;
+  background: rgba(255, 123, 123, 0.671) !important;
 }
 .close-btn:hover {
-  background: rgba(233, 52, 52, 0.7) !important;
+  background: rgba(247, 36, 36, 0.671) !important;
 }
 .menu {
   @extend .absolute-center;
@@ -134,7 +134,7 @@
   }
 }
 
-$numOfElems: 6;
+$numOfElems: 8;
 
 @for $i from 1 through $numOfElems {
   $deg: calc(360deg / $numOfElems);

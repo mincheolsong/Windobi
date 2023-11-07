@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable promise/catch-or-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unsafe-finally */
 /* eslint-disable import/no-cycle */
@@ -5,11 +7,19 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  globalShortcut,
+  ipcMain,
+  shell,
+  screen,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
+import fs from 'node:fs';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import createMenuWindow from './menuWindow';
@@ -18,9 +28,17 @@ import {
   interMenuWindowCommunication,
 } from './interWindow';
 import getMails from './mail';
+import SettingHandler from './setting/setting';
+import createTray from './tray/tray';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
+
+const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
 
 export type TWindows = {
   main: BrowserWindow | null;
@@ -49,12 +67,6 @@ let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
 let menuWindow: BrowserWindow | null = null;
 
-// ipcMain.on('ipc-example', async (event, arg) => {
-//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-//   console.log(msgTemplate(arg));
-//   event.reply('ipc-example', msgTemplate('pong'));
-// });
-
 dbInstance.init();
 subDbInstance.init();
 
@@ -77,6 +89,10 @@ ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
   }
 });
 
+ipcMain.handle('env', async (event, key) => {
+  return process.env[key];
+});
+
 ipcMain.on('application', (event, applicationPath) => {
   try {
     shell.openExternal(applicationPath);
@@ -86,8 +102,8 @@ ipcMain.on('application', (event, applicationPath) => {
 });
 
 ipcMain.on('sub', (event, path) => {
-  console.log('path : ' + path);
   subWindow?.webContents.send('sub', path);
+  subWindow?.show();
 });
 
 ipcMain.on('windowMoving', (event, arg) => {
@@ -110,6 +126,61 @@ ipcMain.on('toggleMenuOn', () => {
   mainWindow?.show();
   menuWindow?.show();
   menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
+});
+
+ipcMain.handle('character-list', async () => {
+  const RESOURCE_PATH = 'assets/character';
+  const characterList = fs.readdirSync(RESOURCE_PATH);
+  const result = characterList.map((character) => {
+    const image = fs.readFileSync(
+      path.join(RESOURCE_PATH, character, 'stop', '1.png'),
+      { encoding: 'base64' },
+    );
+
+    return { name: character, image };
+  });
+  return result;
+});
+
+type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
+type TMotionImage = {
+  click: Array<string>;
+  down: Array<string>;
+  move: Array<string>;
+  stop: Array<string>;
+  up: Array<string>;
+};
+ipcMain.handle('character-images', async (event, character: string) => {
+  const RESOURCE_PATH = 'assets/character';
+  const TARGET_DIRECTORY = path.join(RESOURCE_PATH, character);
+  const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'up'];
+  const motionImages: TMotionImage = {
+    click: [],
+    down: [],
+    move: [],
+    stop: [],
+    up: [],
+  };
+  motions.forEach((motion) => {
+    try {
+      const imageList = fs.readdirSync(path.join(TARGET_DIRECTORY, motion));
+      for (const image of imageList) {
+        const base64Image = fs.readFileSync(
+          path.join(TARGET_DIRECTORY, motion, image),
+          { encoding: 'base64' },
+        );
+        motionImages[motion].push(base64Image);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  return motionImages;
+});
+
+ipcMain.on('change-character', (event, character) => {
+  mainWindow?.webContents.send('change-character', character);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -171,15 +242,13 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    createWindow();
+    createWindow().then(() => {
+      // 윈도우가 만들어지고난 후
+      SettingHandler(windows);
+      createTray(app, windows);
+    });
     app.on('activate', () => {
       if (mainWindow === null) createWindow();
-    });
-
-    globalShortcut.register('CommandOrControl+Alt+U', () => {
-      console.log(mainWindow?.getBounds());
-      console.log(subWindow?.getBounds());
-      console.log(menuWindow?.getBounds());
     });
 
     globalShortcut.register('CommandOrControl+Alt+I', () => {
@@ -187,14 +256,38 @@ app
       subWindow?.webContents.toggleDevTools();
       menuWindow?.webContents.toggleDevTools();
     });
+    globalShortcut.register('CommandOrControl+Alt+M', () => {
+      mainWindow?.webContents.toggleDevTools();
+    });
+    globalShortcut.register('CommandOrControl+Alt+S', () => {
+      subWindow?.webContents.toggleDevTools();
+    });
     globalShortcut.register('CommandOrControl+Alt+O', () => {
       subWindow?.webContents.send('sub', 'jobtime');
     });
     globalShortcut.register('CommandOrControl+Alt+P', () => {
       subWindow?.webContents.send('sub', 'notification');
-    })
+    });
   })
   .catch(console.log);
 
-// 프로그램 시간 계산하기
+let moveTimer: ReturnType<typeof setInterval> | null = null;
+ipcMain.on('start-move', () => {
+  mainWindow?.webContents.send('character-move', 'click');
+  moveTimer = setInterval(() => {
+    const { x, y } = screen.getCursorScreenPoint();
+    mainWindow?.setBounds({
+      width: 100,
+      height: 100,
+      x: x - 50,
+      y: y - 50,
+    });
+  }, 10);
+});
+ipcMain.on('stop-move', () => {
+  if (moveTimer) {
+    clearInterval(moveTimer);
+  }
+});
+
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));

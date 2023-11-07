@@ -46,8 +46,8 @@ function BarChart({ dailyJobs, weeklyJobs, type, setApplication }: TBarChart) {
     const minute = Math.floor((time % 3600) / 60);
 
     let result = '';
-    result = result.concat(hour > 0 ? `${hour}시` : '');
-    result = result.concat(minute > 0 ? `${minute}분` : '');
+    result = result.concat(hour > 0 ? `${hour}:` : '');
+    result = result.concat(minute > 0 ? `${minute}` : '');
 
     return result;
   };
