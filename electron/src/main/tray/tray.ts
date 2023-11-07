@@ -3,8 +3,9 @@
 import Electron, { App, Menu, Tray, globalShortcut } from 'electron';
 import path from 'path';
 import { TWindows } from '../main';
+import SettingDB from '../setting/settingDB';
 
-const createTray = (app: App, windows: TWindows) => {
+const createTray = (app: App, windows: TWindows, settingDB: SettingDB) => {
   const iconPath = path.join('assets', 'icons', 'hanbyul.png');
   const tray = new Tray(iconPath);
 
@@ -12,17 +13,33 @@ const createTray = (app: App, windows: TWindows) => {
   tray.setToolTip('윈도비');
 
   // 메뉴 만들기
-  createMenu(tray, app, windows);
+  createMenu(tray, app, windows, settingDB);
 };
 
-function createMenu(tray: Tray, app: App, windows: TWindows) {
+function createMenu(
+  tray: Tray,
+  app: App,
+  windows: TWindows,
+  settingDB: SettingDB,
+) {
   const initTemplate: Array<
     Electron.MenuItemConstructorOptions | Electron.MenuItem
-  > = [{ label: '종료', type: 'normal', click: exit }];
+  > = [
+    {
+      label: '종료',
+      type: 'normal',
+      click: exit,
+    },
+  ];
 
   function hide() {
     const contextMenu = Menu.buildFromTemplate([
-      { label: '보이기', type: 'normal', click: show },
+      {
+        label: '보이기',
+        type: 'normal',
+        click: show,
+        accelerator: settingDB.hideOrShow,
+      },
       ...initTemplate,
     ]);
     tray.setContextMenu(contextMenu);
@@ -32,7 +49,12 @@ function createMenu(tray: Tray, app: App, windows: TWindows) {
 
   function show() {
     const contextMenu = Menu.buildFromTemplate([
-      { label: '숨기기', type: 'normal', click: hide },
+      {
+        label: '숨기기',
+        type: 'normal',
+        click: hide,
+        accelerator: settingDB.hideOrShow,
+      },
       ...initTemplate,
     ]);
     tray.setContextMenu(contextMenu);
@@ -48,7 +70,12 @@ function createMenu(tray: Tray, app: App, windows: TWindows) {
   }
 
   const contextMenu = Menu.buildFromTemplate([
-    { label: '숨기기', type: 'normal', click: hide },
+    {
+      label: '숨기기',
+      type: 'normal',
+      click: hide,
+      accelerator: settingDB.hideOrShow,
+    },
     ...initTemplate,
   ]);
   tray.setContextMenu(contextMenu);

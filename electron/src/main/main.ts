@@ -29,7 +29,7 @@ import {
   interMenuWindowCommunication,
 } from './interWindow';
 import getMails from './mail';
-import SettingHandler from './setting/setting';
+import SettingHandler, { settingDB } from './setting/setting';
 import createTray from './tray/tray';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
@@ -116,11 +116,10 @@ ipcMain.on('windowMoving', (event, arg) => {
   });
 });
 
-ipcMain.on('mailRequest', ()=>{
-  console.log("mail Requesting!!!");
+ipcMain.on('mailRequest', () => {
+  console.log('mail Requesting!!!');
   subWindow?.webContents.send('mailRequest', mails);
 });
-
 
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenuOn', () => {
@@ -184,10 +183,16 @@ ipcMain.on('change-character', (event, character) => {
   mainWindow?.webContents.send('change-character', character);
 });
 
-ipcMain.on('deleteMail', (event, mail)=>{  // 메일 삭제하기 위해 듣는 리스너
-  for(let i = 0; i < mails.length; ++i){
-    if(mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host){ // 해당 메일 삭제
-      mails.splice(i,1);
+ipcMain.on('deleteMail', (event, mail) => {
+  // 메일 삭제하기 위해 듣는 리스너
+  for (let i = 0; i < mails.length; ++i) {
+    if (
+      mails[i].seq === mail.seq &&
+      mails[i].to === mail.to &&
+      mails[i].host === mail.host
+    ) {
+      // 해당 메일 삭제
+      mails.splice(i, 1);
     }
   }
 });
@@ -227,7 +232,7 @@ const createWindow = async () => {
   subWindow = createSubWindow(app, windows);
 
   // 메일 계정 불러오기
-  let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
+  // let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);
@@ -255,7 +260,7 @@ app
     createWindow().then(() => {
       // 윈도우가 만들어지고난 후
       SettingHandler(windows);
-      createTray(app, windows);
+      createTray(app, windows, settingDB);
     });
     app.on('activate', () => {
       if (mainWindow === null) createWindow();
@@ -302,6 +307,15 @@ ipcMain.on('stop-move', () => {
 
 ipcMain.handle('get-image', (event, filePath: string) => {
   return fs.readFileSync(filePath, { encoding: 'base64' });
+});
+
+ipcMain.handle('delete-character', (event, name: string) => {
+  const RESOURCE_PATH = 'assets/character';
+  if (!fs.existsSync(path.join(RESOURCE_PATH, name))) {
+    return false;
+  }
+  fs.rmSync(path.join(RESOURCE_PATH, name), { recursive: true, force: true });
+  return true;
 });
 
 type TAddCharacter = {
