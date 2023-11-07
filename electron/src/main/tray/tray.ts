@@ -33,11 +33,12 @@ function createMenu(tray: Tray, app: App, windows: TWindows) {
     ]);
     tray.setContextMenu(contextMenu);
 
+    windows.main?.hide();
+    windows.sub?.hide();
+
     windows.menu?.webContents.send('setActiveFalse');
     await sleep(500);
-    windows.main?.hide();
     windows.menu?.hide();
-    windows.sub?.hide();
   }
 
   function show() {
