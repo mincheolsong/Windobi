@@ -23,7 +23,7 @@ function MyApp() {
   ipcRenderer.on('sub', (path) => {
     navigate(`/${path}`);
   });
-
+ 
   return (
     <>
       <GlobalFont />
