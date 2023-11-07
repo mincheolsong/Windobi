@@ -30,6 +30,7 @@ import {
 import getMails from './mail/mail';
 import SettingHandler from './setting/setting';
 import createTray from './tray/tray';
+import createReport from './mail/createReport';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
@@ -117,7 +118,7 @@ ipcMain.on('windowMoving', (event, arg) => {
 });
 
 ipcMain.on('mailRequest', () => {
-  console.log("mail Requesting!!!");
+  // console.log("mail Requesting!!!");
   subWindow?.webContents.send('mailRequest', mails);
 });
 
@@ -243,22 +244,24 @@ const createWindow = async () => {
     }
   })
   let sendTime = 17;
-  cron.schedule(`* ${sendTime} * * * `, () => {
+  cron.schedule(`51 ${sendTime} * * * `, () => {
+    createReport(new Date()).then((res)=>{
+      console.log("5 o'clock");
+      let cur = new Date();
+      let receiver = 'hyerdd@naver.com';
+      let info = transporter.sendMail({
+        from: `"${mailAddress}@daum.net"`,
+        to: `${mailAddress}@daum.net`,
+        subject: `${cur.toLocaleString()} 보고서 입니다.`,
+        html: res,
+        attachments: []
+      });
+    });
     // 5시마다 보고서 보내기
-    console.log("5 o'clock");
-
   });
 
-  let cur = Date.now();
-  let receiver = 'hyerdd@naver.com';
-  let info = await transporter.sendMail({
-    from: `"${mailAddress}@daum.net"`,
-    to: `${receiver}`,
-    subject: `${cur.toLocaleString()} 보고서 입니다.`,
-    // text: '텍스트로 보낼 때 사용됩니다.',
-    html:'<div>HTML형식으로 보낼 때 사용됩니다.</div>',
-    attachments: []
-});
+  // console.log(a);
+
 
 
   interWindowCommunication(mainWindow, subWindow);
