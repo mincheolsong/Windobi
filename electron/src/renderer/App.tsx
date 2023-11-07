@@ -5,24 +5,27 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-import Character from './pages/Character';
-import JobTime from './pages/JobTime';
+import {
+  AddCharacter,
+  Alarm,
+  ChangeCharacter,
+  Character,
+  ChatGPT,
+  Closed,
+  DeleteCharacter,
+  JobTime,
+  MailContent,
+  MyEmail,
+  Notification,
+  RegistEmail,
+  Setting,
+} from './pages';
+
 import SubWindow from './layout/SubWindow';
-import Notification from './pages/Notification';
 import GlobalFont from './global';
 import MenuModal from './components/character/MenuModal';
-import Closed from './pages/Closed';
-import Setting from './pages/Setting';
 import TMail from './components/notification/TMail';
-import MailContent from './pages/MailContent';
-import ChangeCharacter from './pages/ChangeCharacter';
-import ChatGPT from './pages/ChatGPT';
-import AddCharacter from './pages/AddCharacter';
-import MyEmail from './pages/MyEmail';
-import RegistEmail from './pages/RegistEmail';
-import Alarm from './pages/Alarm';
 import SubWindowBack from './layout/SubWindowBack';
-import DeleteCharacter from './pages/DeleteCharacter';
 
 function MyApp() {
   const navigate = useNavigate();
