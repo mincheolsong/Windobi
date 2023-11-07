@@ -112,6 +112,7 @@
     "mailparser": "^3.6.5",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
+    "nodemailer": "^6.9.7",
     "openai": "^4.14.2",
     "package.json": "^2.0.1",
     "react": "^18.2.0",

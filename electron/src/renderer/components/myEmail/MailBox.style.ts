@@ -1,4 +1,15 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+    height: auto;
+  }
+  to {
+    opacity: 0;
+    height: 0;
+  }
+`;
 
 const Wrapper = styled.div`
   border: 1px solid #000; /* 사각형 테두리 */
@@ -14,6 +25,7 @@ const Wrapper = styled.div`
   font-weight: bold;
   position: relative; /* 상대 위치 설정 */
   min-height: 10vh; /* 최소 높이를 뷰포트 높이로 설정 */
+  animation: ${fadeOut} 0.3s linear; /* 애니메이션을 적용합니다. */
 `;
 
 const Icon = styled.img`
