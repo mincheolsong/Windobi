@@ -16,6 +16,7 @@ import Setting from './pages/Setting';
 import ChangeCharacter from './pages/ChangeCharacter';
 import ChatGPT from './pages/ChatGPT';
 import AddCharacter from './pages/AddCharacter';
+import Music from './pages/Music';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -70,6 +71,16 @@ function MyApp() {
             </SubWindow>
           }
         />
+
+        <Route
+          path="/music"
+          element={
+            <SubWindow title="음악 추천">
+              <Music />
+            </SubWindow>
+          }
+        />
+
         <Route
           path="/chatGPT"
           element={
