@@ -28,7 +28,8 @@ export type Channels =
   | 'get-setting'
   | 'env'
   | 'hideMenuWindow'
-  | 'hideSubWindow';
+  | 'hideSubWindow'
+  | 'deleteMail';
 
 const electronHandler = {
   ipcRenderer: {
