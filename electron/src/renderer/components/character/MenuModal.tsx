@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import './MenuModal.scss';
 import jobtime from '../../../../assets/icons/jobtime.svg';
 import calendar from '../../../../assets/icons/calendar.svg';
-import alarm from '../../../../assets/icons/alarm.svg';
+import notification from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
 import news from '../../../../assets/icons/news.svg';
 import setting from '../../../../assets/icons/setting.svg';
@@ -19,7 +19,7 @@ function MenuModal() {
   const menuItems = [
     { jobtime: jobtime },
     { calendar: calendar },
-    { notification: alarm },
+    { notification: notification },
     { chatGPT: chatGPT },
     { setting: setting },
     { close: close },
