@@ -4,10 +4,6 @@ import '../components/chatGPT/chatGPT.scss';
 
 function ChatGPT() {
   // const { ipcRenderer } = window.electron;
-  window.electron.ipcRenderer.sendMessage('size', {
-    width: 300,
-    height: 500,
-  });
 
   const [openai, setOpenai] = useState();
   const messageEndRef = useRef<HTMLDivElement | null>(null);
@@ -26,6 +22,10 @@ function ChatGPT() {
   };
 
   useEffect(() => {
+    window.electron.ipcRenderer.sendMessage('size', {
+      width: 300,
+      height: 500,
+    });
     settingOpenAi();
   }, []);
 
