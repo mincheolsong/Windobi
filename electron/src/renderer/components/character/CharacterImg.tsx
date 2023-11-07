@@ -83,7 +83,6 @@ function CharacterImg() {
     setImageIndex(0);
 
     const indexHandler = (length: number) => {
-      console.log(new Date());
       setImageIndex((prev) => (prev + 1) % length);
     };
 
@@ -167,6 +166,7 @@ function CharacterImg() {
 
 const Image = styled.img`
   -webkit-user-drag: none;
+  -webkit-user-select: none;
 `;
 
 export default CharacterImg;

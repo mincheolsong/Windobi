@@ -7,20 +7,11 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable promise/always-return */
 /* eslint-disable global-require */
-import {
-  app,
-  BrowserWindow,
-  globalShortcut,
-  ipcMain,
-  shell,
-  screen,
-  Tray,
-} from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
-import fs from 'node:fs';
 import createMainWindow from './mainWindow';
 import createSubWindow from './subWindow';
 import createMenuWindow from './menuWindow';
@@ -28,19 +19,17 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
-import getMails from './mail';
 import SettingHandler, { settingDB } from './setting/setting';
 import createTray from './tray/tray';
 import characterHandler from './ipcMainHandler/characterHandler';
 import windowsHandler from './ipcMainHandler/windowsHandler';
 import globalShortcutHandler from './shortcut/globalShortcutHandler';
-import { JobTimeDB } from './jobtime/jobTimeDB';
 import jobTimeHandler from './ipcMainHandler/jobTimeHandler';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
 
-const sleep = (ms) => {
+const sleep = (ms: number) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
