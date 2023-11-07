@@ -22,6 +22,7 @@ import MyEmail from './pages/MyEmail';
 import RegistEmail from './pages/RegistEmail';
 import Alarm from './pages/Alarm';
 import SubWindowBack from './layout/SubWindowBack';
+import DeleteCharacter from './pages/DeleteCharacter';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ function MyApp() {
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
     // console.log("mainRenderer Mail 수신", mail);
     // 메일 수신 알림 주기
-    console.log("서브 수신 완료");
+    console.log('서브 수신 완료');
     ipcRenderer.sendMessage('sub', 'alarm');
   });
 
@@ -74,7 +75,7 @@ function MyApp() {
           element={
             <SubWindowBack title="메일">
               <MailContent />
-              </SubWindowBack>
+            </SubWindowBack>
           }
         />
 
@@ -92,6 +93,14 @@ function MyApp() {
           element={
             <SubWindow title="캐릭터 추가">
               <AddCharacter />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/deletecharacter"
+          element={
+            <SubWindow title="캐릭터 삭제">
+              <DeleteCharacter />
             </SubWindow>
           }
         />
