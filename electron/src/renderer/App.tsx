@@ -20,6 +20,8 @@ import ChatGPT from './pages/ChatGPT';
 import AddCharacter from './pages/AddCharacter';
 import MyEmail from './pages/MyEmail';
 import RegistEmail from './pages/RegistEmail';
+import Alarm from './pages/Alarm';
+import SubWindowBack from './layout/SubWindowBack';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -28,6 +30,8 @@ function MyApp() {
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
     // console.log("mainRenderer Mail 수신", mail);
     // 메일 수신 알림 주기
+    console.log("서브 수신 완료");
+    ipcRenderer.sendMessage('sub', 'alarm');
   });
 
   ipcRenderer.on('sub', (path) => {
@@ -68,9 +72,9 @@ function MyApp() {
         <Route
           path="/mailContent"
           element={
-            <SubWindow title="메일">
+            <SubWindowBack title="메일">
               <MailContent />
-              </SubWindow>
+              </SubWindowBack>
           }
         />
 
@@ -113,6 +117,14 @@ function MyApp() {
           element={
             <SubWindow title="이메일 등록">
               <RegistEmail />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/alarm"
+          element={
+            <SubWindow title="알림">
+              <Alarm />
             </SubWindow>
           }
         />

@@ -72,7 +72,7 @@ function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], al
 
       if (match.length === 0) {
         // 메일 받은 경우 !! 이벤트 발생
-        mainWindow.webContents.send('mailReceiving', mails[i]); // 알림을 위해서
+        // mainWindow.webContents.send('mailReceiving', mails[i]); // 알림을 위해서
         subWindow.webContents.send('mailReceiving', mails[i]); // 갱신을 위해서
         mails[i].to = user;
         mails[i].host = host;
