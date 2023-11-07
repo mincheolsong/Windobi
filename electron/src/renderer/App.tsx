@@ -13,6 +13,8 @@ import GlobalFont from './global';
 import MenuModal from './components/character/MenuModal';
 import Closed from './pages/Closed';
 import Setting from './pages/Setting';
+import TMail from './components/notification/TMail';
+import MailContent from './pages/MailContent';
 import ChangeCharacter from './pages/ChangeCharacter';
 import ChatGPT from './pages/ChatGPT';
 import AddCharacter from './pages/AddCharacter';
@@ -22,6 +24,12 @@ import RegistEmail from './pages/RegistEmail';
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
+
+  ipcRenderer.on('mailReceiving', (mail: TMail) => {
+    // console.log("mainRenderer Mail 수신", mail);
+    // 메일 수신 알림 주기
+  });
+
   ipcRenderer.on('sub', (path) => {
     navigate(`/${path}`);
   });
@@ -56,6 +64,16 @@ function MyApp() {
             </SubWindow>
           }
         />
+
+        <Route
+          path="/mailContent"
+          element={
+            <SubWindow title="메일">
+              <MailContent />
+              </SubWindow>
+          }
+        />
+
         <Route
           path="/changecharacter"
           element={
@@ -64,6 +82,7 @@ function MyApp() {
             </SubWindow>
           }
         />
+
         <Route
           path="/addcharacter"
           element={
