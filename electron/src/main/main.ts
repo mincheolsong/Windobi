@@ -33,6 +33,7 @@ import createTray from './tray/tray';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
+var cron = require('node-cron');
 
 const sleep = (ms) => {
   return new Promise((resolve) => {
@@ -115,7 +116,7 @@ ipcMain.on('windowMoving', (event, arg) => {
   });
 });
 
-ipcMain.on('mailRequest', ()=>{
+ipcMain.on('mailRequest', () => {
   console.log("mail Requesting!!!");
   subWindow?.webContents.send('mailRequest', mails);
 });
@@ -183,10 +184,10 @@ ipcMain.on('change-character', (event, character) => {
   mainWindow?.webContents.send('change-character', character);
 });
 
-ipcMain.on('deleteMail', (event, mail)=>{  // 메일 삭제하기 위해 듣는 리스너
-  for(let i = 0; i < mails.length; ++i){
-    if(mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host){ // 해당 메일 삭제
-      mails.splice(i,1);
+ipcMain.on('deleteMail', (event, mail) => {  // 메일 삭제하기 위해 듣는 리스너
+  for (let i = 0; i < mails.length; ++i) {
+    if (mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host) { // 해당 메일 삭제
+      mails.splice(i, 1);
     }
   }
 });
@@ -227,6 +228,38 @@ const createWindow = async () => {
 
   // 메일 계정 불러오기
   let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
+
+  const nodemailer = require('nodemailer');
+  const mailAddress = 'honeycomb201';
+  const mailPassword = 'ssafyssafy123';
+
+  let transporter = nodemailer.createTransport({
+    host: 'smtp.daum.net',
+    secure: true,  //다른 포트를 사용해야 되면 false값을 주어야 합니다.
+    //port: 587,   //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
+    auth: {
+      user: mailAddress,
+      pass: mailPassword
+    }
+  })
+  let sendTime = 17;
+  cron.schedule(`* ${sendTime} * * * `, () => {
+    // 5시마다 보고서 보내기
+    console.log("5 o'clock");
+
+  });
+
+  let cur = Date.now();
+  let receiver = 'hyerdd@naver.com';
+  let info = await transporter.sendMail({
+    from: `"${mailAddress}@daum.net"`,
+    to: `${receiver}`,
+    subject: `${cur.toLocaleString()} 보고서 입니다.`,
+    // text: '텍스트로 보낼 때 사용됩니다.',
+    html:'<div>HTML형식으로 보낼 때 사용됩니다.</div>',
+    attachments: []
+});
+
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);
