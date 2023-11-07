@@ -17,6 +17,8 @@ export type Channels =
   | 'stopMoving'
   | 'restartMoving'
   | 'sub-job-time'
+  | 'mailReceiving'
+  | 'mailRequest'
   | 'character-list'
   | 'character-images'
   | 'change-character'
@@ -28,7 +30,8 @@ export type Channels =
   | 'hideMenuWindow'
   | 'hideSubWindow'
   | 'get-image'
-  | 'add-character';
+  | 'add-character'
+  | 'deleteMail';
 
 const electronHandler = {
   ipcRenderer: {
