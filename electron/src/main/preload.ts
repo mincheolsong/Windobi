@@ -17,6 +17,8 @@ export type Channels =
   | 'stopMoving'
   | 'restartMoving'
   | 'sub-job-time'
+  | 'mailReceiving'
+  | 'mailRequest'
   | 'character-list'
   | 'character-images'
   | 'change-character'

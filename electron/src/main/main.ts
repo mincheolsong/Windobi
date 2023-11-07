@@ -27,6 +27,7 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
+import getMails from './mail';
 import SettingHandler from './setting/setting';
 import createTray from './tray/tray';
 
@@ -58,6 +59,9 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
+const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
+const mails: [] = []; // 이제껏 수신한 메일들을 보관하는 배열
 
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
@@ -110,6 +114,12 @@ ipcMain.on('windowMoving', (event, arg) => {
     y: arg.mouseY - 50,
   });
 });
+
+ipcMain.on('mailRequest', ()=>{
+  console.log("mail Requesting!!!");
+  subWindow?.webContents.send('mailRequest', mails);
+});
+
 
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenuOn', () => {
@@ -206,6 +216,8 @@ const createWindow = async () => {
   mainWindow = createMainWindow(app, windows);
   menuWindow = createMenuWindow(app, windows);
   subWindow = createSubWindow(app, windows);
+
+  let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.naver.com");
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);

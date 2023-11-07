@@ -53,8 +53,8 @@ const Close = styled.div`
 
 const Body = styled.div`
   padding-top: 40px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
   padding-bottom: 5px;
   width: 100%;
   // height: calc(100% - 35px);
