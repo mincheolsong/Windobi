@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 100%;
+  // height: 100%;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
@@ -25,6 +25,10 @@ const SenderText = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+
+  padding: 3px;
+  border-radius: 5px;
+  background-color: rgba(51,51,204, 0.5);
 `;
 
 
@@ -39,12 +43,8 @@ const Sender = styled.div`
   display: flex;
   text-align: left;
   align-items: center;
-  padding: 3px;
-  border-radius: 5px;
-  background-color: rgba(51,51,204, 0.5);
+
 `;
-
-
 
 const From = styled.div`
   width: 100%;
@@ -65,7 +65,6 @@ const Line = styled.div`
 const Subject = styled.div`
   padding: 10px;
   width: 100%;
-  height: 18%;
   // background-color: rgba(123,123,123,0.5);
 `;
 
@@ -80,6 +79,7 @@ const Time = styled.div`
 const Content = styled.div`
   padding: 10px;
   font-size: 14px;
+  word-wrap: break-word;
   width: 100%;
   font-family: GmarketSansTTFLight
 `;

@@ -10,13 +10,17 @@ class Mail {
   date: Date;
   subject: string;
   content: string;
+  to: string;
+  host: string;
 
-  constructor(seq: number, from: string, date: Date, subject: string, content: string) {
+  constructor(seq: number, from: string, date: Date, subject: string, content: string, to: string, host: string) {
     this.seq = seq;
     this.from = from;
     this.date = date;
     this.subject = subject;
     this.content = content;
+    this.to = to;
+    this.host = host;
   }
 }
 
@@ -68,10 +72,12 @@ function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], al
 
       if (match.length === 0) {
         // 메일 받은 경우 !! 이벤트 발생
-        mainWindow.webContents.send('mailReceiving', mails[i]); // 알림을 위해서
+        // mainWindow.webContents.send('mailReceiving', mails[i]); // 알림을 위해서
         subWindow.webContents.send('mailReceiving', mails[i]); // 갱신을 위해서
+        mails[i].to = user;
+        mails[i].host = host;
         allMails.push(mails[i]);
-        // console.log("sending:", mails[i]);
+        console.log("sending:", mails[i]);
       }
     }
 
@@ -83,7 +89,7 @@ function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], al
   });
 
 
-  console.log("connect");
+  // console.log("connect");
   imap.connect();
 }
 
@@ -99,6 +105,7 @@ function processMessage(msg, seqno) {
     mail.from = headers.get('from').text;
     mail.date = headers.get('date');
     mail.subject = headers.get('subject');
+
   });
 
   parser.on('data', data => {

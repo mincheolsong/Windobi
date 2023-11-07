@@ -4,6 +4,8 @@ type TMail = {
   date: Date;
   subject: string;
   content: string;
+  to: string;
+  host: string;
 }
 
 export default TMail;
