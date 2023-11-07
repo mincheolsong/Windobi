@@ -183,6 +183,14 @@ ipcMain.on('change-character', (event, character) => {
   mainWindow?.webContents.send('change-character', character);
 });
 
+ipcMain.on('deleteMail', (event, mail)=>{  // 메일 삭제하기 위해 듣는 리스너
+  for(let i = 0; i < mails.length; ++i){
+    if(mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host){ // 해당 메일 삭제
+      mails.splice(i,1);
+    }
+  }
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -217,7 +225,8 @@ const createWindow = async () => {
   menuWindow = createMenuWindow(app, windows);
   subWindow = createSubWindow(app, windows);
 
-  let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.naver.com");
+  // 메일 계정 불러오기
+  let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);
