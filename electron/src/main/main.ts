@@ -14,6 +14,7 @@ import {
   ipcMain,
   shell,
   screen,
+  Tray,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -298,5 +299,78 @@ ipcMain.on('stop-move', () => {
     clearInterval(moveTimer);
   }
 });
+
+ipcMain.handle('get-image', (event, filePath: string) => {
+  return fs.readFileSync(filePath, { encoding: 'base64' });
+});
+
+type TAddCharacter = {
+  name: string;
+  stop: Array<string>;
+  move: Array<string>;
+  click: Array<string>;
+  down: Array<string>;
+  up: Array<string>;
+};
+ipcMain.handle(
+  'add-character',
+  (event, { name, stop, move, click, down, up }: TAddCharacter) => {
+    const result = {
+      success: false,
+      message: '',
+    };
+
+    if (name.length === 0 || stop.length > 10) {
+      result.success = false;
+      result.message = '캐릭터 이름은 1~9글자여야합니다';
+      return result;
+    }
+
+    if (
+      stop.length === 0 ||
+      move.length === 0 ||
+      click.length === 0 ||
+      down.length === 0 ||
+      up.length === 0
+    ) {
+      result.success = false;
+      result.message = '각 모션마다 최소 1장의 이미지가 필요합니다';
+      return result;
+    }
+
+    const RESOURCE_PATH = 'assets/character';
+
+    if (fs.existsSync(path.join(RESOURCE_PATH, name))) {
+      result.success = false;
+      result.message = '이미 존재하는 캐릭터 이름입니다';
+      return result;
+    }
+
+    fs.mkdirSync(path.join(RESOURCE_PATH, name));
+
+    const images = [
+      { motion: 'stop', images: stop },
+      { motion: 'move', images: move },
+      { motion: 'click', images: click },
+      { motion: 'down', images: down },
+      { motion: 'up', images: up },
+    ];
+
+    images.forEach(({ motion, images }) => {
+      fs.mkdirSync(path.join(RESOURCE_PATH, name, motion));
+      images.forEach((image, index) => {
+        fs.writeFileSync(
+          path.join(RESOURCE_PATH, name, motion, `${index + 1}.png`),
+          image,
+          'base64',
+        );
+      });
+    });
+
+    result.success = true;
+
+    return result;
+  },
+);
 
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));

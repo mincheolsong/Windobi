@@ -5,6 +5,15 @@ const Wrapper = styled.div`
   height: 80px;
   font-size: 10px;
   background-color: rgb(255, 255, 255);
+
+  &:hover {
+    cursor: pointer;
+
+    & > div {
+      border: 3px solid rgb(0, 180, 0);
+      transition: all 0.1s;
+    }
+  }
 `;
 
 const Base = styled.div`

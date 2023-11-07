@@ -29,6 +29,8 @@ export type Channels =
   | 'env'
   | 'hideMenuWindow'
   | 'hideSubWindow'
+  | 'get-image'
+  | 'add-character'
   | 'deleteMail';
 
 const electronHandler = {
