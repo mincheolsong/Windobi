@@ -69,12 +69,15 @@ const Sender = styled.div`
   // background-color: rgba(10,220,30,0.8);
 `;
 const Title = styled.div`
-  padding: 0 4px 9px 6px;
+  padding: 0 0 9px 6px;
   display: flex;
   align-items: center;
   width: 100%;
   height: 37px;
   cursor: pointer;
+  &:hover {
+    background-color: rgba(0,0,0, 0.1);
+  }
 `;
 
 const Text = styled.div`

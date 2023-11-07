@@ -27,7 +27,7 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
-import getMails from './mail';
+import getMails from './mail/mail';
 import SettingHandler from './setting/setting';
 import createTray from './tray/tray';
 
