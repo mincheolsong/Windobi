@@ -67,16 +67,18 @@ function Music() {
     e.preventDefault();
 
     try {
+      // openai에게 추천받기
       const result = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: messages,
       });
 
-      let res = JSON.parse(result.choices[0].message.content); //   
+      let openai_res = JSON.parse(result.choices[0].message.content); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
 
+      // youtube에 검색하기
       axios
         .get(
-          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${res[0].song}%7C${res[0].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
+          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${openai_res[0].song}%7C${openai_res[0].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
         )
         .then((res) => {
           console.log(res);
