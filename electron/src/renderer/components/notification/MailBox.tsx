@@ -1,59 +1,70 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import naver from '../../../../assets/naver.png';
+import daum from '../../../../assets/daum.png';
 import * as S from './Mail.style';
 import Time from './Time';
+import TMail from './TMail';
+import { useNavigate } from 'react-router-dom';
+import { ipcRenderer } from 'electron';
 
 // async function click(){
 //   let a = await window.electron.ipcRenderer.invoke('test', 1);
 //   alert(a);
 // }
 
-type TMail = {
-  id: string;
-  title: string;
-  time: Date;
-  sender: string;
-  content: string;
-};
-
-function MailBox({ mails, setMails }: { mails: TMail[], setMails: React.Dispatch<React.SetStateAction<TMail[]>>}) {
-
+function MailBox({
+  mails,
+  setMails,
+}: {
+  mails: TMail[];
+  setMails: React.Dispatch<React.SetStateAction<TMail[]>>;
+}) {
+  const navigate = useNavigate();
   useEffect(() => {
     if (!mails || mails.length === 0) return;
     for (let i = 0; i < mails.length; ++i) {
-      console.log(mails[i].title);
+      console.log(mails[i].subject);
     }
   }, [mails]);
 
   return (
     <>
-      {mails.map((mail) => {
+      {mails.reverse().map((mail) => {
+        let img;
+        switch(mail.host){
+          case "imap.naver.com":
+            img = naver;
+            break;
+          case "imap.daum.net":
+            img = daum;
+            break;
+        }
+
         return (
-          <S.Wrapper key={mail.id}>
+          <S.Wrapper key={mail.seq}>
             <S.MailWrapper>
-              <S.Icon src={naver} />
+              <S.Icon src={img} />
               <S.Contents>
                 <S.ContentsDiv>
-                  <S.Sender>
-                    {mail.sender}
-                  </S.Sender>
+                  <S.Sender>{mail.from}</S.Sender>
                   <Time
                     onClick={() => {
-                      console.log("isItOK?");
-                      setMails((prevMails) => prevMails.filter((m) => m.id !== mail.id));
-                      console.log(mails);
+                      window.electron.ipcRenderer.sendMessage('deleteMail', mail);
+                      setMails((prevMails) =>
+                        prevMails.filter((m) => m.seq !== mail.seq),
+                      );
                     }}
-                    time={mail.time}
+                    time={mail.date}
                   />
                 </S.ContentsDiv>
                 <S.Title>
                   <S.Text
                     onClick={() => {
-                      alert('임시');
+                      navigate('/mailContent', { state: { mail } });
                     }}
                   >
-                    {mail.title}
+                    {mail.subject}
                   </S.Text>
                 </S.Title>
               </S.Contents>
