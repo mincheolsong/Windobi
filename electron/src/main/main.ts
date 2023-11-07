@@ -14,6 +14,7 @@ import {
   ipcMain,
   shell,
   screen,
+  Tray,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -27,6 +28,7 @@ import {
   interWindowCommunication,
   interMenuWindowCommunication,
 } from './interWindow';
+import getMails from './mail';
 import SettingHandler from './setting/setting';
 import createTray from './tray/tray';
 
@@ -58,6 +60,9 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
+const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
+const mails: [] = []; // 이제껏 수신한 메일들을 보관하는 배열
 
 let mainWindow: BrowserWindow | null = null;
 let subWindow: BrowserWindow | null = null;
@@ -110,6 +115,12 @@ ipcMain.on('windowMoving', (event, arg) => {
     y: arg.mouseY - 50,
   });
 });
+
+ipcMain.on('mailRequest', ()=>{
+  console.log("mail Requesting!!!");
+  subWindow?.webContents.send('mailRequest', mails);
+});
+
 
 // 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
 ipcMain.on('toggleMenuOn', () => {
@@ -173,6 +184,14 @@ ipcMain.on('change-character', (event, character) => {
   mainWindow?.webContents.send('change-character', character);
 });
 
+ipcMain.on('deleteMail', (event, mail)=>{  // 메일 삭제하기 위해 듣는 리스너
+  for(let i = 0; i < mails.length; ++i){
+    if(mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host){ // 해당 메일 삭제
+      mails.splice(i,1);
+    }
+  }
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -206,6 +225,9 @@ const createWindow = async () => {
   mainWindow = createMainWindow(app, windows);
   menuWindow = createMenuWindow(app, windows);
   subWindow = createSubWindow(app, windows);
+
+  // 메일 계정 불러오기
+  let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);
@@ -277,5 +299,78 @@ ipcMain.on('stop-move', () => {
     clearInterval(moveTimer);
   }
 });
+
+ipcMain.handle('get-image', (event, filePath: string) => {
+  return fs.readFileSync(filePath, { encoding: 'base64' });
+});
+
+type TAddCharacter = {
+  name: string;
+  stop: Array<string>;
+  move: Array<string>;
+  click: Array<string>;
+  down: Array<string>;
+  up: Array<string>;
+};
+ipcMain.handle(
+  'add-character',
+  (event, { name, stop, move, click, down, up }: TAddCharacter) => {
+    const result = {
+      success: false,
+      message: '',
+    };
+
+    if (name.length === 0 || stop.length > 10) {
+      result.success = false;
+      result.message = '캐릭터 이름은 1~9글자여야합니다';
+      return result;
+    }
+
+    if (
+      stop.length === 0 ||
+      move.length === 0 ||
+      click.length === 0 ||
+      down.length === 0 ||
+      up.length === 0
+    ) {
+      result.success = false;
+      result.message = '각 모션마다 최소 1장의 이미지가 필요합니다';
+      return result;
+    }
+
+    const RESOURCE_PATH = 'assets/character';
+
+    if (fs.existsSync(path.join(RESOURCE_PATH, name))) {
+      result.success = false;
+      result.message = '이미 존재하는 캐릭터 이름입니다';
+      return result;
+    }
+
+    fs.mkdirSync(path.join(RESOURCE_PATH, name));
+
+    const images = [
+      { motion: 'stop', images: stop },
+      { motion: 'move', images: move },
+      { motion: 'click', images: click },
+      { motion: 'down', images: down },
+      { motion: 'up', images: up },
+    ];
+
+    images.forEach(({ motion, images }) => {
+      fs.mkdirSync(path.join(RESOURCE_PATH, name, motion));
+      images.forEach((image, index) => {
+        fs.writeFileSync(
+          path.join(RESOURCE_PATH, name, motion, `${index + 1}.png`),
+          image,
+          'base64',
+        );
+      });
+    });
+
+    result.success = true;
+
+    return result;
+  },
+);
 
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));

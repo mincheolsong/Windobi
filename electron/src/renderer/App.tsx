@@ -13,15 +13,27 @@ import GlobalFont from './global';
 import MenuModal from './components/character/MenuModal';
 import Closed from './pages/Closed';
 import Setting from './pages/Setting';
+import TMail from './components/notification/TMail';
+import MailContent from './pages/MailContent';
 import ChangeCharacter from './pages/ChangeCharacter';
 import ChatGPT from './pages/ChatGPT';
 import AddCharacter from './pages/AddCharacter';
 import MyEmail from './pages/MyEmail';
 import RegistEmail from './pages/RegistEmail';
+import Alarm from './pages/Alarm';
+import SubWindowBack from './layout/SubWindowBack';
 
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
+
+  ipcRenderer.on('mailReceiving', (mail: TMail) => {
+    // console.log("mainRenderer Mail 수신", mail);
+    // 메일 수신 알림 주기
+    console.log("서브 수신 완료");
+    ipcRenderer.sendMessage('sub', 'alarm');
+  });
+
   ipcRenderer.on('sub', (path) => {
     navigate(`/${path}`);
   });
@@ -56,6 +68,16 @@ function MyApp() {
             </SubWindow>
           }
         />
+
+        <Route
+          path="/mailContent"
+          element={
+            <SubWindowBack title="메일">
+              <MailContent />
+              </SubWindowBack>
+          }
+        />
+
         <Route
           path="/changecharacter"
           element={
@@ -64,6 +86,7 @@ function MyApp() {
             </SubWindow>
           }
         />
+
         <Route
           path="/addcharacter"
           element={
@@ -94,6 +117,14 @@ function MyApp() {
           element={
             <SubWindow title="이메일 등록">
               <RegistEmail />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/alarm"
+          element={
+            <SubWindow title="알림">
+              <Alarm />
             </SubWindow>
           }
         />

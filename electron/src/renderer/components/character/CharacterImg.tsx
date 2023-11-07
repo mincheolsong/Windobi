@@ -69,15 +69,14 @@ function CharacterImg() {
         character,
       );
 
-      setImages(characterImages);
+      ipcRenderer.removeAllListener('character-move');
+      setImages(() => characterImages);
       if (timerId !== null) clearInterval(timerId);
     })();
   }, [character]);
 
   useEffect(() => {
     if (images.stop.length === 0) return;
-    ipcRenderer.removeAllListener('character-move');
-
     setMotion('stop');
     setImageIndex(0);
 

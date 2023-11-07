@@ -11,9 +11,10 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
+
   width: 100%;
   height: 35px;
-  font-family: NanumBarunGothicBold;
+  font-family:  NanumBarunGothicBold;
   font-size: 20px;
   color: white;
 
@@ -22,12 +23,32 @@ const Header = styled.div`
   align-items: center;
 
   position: fixed;
-  z-index: 999;
+  z-index: 10;
 
   background-color: rgb(11, 108, 255);
+  // background-color: red;
 
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+`;
+
+const Back = styled.div`
+  position: fixed;
+  width: 26px;
+  height: 26px;
+  left: 10px;
+
+  // background-color: red;
+
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+
 `;
 
 const Close = styled.div`
@@ -74,4 +95,4 @@ const Body = styled.div`
   }
 `;
 
-export { Wrapper, Header, Close, Body };
+export { Wrapper, Header, Close, Body, Back };
