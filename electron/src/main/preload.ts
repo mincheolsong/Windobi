@@ -26,7 +26,9 @@ export type Channels =
   | 'get-setting'
   | 'env'
   | 'hideMenuWindow'
-  | 'hideSubWindow';
+  | 'hideSubWindow'
+  | 'get-image'
+  | 'add-character';
 
 const electronHandler = {
   ipcRenderer: {
