@@ -12,10 +12,12 @@ const DB_FILE = path.join(RESOURCES_PATH, 'setting.json');
 
 type TSetting = {
   character: string;
+  hideOrShow: string;
 };
 
 const initSetting: TSetting = {
   character: 'hanbyul',
+  hideOrShow: 'CommandOrcontrol+Alt+H',
 };
 
 class SettingDB {
@@ -41,6 +43,15 @@ class SettingDB {
 
   set character(value) {
     this.#setting.character = value;
+    this.#save();
+  }
+
+  get hideOrShow() {
+    return this.#setting.hideOrShow;
+  }
+
+  set hideOrShow(value) {
+    this.#setting.hideOrShow = value;
     this.#save();
   }
 }

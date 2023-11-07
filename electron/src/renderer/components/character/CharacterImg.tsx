@@ -1,8 +1,10 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable default-case */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { styled } from 'styled-components';
 
 type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
 type TDirection =
@@ -56,8 +58,8 @@ function CharacterImg() {
   };
 
   const { ipcRenderer } = window.electron;
+  const timerId = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  let timerId: ReturnType<typeof setInterval> | null = null;
   // 캐릭터가 변경(디렉터리 이름과 매치되어야 함)
   // 이에 따라 적절한 이미지를 불러오자
   useEffect(() => {
@@ -70,8 +72,8 @@ function CharacterImg() {
       );
 
       ipcRenderer.removeAllListener('character-move');
+      if (timerId.current !== null) clearInterval(timerId.current);
       setImages(() => characterImages);
-      if (timerId !== null) clearInterval(timerId);
     })();
   }, [character]);
 
@@ -81,6 +83,7 @@ function CharacterImg() {
     setImageIndex(0);
 
     const indexHandler = (length: number) => {
+      console.log(new Date());
       setImageIndex((prev) => (prev + 1) % length);
     };
 
@@ -123,9 +126,9 @@ function CharacterImg() {
     };
 
     const handler = (direction: TDirection) => {
-      if (timerId !== null) clearInterval(timerId);
+      if (timerId.current !== null) clearInterval(timerId.current);
       setImageIndex(() => 0);
-      timerId = motionHandler[direction]();
+      timerId.current = motionHandler[direction]();
     };
     ipcRenderer.on('character-move', handler);
   }, [images]);
@@ -137,15 +140,15 @@ function CharacterImg() {
         'get-setting',
         'character',
       );
-      setCharacter(savedCharacter);
+      setCharacter(() => savedCharacter);
     })();
     ipcRenderer.on('change-character', (character: string) => {
-      setCharacter(character);
+      setCharacter(() => character);
     });
   }, []);
 
   return (
-    <img
+    <Image
       width="100"
       alt="icon"
       src={
@@ -156,11 +159,14 @@ function CharacterImg() {
           : ''
       }
       style={{
-        WebkitUserDrag: 'none',
         transform: `scaleX(${reverse ? -1 : 1})`,
       }}
     />
   );
 }
+
+const Image = styled.img`
+  -webkit-user-drag: none;
+`;
 
 export default CharacterImg;

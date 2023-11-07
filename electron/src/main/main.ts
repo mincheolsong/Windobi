@@ -29,8 +29,13 @@ import {
   interMenuWindowCommunication,
 } from './interWindow';
 import getMails from './mail';
-import SettingHandler from './setting/setting';
+import SettingHandler, { settingDB } from './setting/setting';
 import createTray from './tray/tray';
+import characterHandler from './ipcMainHandler/characterHandler';
+import windowsHandler from './ipcMainHandler/windowsHandler';
+import globalShortcutHandler from './shortcut/globalShortcutHandler';
+import { JobTimeDB } from './jobtime/jobTimeDB';
+import jobTimeHandler from './ipcMainHandler/jobTimeHandler';
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
@@ -71,25 +76,6 @@ let menuWindow: BrowserWindow | null = null;
 dbInstance.init();
 subDbInstance.init();
 
-ipcMain.on('job-time', async (event, type, target) => {
-  if (type === 'day') {
-    const result = await dbInstance.getByDay(target);
-    event.reply('job-time', { type, result });
-  } else if (type === 'week') {
-    const result = await dbInstance.getRecentWeek();
-    event.reply('job-time', { type, result });
-  }
-});
-
-ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
-  if (type === 'daily') {
-    return subDbInstance.getByDay(application, date);
-  }
-  if (type === 'weekly') {
-    return subDbInstance.getRecentWeek(application);
-  }
-});
-
 ipcMain.handle('env', async (event, key) => {
   return process.env[key];
 });
@@ -102,92 +88,21 @@ ipcMain.on('application', (event, applicationPath) => {
   }
 });
 
-ipcMain.on('sub', (event, path) => {
-  subWindow?.webContents.send('sub', path);
-  subWindow?.show();
-});
-
-ipcMain.on('windowMoving', (event, arg) => {
-  mainWindow?.setBounds({
-    width: 100,
-    height: 100,
-    x: arg.mouseX - 50, // always changes in runtime
-    y: arg.mouseY - 50,
-  });
-});
-
-ipcMain.on('mailRequest', ()=>{
-  console.log("mail Requesting!!!");
+ipcMain.on('mailRequest', () => {
+  console.log('mail Requesting!!!');
   subWindow?.webContents.send('mailRequest', mails);
 });
 
-
-// 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
-ipcMain.on('toggleMenuOn', () => {
-  mainWindow?.show();
-  menuWindow?.show();
-  menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
-});
-
-ipcMain.handle('character-list', async () => {
-  const RESOURCE_PATH = 'assets/character';
-  const characterList = fs.readdirSync(RESOURCE_PATH);
-  const result = characterList.map((character) => {
-    const image = fs.readFileSync(
-      path.join(RESOURCE_PATH, character, 'stop', '1.png'),
-      { encoding: 'base64' },
-    );
-
-    return { name: character, image };
-  });
-  return result;
-});
-
-type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
-type TMotionImage = {
-  click: Array<string>;
-  down: Array<string>;
-  move: Array<string>;
-  stop: Array<string>;
-  up: Array<string>;
-};
-ipcMain.handle('character-images', async (event, character: string) => {
-  const RESOURCE_PATH = 'assets/character';
-  const TARGET_DIRECTORY = path.join(RESOURCE_PATH, character);
-  const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'up'];
-  const motionImages: TMotionImage = {
-    click: [],
-    down: [],
-    move: [],
-    stop: [],
-    up: [],
-  };
-  motions.forEach((motion) => {
-    try {
-      const imageList = fs.readdirSync(path.join(TARGET_DIRECTORY, motion));
-      for (const image of imageList) {
-        const base64Image = fs.readFileSync(
-          path.join(TARGET_DIRECTORY, motion, image),
-          { encoding: 'base64' },
-        );
-        motionImages[motion].push(base64Image);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  });
-
-  return motionImages;
-});
-
-ipcMain.on('change-character', (event, character) => {
-  mainWindow?.webContents.send('change-character', character);
-});
-
-ipcMain.on('deleteMail', (event, mail)=>{  // 메일 삭제하기 위해 듣는 리스너
-  for(let i = 0; i < mails.length; ++i){
-    if(mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host){ // 해당 메일 삭제
-      mails.splice(i,1);
+ipcMain.on('deleteMail', (event, mail) => {
+  // 메일 삭제하기 위해 듣는 리스너
+  for (let i = 0; i < mails.length; ++i) {
+    if (
+      mails[i].seq === mail.seq &&
+      mails[i].to === mail.to &&
+      mails[i].host === mail.host
+    ) {
+      // 해당 메일 삭제
+      mails.splice(i, 1);
     }
   }
 });
@@ -227,7 +142,7 @@ const createWindow = async () => {
   subWindow = createSubWindow(app, windows);
 
   // 메일 계정 불러오기
-  let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
+  // let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
 
   interWindowCommunication(mainWindow, subWindow);
   interMenuWindowCommunication(mainWindow, menuWindow);
@@ -235,10 +150,6 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
-
-/**
- * Add event listeners...
- */
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -255,122 +166,18 @@ app
     createWindow().then(() => {
       // 윈도우가 만들어지고난 후
       SettingHandler(windows);
-      createTray(app, windows);
+      createTray(app, windows, settingDB);
+
+      // ipc관련 핸들러들 등록
+      characterHandler(windows);
+      windowsHandler(windows);
+      globalShortcutHandler(windows);
+      jobTimeHandler(dbInstance, subDbInstance);
     });
     app.on('activate', () => {
       if (mainWindow === null) createWindow();
     });
-
-    globalShortcut.register('CommandOrControl+Alt+I', () => {
-      mainWindow?.webContents.toggleDevTools();
-      subWindow?.webContents.toggleDevTools();
-      menuWindow?.webContents.toggleDevTools();
-    });
-    globalShortcut.register('CommandOrControl+Alt+M', () => {
-      mainWindow?.webContents.toggleDevTools();
-    });
-    globalShortcut.register('CommandOrControl+Alt+S', () => {
-      subWindow?.webContents.toggleDevTools();
-    });
-    globalShortcut.register('CommandOrControl+Alt+O', () => {
-      subWindow?.webContents.send('sub', 'jobtime');
-    });
-    globalShortcut.register('CommandOrControl+Alt+P', () => {
-      subWindow?.webContents.send('sub', 'notification');
-    });
   })
   .catch(console.log);
-
-let moveTimer: ReturnType<typeof setInterval> | null = null;
-ipcMain.on('start-move', () => {
-  mainWindow?.webContents.send('character-move', 'click');
-  moveTimer = setInterval(() => {
-    const { x, y } = screen.getCursorScreenPoint();
-    mainWindow?.setBounds({
-      width: 100,
-      height: 100,
-      x: x - 50,
-      y: y - 50,
-    });
-  }, 10);
-});
-ipcMain.on('stop-move', () => {
-  if (moveTimer) {
-    clearInterval(moveTimer);
-  }
-});
-
-ipcMain.handle('get-image', (event, filePath: string) => {
-  return fs.readFileSync(filePath, { encoding: 'base64' });
-});
-
-type TAddCharacter = {
-  name: string;
-  stop: Array<string>;
-  move: Array<string>;
-  click: Array<string>;
-  down: Array<string>;
-  up: Array<string>;
-};
-ipcMain.handle(
-  'add-character',
-  (event, { name, stop, move, click, down, up }: TAddCharacter) => {
-    const result = {
-      success: false,
-      message: '',
-    };
-
-    if (name.length === 0 || stop.length > 10) {
-      result.success = false;
-      result.message = '캐릭터 이름은 1~9글자여야합니다';
-      return result;
-    }
-
-    if (
-      stop.length === 0 ||
-      move.length === 0 ||
-      click.length === 0 ||
-      down.length === 0 ||
-      up.length === 0
-    ) {
-      result.success = false;
-      result.message = '각 모션마다 최소 1장의 이미지가 필요합니다';
-      return result;
-    }
-
-    const RESOURCE_PATH = 'assets/character';
-
-    if (fs.existsSync(path.join(RESOURCE_PATH, name))) {
-      result.success = false;
-      result.message = '이미 존재하는 캐릭터 이름입니다';
-      return result;
-    }
-
-    fs.mkdirSync(path.join(RESOURCE_PATH, name));
-
-    const images = [
-      { motion: 'stop', images: stop },
-      { motion: 'move', images: move },
-      { motion: 'click', images: click },
-      { motion: 'down', images: down },
-      { motion: 'up', images: up },
-    ];
-
-    images.forEach(({ motion, images }) => {
-      fs.mkdirSync(path.join(RESOURCE_PATH, name, motion));
-      images.forEach((image, index) => {
-        fs.writeFileSync(
-          path.join(RESOURCE_PATH, name, motion, `${index + 1}.png`),
-          image,
-          'base64',
-        );
-      });
-    });
-
-    result.success = true;
-
-    return result;
-  },
-);
 
 const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));
