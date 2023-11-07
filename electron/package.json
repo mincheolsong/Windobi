@@ -103,6 +103,7 @@
     "@mui/styles": "^5.14.16",
     "@mui/x-charts": "^6.0.0-alpha.17",
     "@paymoapp/active-window": "^2.0.6",
+    "axios": "^1.6.0",
     "dotenv": "^16.3.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
@@ -120,6 +121,7 @@
     "react-router-dom": "^6.16.0",
     "react-scripts": "4.0.3",
     "react-switch": "^7.0.0",
+    "sqlite3": "^5.1.6",
     "styled-components": "^6.1.0"
   },
   "devDependencies": {
