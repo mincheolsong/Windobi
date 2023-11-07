@@ -4,10 +4,10 @@ import { ipcMain } from 'electron';
 import { TWindows } from '../main';
 import SettingDB from './settingDB';
 
-type TKyes = 'character';
+type TSetting = 'character';
 
+const settingDB = new SettingDB();
 const SettingHandler = (windows: TWindows) => {
-  const settingDB = new SettingDB();
   const getHandler = {
     character: settingDB.character,
   };
@@ -18,14 +18,16 @@ const SettingHandler = (windows: TWindows) => {
     },
   };
 
-  ipcMain.handle('get-setting', async (event, key: TKyes) => {
+  ipcMain.handle('get-setting', async (event, key: TSetting) => {
     return getHandler[key];
   });
 
-  ipcMain.on('set-setting', async (event, key: TKyes, value) => {
+  ipcMain.on('set-setting', async (event, key: TSetting, value) => {
     const handler = setHandler[key];
     handler(value);
   });
 };
 
 export default SettingHandler;
+
+export { settingDB };
