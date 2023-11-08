@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-undef */
 import path from 'node:path';
 import fs from 'fs';
 
@@ -12,10 +10,12 @@ const DB_FILE = path.join(RESOURCES_PATH, 'setting.json');
 
 type TSetting = {
   character: string;
+  hideOrShow: string;
 };
 
 const initSetting: TSetting = {
   character: 'hanbyul',
+  hideOrShow: 'CommandOrControl+Alt+H',
 };
 
 class SettingDB {
@@ -43,6 +43,17 @@ class SettingDB {
     this.#setting.character = value;
     this.#save();
   }
+
+  get hideOrShow() {
+    return this.#setting.hideOrShow;
+  }
+
+  set hideOrShow(value) {
+    this.#setting.hideOrShow = value;
+    this.#save();
+  }
 }
 
-export default SettingDB;
+const settingDB = new SettingDB();
+
+export default settingDB;

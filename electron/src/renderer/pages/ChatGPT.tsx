@@ -104,7 +104,7 @@ function ChatGPT() {
           ) : null,
         )}
       </div>
-      <div ref={messageEndRef}></div>
+      <div ref={messageEndRef} />
       <div
         style={{
           display: 'flex',

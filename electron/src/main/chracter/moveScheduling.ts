@@ -1,13 +1,13 @@
-/* eslint-disable prefer-const */
-/* eslint-disable default-case */
-import Character from './Character';
+import { mainVariables } from '../windows';
 
 const max = 3;
 // const behavior = ['left', 'right', 'stop', 'up', 'down']; // 현재 2까지 사용
 
-function moveScheduling(character: Character) {
+const { character } = mainVariables;
+
+function moveScheduling() {
   let flag = true;
-  let flag2 = character.fallTrigger;
+  const flag2 = character.fallTrigger;
   while (flag && !flag2) {
     const rand = Math.floor(Math.random() * max);
     // rand값에 따라 (0,1,2) 멈추거나(2) 오른쪽가거나(1) 왼쪽으로 가기(0)
@@ -18,7 +18,6 @@ function moveScheduling(character: Character) {
           flag = false;
           if (character.direction !== 'left') character.transition = true;
           character.direction = 'left';
-          character.mainWindow.webContents.send('character-move', 'left');
         }
         break;
       case 1:
@@ -27,7 +26,6 @@ function moveScheduling(character: Character) {
           flag = false;
           if (character.direction !== 'right') character.transition = true;
           character.direction = 'right';
-          character.mainWindow.webContents.send('character-move', 'right');
         }
         break;
       case 2:
@@ -35,7 +33,6 @@ function moveScheduling(character: Character) {
         flag = false;
         if (character.direction !== 'stop') character.transition = true;
         character.direction = 'stop';
-        character.mainWindow.webContents.send('character-move', 'stop');
         break;
     }
   }

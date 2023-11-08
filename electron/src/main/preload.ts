@@ -1,32 +1,19 @@
-// Disable no-unused-vars, broken for spread args
-/* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { TCharacterChannel } from './preload/Character';
+import { JobTimeChannel } from './preload/JobTime';
+import { WindowsChannel } from './preload/Windows';
 
 export type Channels =
-  | 'ipc-example'
-  | 'sub'
-  | 'job-time'
-  | 'size'
-  | 'windowMoving'
-  | 'toggleMenuOn'
-  | 'toggleMenuClose'
-  | 'closeMenuWindow'
-  | 'sizeUpMenuWindow'
   | 'application'
-  | 'character-move'
-  | 'stopMoving'
-  | 'restartMoving'
-  | 'sub-job-time'
-  | 'character-list'
-  | 'character-images'
-  | 'change-character'
-  | 'start-move'
-  | 'stop-move'
+  | 'mailReceiving'
+  | 'mailRequest'
   | 'set-setting'
   | 'get-setting'
   | 'env'
-  | 'hideMenuWindow'
-  | 'hideSubWindow';
+  | 'deleteMail'
+  | TCharacterChannel
+  | JobTimeChannel
+  | WindowsChannel;
 
 const electronHandler = {
   ipcRenderer: {
