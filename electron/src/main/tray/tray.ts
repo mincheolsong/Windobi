@@ -1,30 +1,21 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable import/no-cycle */
-import Electron, { App, Menu, Tray, globalShortcut } from 'electron';
+import Electron, { Menu, Tray, app, globalShortcut } from 'electron';
 import path from 'path';
-import { TWindows } from '../main';
-import SettingDB from '../setting/settingDB';
+import settingDB from '../setting/settingDB';
+import { mainWindow, subWindow } from '../windows';
 
-const createTray = (app: App, windows: TWindows, settingDB: SettingDB) => {
+const createTray = () => {
   const iconPath = path.join('assets', 'icons', 'hanbyul.png');
   const tray = new Tray(iconPath);
 
   // 툴팁 설정
-  tray.setToolTip('윈도비');
+  tray.setToolTip('windobi');
 
   // 메뉴 만들기
-  createMenu(tray, app, windows, settingDB);
+  createMenu(tray);
 };
 
-function createMenu(
-  tray: Tray,
-  app: App,
-  windows: TWindows,
-  settingDB: SettingDB,
-) {
-  const initTemplate: Array<
-    Electron.MenuItemConstructorOptions | Electron.MenuItem
-  > = [
+function createMenu(tray: Tray) {
+  const initTemplate: Array<Electron.MenuItemConstructorOptions> = [
     {
       label: '종료',
       type: 'normal',
@@ -43,8 +34,8 @@ function createMenu(
       ...initTemplate,
     ]);
     tray.setContextMenu(contextMenu);
-    windows.main?.hide();
-    windows.sub?.hide();
+    mainWindow.hide();
+    subWindow.hide();
   }
 
   function show() {
@@ -58,8 +49,8 @@ function createMenu(
       ...initTemplate,
     ]);
     tray.setContextMenu(contextMenu);
-    windows.main?.show();
-    windows.sub?.show();
+    mainWindow.show();
+    subWindow.show();
   }
 
   function exit() {

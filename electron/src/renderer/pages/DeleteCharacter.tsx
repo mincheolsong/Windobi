@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
-import * as S from '../components/changeCharacter/ChangeCharacter.style';
+import * as S from '../components/deleteCharacter/DeleteCharacter.style';
 
 type TCharacter = {
   name: string;
@@ -23,6 +23,8 @@ function DeleteCharacter() {
   }, []);
 
   const onClickDelete = async (name: string) => {
+    const check = window.confirm(`${name}을 삭제할까요?`);
+    if (!check) return;
     const success = await ipcRenderer.invoke('delete-character', name);
 
     if (success) {

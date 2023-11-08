@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-undef */
 import path from 'node:path';
 import fs from 'fs';
 
@@ -17,7 +15,7 @@ type TSetting = {
 
 const initSetting: TSetting = {
   character: 'hanbyul',
-  hideOrShow: 'CommandOrcontrol+Alt+H',
+  hideOrShow: 'CommandOrControl+Alt+H',
 };
 
 class SettingDB {
@@ -56,4 +54,6 @@ class SettingDB {
   }
 }
 
-export default SettingDB;
+const settingDB = new SettingDB();
+
+export default settingDB;
