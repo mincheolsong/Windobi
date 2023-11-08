@@ -1,13 +1,14 @@
 /* eslint-disable global-require */
 /* eslint-disable no-param-reassign */
 
-import { App, BrowserWindow, shell, ipcMain } from 'electron';
+import { App, BrowserWindow, shell, ipcMain, MessagePortMain } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from './util';
 import Character from './chracter/Character';
 import moveScheduling from './chracter/moveScheduling';
 import moving from './chracter/moving';
 import { TWindows } from './main';
+import getMails from './mail/mail';
 
 const width = 100;
 const height = 100;
@@ -77,7 +78,7 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
     scheduling = setInterval(moveScheduling, 2000, character);
     characterMoving = setInterval(moving, 30, character);
 
-    // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
+    // // 캐릭터를 드래그 하고 있는 경우에는 걸어다니는 동작을 일시 정지함
 
     ipcMain.on('stopMoving', () => {
       clearInterval(characterMoving);
@@ -99,6 +100,8 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
         scheduling = setInterval(moveScheduling, 2000, character);
       }
     });
+
+
 
     mainWindow.webContents.closeDevTools();
   });

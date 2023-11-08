@@ -53,6 +53,7 @@ function Music() {
   };
 
   useEffect(() => {
+    console.log('music!');
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
       height: 300,

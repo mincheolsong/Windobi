@@ -5,24 +5,42 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-import Character from './pages/Character';
-import JobTime from './pages/JobTime';
+import {
+  AddCharacter,
+  Alarm,
+  ChangeCharacter,
+  Character,
+  ChatGPT,
+  Closed,
+  DeleteCharacter,
+  JobTime,
+  MailContent,
+  MyEmail,
+  Notification,
+  RegistEmail,
+  Setting,
+} from './pages';
+
 import SubWindow from './layout/SubWindow';
-import Notification from './pages/Notification';
 import GlobalFont from './global';
 import MenuModal from './components/character/MenuModal';
-import Closed from './pages/Closed';
-import Setting from './pages/Setting';
-import ChangeCharacter from './pages/ChangeCharacter';
-import ChatGPT from './pages/ChatGPT';
-import AddCharacter from './pages/AddCharacter';
-import Music from './pages/Music';
+import TMail from './components/notification/TMail';
+import SubWindowBack from './layout/SubWindowBack';
 import Test from './pages/Test';
 import GoogleOAuth from './pages/GoogleOAuth';
+import Music from './pages/Music';
 
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
+
+  ipcRenderer.on('mailReceiving', (mail: TMail) => {
+    // console.log("mainRenderer Mail 수신", mail);
+    // 메일 수신 알림 주기
+    console.log('서브 수신 완료');
+    ipcRenderer.sendMessage('sub', 'alarm');
+  });
+
   ipcRenderer.on('sub', (path) => {
     navigate(`/${path}`);
   });
@@ -65,6 +83,16 @@ function MyApp() {
             </SubWindow>
           }
         />
+
+        <Route
+          path="/mailContent"
+          element={
+            <SubWindowBack title="메일">
+              <MailContent />
+            </SubWindowBack>
+          }
+        />
+
         <Route
           path="/changecharacter"
           element={
@@ -73,6 +101,7 @@ function MyApp() {
             </SubWindow>
           }
         />
+
         <Route
           path="/addcharacter"
           element={
@@ -101,6 +130,14 @@ function MyApp() {
         />
 
         <Route
+          path="/deletecharacter"
+          element={
+            <SubWindow title="캐릭터 삭제">
+              <DeleteCharacter />
+            </SubWindow>
+          }
+        />
+        <Route
           path="/chatGPT"
           element={
             <SubWindow title="한별이">
@@ -108,13 +145,35 @@ function MyApp() {
             </SubWindow>
           }
         />
-
         <Route path="/menu" element={<MenuModal />} />
+        <Route
+          path="/email"
+          element={
+            <SubWindow title="나의 이메일">
+              <MyEmail />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/registemail"
+          element={
+            <SubWindow title="이메일 등록">
+              <RegistEmail />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/alarm"
+          element={
+            <SubWindow title="알림">
+              <Alarm />
+            </SubWindow>
+          }
+        />
       </Routes>
     </>
   );
 }
-
 export default function App() {
   return (
     <Router>
