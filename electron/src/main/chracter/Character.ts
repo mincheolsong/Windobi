@@ -51,6 +51,7 @@ class Character {
 
     this.#direction = 'stop';
     this.#prevDirection = 'down';
+
   }
 
   get curX() {

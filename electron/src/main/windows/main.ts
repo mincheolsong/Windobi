@@ -3,6 +3,7 @@ import path from 'path';
 import { resolveHtmlPath } from '../util';
 import Character from '../chracter/Character';
 
+const primaryDisplay = screen.getPrimaryDisplay();
 const height = 100;
 const width = 100;
 
@@ -53,7 +54,7 @@ type TVariables = {
   height: number;
 };
 const variables: TVariables = {
-  character: new Character(width, height, width, height + 2),
+  character: new Character(primaryDisplay.bounds.width, primaryDisplay.bounds.height, width, height + 2),
   scheduleId: null,
   characterMoveId: null,
   primaryDisplay: screen.getPrimaryDisplay(),
