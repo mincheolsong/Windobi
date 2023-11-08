@@ -18,22 +18,49 @@ function AddCharacter() {
   const [name, setName] = useState<string>('');
   const [message, setMessage] = useState<string>('');
 
+  const [able, setAble] = useState<boolean>(false);
+
   useEffect(() => {
     ipcRenderer.sendMessage('size', { width: 440, height: 500 });
   }, []);
 
+  useEffect(() => {
+    if (
+      stopImages.length !== 0 &&
+      moveImages.length !== 0 &&
+      clickImages.length !== 0 &&
+      downImages.length !== 0 &&
+      upImages.length !== 0 &&
+      name
+    ) {
+      setAble(true);
+    } else {
+      setAble(false);
+    }
+  }, [
+    stopImages.length,
+    moveImages.length,
+    clickImages.length,
+    downImages.length,
+    upImages.length,
+    name,
+  ]);
+
   const saveCharacter = async () => {
-    const { success, message } = await ipcRenderer.invoke('add-character', {
-      name,
-      stop: stopImages,
-      move: moveImages,
-      click: clickImages,
-      down: downImages,
-      up: upImages,
-    });
+    const { success, message: newMessage } = await ipcRenderer.invoke(
+      'add-character',
+      {
+        name,
+        stop: stopImages,
+        move: moveImages,
+        click: clickImages,
+        down: downImages,
+        up: upImages,
+      },
+    );
 
     if (!success) {
-      setMessage(message);
+      setMessage(newMessage);
     }
     if (success) {
       alert('캐릭터 등록 성공!');
@@ -68,7 +95,9 @@ function AddCharacter() {
         onChange={(e) => setName(e.target.value)}
       />
       {message && <S.Message>{message}</S.Message>}
-      <S.Button onClick={saveCharacter}>저장</S.Button>
+      <S.Button onClick={saveCharacter} disabled={!able} able={able}>
+        저장
+      </S.Button>
     </S.Wrapper>
   );
 }

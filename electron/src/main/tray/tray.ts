@@ -10,7 +10,7 @@ const createTray = (app: App, windows: TWindows, settingDB: SettingDB) => {
   const tray = new Tray(iconPath);
 
   // 툴팁 설정
-  tray.setToolTip('윈도비');
+  tray.setToolTip('windobi');
 
   // 메뉴 만들기
   createMenu(tray, app, windows, settingDB);
@@ -22,9 +22,7 @@ function createMenu(
   windows: TWindows,
   settingDB: SettingDB,
 ) {
-  const initTemplate: Array<
-    Electron.MenuItemConstructorOptions | Electron.MenuItem
-  > = [
+  const initTemplate: Array<Electron.MenuItemConstructorOptions> = [
     {
       label: '종료',
       type: 'normal',

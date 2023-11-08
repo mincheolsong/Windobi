@@ -29,12 +29,6 @@ import jobTimeHandler from './ipcMainHandler/jobTimeHandler';
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
 
-const sleep = (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-};
-
 export type TWindows = {
   main: BrowserWindow | null;
   sub: BrowserWindow | null;
@@ -162,6 +156,8 @@ app
       windowsHandler(windows);
       globalShortcutHandler(windows);
       jobTimeHandler(dbInstance, subDbInstance);
+
+      // 테스트
     });
     app.on('activate', () => {
       if (mainWindow === null) createWindow();

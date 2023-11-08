@@ -215,7 +215,7 @@ const startMoveHandler = (windows: TWindows) => {
 // 캐릭터 멈추기 동작을 할 때
 const stopMoveHandler = () => {
   ipcMain.on('stop-move', () => {
-    if (moveTimer) {
+    if (moveTimer !== null) {
       clearInterval(moveTimer);
     }
   });
