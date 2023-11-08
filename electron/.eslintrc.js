@@ -31,6 +31,7 @@ module.exports = {
     'default-case': 'off',
     'react-hooks/exhaustive-deps': 'warn',
     'no-nested-ternary': 'warn',
+    'no-plusplus': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

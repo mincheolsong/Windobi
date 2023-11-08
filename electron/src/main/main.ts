@@ -15,12 +15,10 @@ class AppUpdater {
   }
 }
 
-const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
-const mails: [] = []; // 이제껏 수신한 메일들을 보관하는 배열
 dbInstance.init();
 subDbInstance.init();
 
-ipcMain.handle('env', async (event, key) => {
+ipcMain.handle('env', async (_event, key) => {
   return process.env[key];
 });
 
@@ -31,25 +29,6 @@ ipcMain.on('application', (event, applicationPath) => {
     console.log(e);
   }
 });
-
-// ipcMain.on('mailRequest', () => {
-//   console.log('mail Requesting!!!');
-//   subWindow?.webContents.send('mailRequest', mails);
-// });
-
-// ipcMain.on('deleteMail', (event, mail) => {
-//   // 메일 삭제하기 위해 듣는 리스너
-//   for (let i = 0; i < mails.length; ++i) {
-//     if (
-//       mails[i].seq === mail.seq &&
-//       mails[i].to === mail.to &&
-//       mails[i].host === mail.host
-//     ) {
-//       // 해당 메일 삭제
-//       mails.splice(i, 1);
-//     }
-//   }
-// });
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -83,9 +62,6 @@ const createWindow = async () => {
 
   await import('./windows');
 
-  // 메일 계정 불러오기
-  // let timerId = setInterval(getMails, 10000, mainWindow, subWindow, received, mails, "honeycomb201", "ssafyssafy123", "imap.daum.net");
-
   // Remove this if your app does not use auto updates
 
   new AppUpdater();
@@ -114,9 +90,8 @@ app
       const createTray = await import('./tray/tray');
       createTray.default();
 
-      const { characterHandler, jobTimeHandler, windowsHandler } = await import(
-        './ipcMainHandler'
-      );
+      const { characterHandler, jobTimeHandler, windowsHandler, mailHandler } =
+        await import('./ipcMainHandler');
       const globalShortcutHandler = await import(
         './shortcut/globalShortcutHandler'
       );
@@ -125,6 +100,8 @@ app
       characterHandler();
       windowsHandler();
       jobTimeHandler(dbInstance, subDbInstance);
+      mailHandler();
+
       globalShortcutHandler.default();
     });
     app.on('activate', async () => {
