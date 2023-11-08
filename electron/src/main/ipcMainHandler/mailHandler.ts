@@ -34,7 +34,9 @@ const mailHandler = () => {
  * 'mailRequest' : 메일 리퀘스트
  */
 const mailRequestHandler = () => {
-  subWindow.webContents.send('mailRequest', mails);
+  ipcMain.on("mailRequest", ()=>{
+    subWindow.webContents.send('mailRequest', mails);
+  });
 };
 
 /**
