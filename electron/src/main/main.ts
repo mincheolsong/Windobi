@@ -80,14 +80,16 @@ app
   .whenReady()
   .then(() => {
     createWindow().then(async () => {
-      const {mainWindow, mainVariables} = await import("./windows")
-      const {curX, curY, winHeight, winWidth} = mainVariables.character;
+      // 초기 캐릭터 위치 변경해주기
+      const { mainWindow, mainVariables } = await import('./windows');
+      const { curX, curY, winHeight, winWidth } = mainVariables.character;
       mainWindow.setBounds({
         x: curX,
         y: curY,
         width: winWidth,
-        height: winHeight
+        height: winHeight,
       });
+
       // 윈도우가 만들어지고난 후
       const communication = await import('./windows/communication');
       communication.default();
