@@ -101,8 +101,6 @@ const createMainWindow = (app: App, wins: TWindows): BrowserWindow => {
       }
     });
 
-
-
     mainWindow.webContents.closeDevTools();
   });
 

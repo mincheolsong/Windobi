@@ -17,7 +17,7 @@ type TSetting = {
 
 const initSetting: TSetting = {
   character: 'hanbyul',
-  hideOrShow: 'CommandOrcontrol+Alt+H',
+  hideOrShow: 'CommandOrControl+Alt+H',
 };
 
 class SettingDB {
