@@ -6,6 +6,4 @@ export type WindowsChannel =
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
   | 'start-move'
-  | 'stop-move'
-  | 'hideMenuWindow'
-  | 'hideSubWindow';
+  | 'stop-move';

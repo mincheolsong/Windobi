@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-undef */
 import path from 'node:path';
 import fs from 'fs';
 
@@ -56,4 +54,6 @@ class SettingDB {
   }
 }
 
-export default SettingDB;
+const settingDB = new SettingDB();
+
+export default settingDB;
