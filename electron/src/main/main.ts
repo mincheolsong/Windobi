@@ -243,24 +243,22 @@ const createWindow = async () => {
       pass: mailPassword
     }
   })
-  let sendTime = 17;
-  cron.schedule(`51 ${sendTime} * * * `, () => {
-    createReport(new Date()).then((res)=>{
-      console.log("5 o'clock");
-      let cur = new Date();
-      let receiver = 'hyerdd@naver.com';
-      let info = transporter.sendMail({
-        from: `"${mailAddress}@daum.net"`,
-        to: `${mailAddress}@daum.net`,
-        subject: `${cur.toLocaleString()} 보고서 입니다.`,
-        html: res,
-        attachments: []
-      });
-    });
+  let sendTime = 9;
+  cron.schedule(`39 ${sendTime} * * * `, () => {
+    console.log("5 o'clock");
+    let cur = new Date();
+    createReport(cur).then((res)=>{
+      // let receiver = 'hyerdd@naver.com';
+      // let info = transporter.sendMail({
+      //   from: `"${mailAddress}@daum.net"`,
+      //   to: `hyerdd@naver.com`,
+      //   subject: `${cur.toLocaleString()} 보고서 입니다.`,
+      //   html: res,
+      //   attachments: []
+      // });
+    }).catch((e)=>{console.log(e)});
     // 5시마다 보고서 보내기
   });
-
-  // console.log(a);
 
 
 
