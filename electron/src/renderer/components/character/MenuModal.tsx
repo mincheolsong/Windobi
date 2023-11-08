@@ -23,7 +23,7 @@ function MenuModal() {
     { chatGPT: chatGPT },
     { setting: setting },
     { news: news },
-    { music: music },
+    { googleOAuth: music },
     { login: login },
   ];
 

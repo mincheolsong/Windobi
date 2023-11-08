@@ -19,6 +19,7 @@ function Music() {
   const [openai, setOpenai] = useState();
   const [prompt, setPrompt] = useState('');
   const [count, setCount] = useState(1);
+  let playlistId;
 
   const messages = [
     {
@@ -43,7 +44,6 @@ function Music() {
       'env',
       'OPENAI_API_KEY',
     );
-    console.log(key);
     setOpenai(
       new OpenAI({
         apiKey: key,
@@ -68,40 +68,48 @@ function Music() {
 
     try {
       // openai에게 추천받기
-      const result = await openai.chat.completions.create({
+      const openaiResponse = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: messages,
       });
 
-      let openai_res = JSON.parse(result.choices[0].message.content); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
+      const parsedOneaiResponse = JSON.parse(
+        openaiResponse.choices[0].message.content,
+      ); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
 
-      // youtube에 검색하기
-      axios
-        .get(
-          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${openai_res[0].song}%7C${openai_res[0].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (e) {
-      console.log(e);
+      // youtube에 playlist만들기
+      const playListResponse = await axios.post(
+        `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${GOOGLE_API_KEY}`,
+        {
+          snippet: {
+            title: prompt.concat(' by windobi'), // 플레이 리스트 제목
+          },
+          status: {
+            privacyStatus: 'public', // 플레이리스트가 public으로 만들어 짐
+          },
+        },
+        {
+          headers: {
+            Authorization:
+              'Bearer ya29.a0AfB_byBG5FLoZwNmiRNHLSo4KMHzGVD40AxmVMxSFarkDUwM88WrFodwOEHn97pQ-g6E-3ObJqL21xWqXBNmCd5QT9tZoUdOBjsXjPuvbZDt0RBq4yhsayLyV73uS3_a5P00cnjHCzIJl6tunSEJQ0MJtdZexi5yLAaCgYKATASARMSFQHGX2Micbk8RrN3P814efKMEnDgSg0169',
+          },
+        },
+      );
+
+      playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디
+
+      console.log('생성된 플레이리스트 아이디 '.concat(playlistId));
+
+      // youtube에 노래 검색
+      const youtubeSearchResponse = await axios.get(
+        `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${parsedOneaiResponse[0].song}%7C${parsedOneaiResponse[0].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
+      );
+
+      console.log(youtubeSearchResponse.data.items[0]);
+    } catch (err) {
+      console.log(err);
     }
   };
-
-  useEffect(() => {
-    axios
-      .get(
-        'https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UC7JbUmyD7g8JH6LvkkQuSZQ&maxResults=50&key=AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk',
-      )
-      .then((res) => {
-        console.log(res);
-        setPlaylist(res.data.items);
-      })
-      .catch(() => {});
-  }, []);
 
   return (
     <S.Wrapper>

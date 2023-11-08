@@ -17,6 +17,8 @@ import ChangeCharacter from './pages/ChangeCharacter';
 import ChatGPT from './pages/ChatGPT';
 import AddCharacter from './pages/AddCharacter';
 import Music from './pages/Music';
+import Test from './pages/Test';
+import GoogleOAuth from './pages/GoogleOAuth';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -24,11 +26,19 @@ function MyApp() {
   ipcRenderer.on('sub', (path) => {
     navigate(`/${path}`);
   });
- 
+
   return (
     <>
       <GlobalFont />
       <Routes>
+        <Route
+          path="/callback"
+          element={
+            <SubWindow title="리다이렉트">
+              <Test />
+            </SubWindow>
+          }
+        />
         <Route path="/" element={<Character />} />
         <Route path="/closed" element={<Closed />} />
         <Route
@@ -68,6 +78,15 @@ function MyApp() {
           element={
             <SubWindow title="캐릭터 추가">
               <AddCharacter />
+            </SubWindow>
+          }
+        />
+
+        <Route
+          path="/googleOAuth"
+          element={
+            <SubWindow title="Google OAuth">
+              <GoogleOAuth />
             </SubWindow>
           }
         />
