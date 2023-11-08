@@ -1,43 +1,40 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable import/no-cycle */
 import { globalShortcut } from 'electron';
-import { TWindows } from '../main';
+import { mainWindow, menuWindow, subWindow } from '../windows';
 
-const globalShortcutHandler = (windows: TWindows) => {
-  toggleAllDevToolsHandler(windows);
-  toggleMainWindowDevToolsHandler(windows);
-  toggleSubWindowDevToolsHandler(windows);
-  toggleMenuWindowDevToolsHandler(windows);
+const globalShortcutHandler = () => {
+  toggleAllDevToolsHandler();
+  toggleMainWindowDevToolsHandler();
+  toggleSubWindowDevToolsHandler();
+  toggleMenuWindowDevToolsHandler();
 };
 
 // 모든 윈도우의 devTools를 켜고 끄기
-const toggleAllDevToolsHandler = (windows: TWindows) => {
-  const { main, sub, menu } = windows;
+const toggleAllDevToolsHandler = () => {
   globalShortcut.register('CommandOrControl+Alt+I', () => {
-    main?.webContents.toggleDevTools();
-    sub?.webContents.toggleDevTools();
-    menu?.webContents.toggleDevTools();
+    mainWindow.webContents.toggleDevTools();
+    subWindow.webContents.toggleDevTools();
+    menuWindow.webContents.toggleDevTools();
   });
 };
 
 // 메인 윈도우의 devTools를 켜고 끄기
-const toggleMainWindowDevToolsHandler = (windows: TWindows) => {
+const toggleMainWindowDevToolsHandler = () => {
   globalShortcut.register('CommandOrControl+Alt+A', () => {
-    windows.main?.webContents.toggleDevTools();
+    mainWindow.webContents.toggleDevTools();
   });
 };
 
 // 서브 윈도우의 devTools를 켜고 끄기
-const toggleSubWindowDevToolsHandler = (windows: TWindows) => {
+const toggleSubWindowDevToolsHandler = () => {
   globalShortcut.register('CommandOrControl+Alt+S', () => {
-    windows.sub?.webContents.toggleDevTools();
+    subWindow.webContents.toggleDevTools();
   });
 };
 
 // 메뉴 윈도우의 devTools를 켜고 끄기
-const toggleMenuWindowDevToolsHandler = (windows: TWindows) => {
+const toggleMenuWindowDevToolsHandler = () => {
   globalShortcut.register('CommandOrControl+Alt+D', () => {
-    windows.menu?.webContents.toggleDevTools();
+    menuWindow.webContents.toggleDevTools();
   });
 };
 

@@ -1,8 +1,4 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable default-case */
 import { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 
@@ -75,7 +71,7 @@ function CharacterImg() {
       if (timerId.current !== null) clearInterval(timerId.current);
       setImages(() => characterImages);
     })();
-  }, [character]);
+  }, [character, ipcRenderer]);
 
   useEffect(() => {
     if (images.stop.length === 0) return;
@@ -130,7 +126,7 @@ function CharacterImg() {
       timerId.current = motionHandler[direction]();
     };
     ipcRenderer.on('character-move', handler);
-  }, [images]);
+  }, [images, ipcRenderer]);
 
   // ipcRenderer 이벤트 등록
   useEffect(() => {
@@ -141,8 +137,8 @@ function CharacterImg() {
       );
       setCharacter(() => savedCharacter);
     })();
-    ipcRenderer.on('change-character', (character: string) => {
-      setCharacter(() => character);
+    ipcRenderer.on('change-character', (newCharacter: string) => {
+      setCharacter(() => newCharacter);
     });
   }, []);
 

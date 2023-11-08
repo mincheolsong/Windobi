@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -76,12 +75,14 @@ const Button = styled.button<TButton>`
   border: 0px;
 
   ${({ able }) => {
-    if (!able) return;
-    return `  &:hover {
-      cursor: pointer;
-      background-color: rgba(11, 108, 255, 0.8);
-      transition: all 0.1s;
-    }`;
+    if (able) {
+      return `&:hover {
+        cursor: pointer;
+        background-color: rgba(11, 108, 255, 0.8);
+        transition: all 0.1s;
+      }`;
+    }
+    return '';
   }}
 `;
 
