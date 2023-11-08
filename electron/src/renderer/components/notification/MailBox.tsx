@@ -58,12 +58,10 @@ function MailBox({
                     time={mail.date}
                   />
                 </S.ContentsDiv>
-                <S.Title>
-                  <S.Text
-                    onClick={() => {
+                <S.Title onClick={() => {
                       navigate('/mailContent', { state: { mail } });
-                    }}
-                  >
+                    }}>
+                  <S.Text>
                     {mail.subject}
                   </S.Text>
                 </S.Title>

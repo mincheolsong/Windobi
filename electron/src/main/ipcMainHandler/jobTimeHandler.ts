@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 import { ipcMain } from 'electron';
 import { JobTimeDB } from '../jobtime/jobTimeDB';
 import { SubJobTimeDB } from '../jobtime/subJobTimeDB';
@@ -8,7 +7,9 @@ const jobTimeHandler = (dbInstance: JobTimeDB, subDbInstance: SubJobTimeDB) => {
   subJobTimeHandler(subDbInstance);
 };
 
-// jobTime을 불러오기 위해
+/**
+ * 'job-time' : 작업시간 불러오기 이벤트
+ */
 const registJobTimeHandler = (dbInstance: JobTimeDB) => {
   ipcMain.on('job-time', async (event, type: 'day' | 'week', target: Date) => {
     if (type === 'day') {
@@ -21,16 +22,24 @@ const registJobTimeHandler = (dbInstance: JobTimeDB) => {
   });
 };
 
-// subJobTime을 불러오기 위해
+/**
+ * 'sub-job-time' : 세부 작업시간 불러오기 이벤트
+ */
 const subJobTimeHandler = (subDbInstance: SubJobTimeDB) => {
-  ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
-    if (type === 'daily') {
-      return subDbInstance.getByDay(application, date);
-    }
-    if (type === 'weekly') {
-      return subDbInstance.getRecentWeek(application);
-    }
-  });
+  ipcMain.handle(
+    'sub-job-time',
+    async (_event, { application, type, date }) => {
+      if (type === 'daily') {
+        const result = await subDbInstance.getByDay(application, date);
+        return result;
+      }
+      if (type === 'weekly') {
+        const result = await subDbInstance.getRecentWeek(application);
+        return result;
+      }
+      return [];
+    },
+  );
 };
 
 export default jobTimeHandler;

@@ -8,7 +8,7 @@ import Character from './chracter/Character';
 import moveScheduling from './chracter/moveScheduling';
 import moving from './chracter/moving';
 import { TWindows } from './main';
-import getMails from './mail';
+import getMails from './mail/mail';
 
 const width = 100;
 const height = 100;
