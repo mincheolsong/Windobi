@@ -2,6 +2,7 @@ import { ipcMain, screen } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { mainVariables, mainWindow, menuWindow } from '../windows';
+import { variables as trayVariables } from '../tray/tray';
 
 let moveTimer: IntervalId = null;
 
@@ -197,27 +198,28 @@ const addCharacterHandler = () => {
   );
 };
 
-// 캐릭터를 좌클릭 하였을 때 동작
+/**
+ * 'character-left-click' : 캐릭터를 좌클릭 하였을 때 동작
+ */
 const characterLeftClickHandler = () => {
   ipcMain.on('character-left-click', () => {
     mainWindow.moveTop();
-    menuWindow.webContents.send('character-left-click');
+    trayVariables.menu.popup();
   });
 };
 
 // 캐릭터 움직이기 시작 동작을 할 때
 const startMoveHandler = () => {
+  const { character } = mainVariables;
+
   ipcMain.on('start-move', () => {
-    mainVariables.character.direction = 'click';
-    mainWindow.webContents.send('character-move', 'click');
+    character.direction = 'click';
+    if (moveTimer !== null) clearInterval(moveTimer);
     moveTimer = setInterval(() => {
       const { x, y } = screen.getCursorScreenPoint();
-      mainWindow.setBounds({
-        width: 100,
-        height: 100,
-        x: x - 50,
-        y: y - 50,
-      });
+      const nextX = x - 50;
+      const nextY = y - 50;
+      character.position = { nextX, nextY };
     }, 10);
   });
 };
