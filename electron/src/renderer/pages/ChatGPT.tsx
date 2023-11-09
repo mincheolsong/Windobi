@@ -16,7 +16,7 @@ function ChatGPT() {
       'env',
       'OPENAI_API_KEY',
     );
-    console.log(key);
+    // console.log(key);
     setOpenai(
       new OpenAI({
         apiKey: key,

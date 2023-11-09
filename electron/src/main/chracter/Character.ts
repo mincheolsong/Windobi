@@ -29,9 +29,9 @@ class Character {
 
   fallTrigger: boolean;
 
-  #direction: TDirection;
+  #direction: TDirection; // 현재 향하고 있는 방향
 
-  #prevDirection: TDirection;
+  #isMove: boolean; // 움직일 수 있는 상태인지
 
   constructor(
     maxWidth: number,
@@ -50,8 +50,7 @@ class Character {
     this.fallTrigger = false;
 
     this.#direction = 'stop';
-    this.#prevDirection = 'down';
-
+    this.#isMove = false;
   }
 
   get curX() {
@@ -83,12 +82,24 @@ class Character {
   }
 
   set direction(value) {
-    this.#prevDirection = this.#direction;
-    this.#direction = value;
-
-    if (this.#prevDirection !== this.#direction) {
+    if (this.#direction !== value) {
       mainWindow.webContents.send('character-move', value);
     }
+    this.#direction = value;
+  }
+
+  get isMove() {
+    return this.#isMove;
+  }
+
+  set isMove(value) {
+    // mainVariables.characterMoveId = setInterval(moving, 30, character);
+    // mainVariables.scheduleId = setInterval(moveScheduling, 2000);
+
+    if (this.#isMove !== value) {
+      // 움직이는 상태로 변경일 경우
+    }
+    this.#isMove = value;
   }
 }
 

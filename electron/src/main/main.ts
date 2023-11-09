@@ -18,18 +18,6 @@ class AppUpdater {
 dbInstance.init();
 subDbInstance.init();
 
-ipcMain.handle('env', async (_event, key) => {
-  return process.env[key];
-});
-
-ipcMain.on('application', (event, applicationPath) => {
-  try {
-    shell.openExternal(applicationPath);
-  } catch (e) {
-    console.log(e);
-  }
-});
-
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -100,17 +88,23 @@ app
       const createTray = await import('./tray/tray');
       createTray.default();
 
-      const { characterHandler, jobTimeHandler, windowsHandler, mailHandler } =
-        await import('./ipcMainHandler');
+      const {
+        characterHandler,
+        jobTimeHandler,
+        mailHandler,
+        processHandler,
+        windowsHandler,
+      } = await import('./ipcMainHandler');
       const globalShortcutHandler = await import(
         './shortcut/globalShortcutHandler'
       );
 
       // ipc관련 핸들러들 등록
       characterHandler();
-      windowsHandler();
       jobTimeHandler(dbInstance, subDbInstance);
       mailHandler();
+      processHandler();
+      windowsHandler();
 
       globalShortcutHandler.default();
     });
