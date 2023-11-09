@@ -16,7 +16,7 @@ function ChatGPT() {
       'env',
       'OPENAI_API_KEY',
     );
-    console.log(key);
+    // console.log(key);
     setOpenai(
       new OpenAI({
         apiKey: key,
@@ -104,7 +104,7 @@ function ChatGPT() {
           ) : null,
         )}
       </div>
-      <div ref={messageEndRef}></div>
+      <div ref={messageEndRef} />
       <div
         style={{
           display: 'flex',

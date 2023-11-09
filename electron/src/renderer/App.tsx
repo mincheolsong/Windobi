@@ -5,22 +5,29 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-import Character from './pages/Character';
-import JobTime from './pages/JobTime';
+import { useEffect } from 'react';
+import {
+  AddCharacter,
+  Alarm,
+  ChangeCharacter,
+  Character,
+  ChatGPT,
+  Closed,
+  CreateChart,
+  CreatedChart,
+  DeleteCharacter,
+  JobTime,
+  MailContent,
+  MyEmail,
+  Notification,
+  RegistEmail,
+  Setting,
+} from './pages';
+
 import SubWindow from './layout/SubWindow';
-import Notification from './pages/Notification';
 import GlobalFont from './global';
 import MenuModal from './components/character/MenuModal';
-import Closed from './pages/Closed';
-import Setting from './pages/Setting';
 import TMail from './components/notification/TMail';
-import MailContent from './pages/MailContent';
-import ChangeCharacter from './pages/ChangeCharacter';
-import ChatGPT from './pages/ChatGPT';
-import AddCharacter from './pages/AddCharacter';
-import MyEmail from './pages/MyEmail';
-import RegistEmail from './pages/RegistEmail';
-import Alarm from './pages/Alarm';
 import SubWindowBack from './layout/SubWindowBack';
 import Weather from './pages/Weather';
 
@@ -31,7 +38,7 @@ function MyApp() {
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
     // console.log("mainRenderer Mail 수신", mail);
     // 메일 수신 알림 주기
-    console.log("서브 수신 완료");
+    console.log('서브 수신 완료');
     ipcRenderer.sendMessage('sub', 'alarm');
   });
 
@@ -96,6 +103,14 @@ function MyApp() {
           }
         />
         <Route
+          path="/deletecharacter"
+          element={
+            <SubWindow title="캐릭터 삭제">
+              <DeleteCharacter />
+            </SubWindow>
+          }
+        />
+        <Route
           path="/chatGPT"
           element={
             <SubWindow title="ChatGPT">
@@ -136,6 +151,8 @@ function MyApp() {
             </SubWindow>
           }
         />
+        <Route path="/createchart" element={<CreateChart />} />
+        <Route path="/createdchart" element={<CreatedChart />} />
       </Routes>
     </>
   );

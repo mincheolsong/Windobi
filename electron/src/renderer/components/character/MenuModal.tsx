@@ -17,13 +17,13 @@ function MenuModal() {
   const { ipcRenderer } = window.electron;
   const [currentIndex, setCurrentIndex] = useState(0);
   const menuItems = [
-    { jobtime: jobtime },
-    { weather: weather },
-    { notification: notification },
-    { chatGPT: chatGPT },
-    { setting: setting },
-    { close: close },
-    { news: news },
+    { jobtime },
+    { calendar },
+    { notification },
+    { chatGPT },
+    { setting },
+    { close },
+    { news },
     { email: login },
   ];
 
@@ -41,20 +41,19 @@ function MenuModal() {
   ];
 
   useEffect(() => {
-    console.log('Menu Window');
     ipcRenderer.on('toggleMenuOn', () => {
-      setActive(true);
+      setActive(() => true);
       ipcRenderer.sendMessage('stopMoving');
     });
 
-    // ipcRenderer.on('toggleMenuClose', () => {
-    //   setActive(false);
-    //   ipcRenderer.sendMessage('restartMoving');
-    // });
+    ipcRenderer.on('character-left-click', () => {
+      setActive(() => false); // 클릭하면 메뉴를 닫음(애니메이션)
+      ipcRenderer.sendMessage('hideMenuWindow');
+    });
   }, []);
 
   const navigate = (path: string) => {
-    setActive(false); // 클릭하면 메뉴를 닫음(애니메이션)
+    setActive(() => false); // 클릭하면 메뉴를 닫음(애니메이션)
     ipcRenderer.sendMessage('hideMenuWindow');
 
     if (path === 'close') {

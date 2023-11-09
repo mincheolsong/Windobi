@@ -63,18 +63,27 @@ const Message = styled.div`
   justify-content: center;
 `;
 
-const Button = styled.button`
-  background-color: gray;
+type TButton = {
+  able?: boolean;
+};
+
+const Button = styled.button<TButton>`
+  background-color: ${({ able }) => (able ? 'rgb(50, 168, 255)' : 'gray')};
   height: 50px;
   font-size: 30px;
   border-radius: 10px;
   border: 0px;
 
-  &:hover {
-    cursor: pointer;
-    background-color: rgba(11, 108, 255, 0.8);
-    transition: all 0.1s;
-  }
+  ${({ able }) => {
+    if (able) {
+      return `&:hover {
+        cursor: pointer;
+        background-color: rgba(11, 108, 255, 0.8);
+        transition: all 0.1s;
+      }`;
+    }
+    return '';
+  }}
 `;
 
 export { Wrapper, Details, Summary, Input, Message, Button };
