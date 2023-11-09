@@ -72,7 +72,7 @@ const restartMovingHandler = () => {
     const { characterMoveId, scheduleId, character } = mainVariables;
     if (characterMoveId === null && scheduleId === null) {
       mainWindow.focus();
-
+      character.fallTrigger = false;
       mainVariables.characterMoveId = setInterval(moving, 30, character);
       mainVariables.scheduleId = setInterval(moveScheduling, 2000);
 
