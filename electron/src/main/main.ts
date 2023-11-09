@@ -116,6 +116,7 @@ app
       if (mainWindow === null) createWindow();
     });
 
+    
     return null;
   })
   .catch(console.log);

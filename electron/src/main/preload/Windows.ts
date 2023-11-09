@@ -6,4 +6,6 @@ export type WindowsChannel =
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
   | 'start-move'
-  | 'stop-move';
+  | 'stop-move'
+  | 'showYouTubeMusicWindow'
+  | 'hideYouTubeMusicWindow'
