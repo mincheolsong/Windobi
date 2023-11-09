@@ -1,7 +1,9 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, app, ipcMain } from 'electron';
+import path from 'path';
 import { mainWindow, subWindow } from '../windows';
 import createReport from '../mail/createReport';
 import getMails from '../mail/mail';
+import { resolveHtmlPath } from '../util';
 
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
@@ -28,13 +30,14 @@ const mailHandler = () => {
   deleteMailHandler();
   mailSendHandler();
   mailReceiveHandler();
+  // mailTestHandler();
 };
 
 /**
  * 'mailRequest' : 메일 리퀘스트
  */
 const mailRequestHandler = () => {
-  ipcMain.on("mailRequest", ()=>{
+  ipcMain.on('mailRequest', () => {
     subWindow.webContents.send('mailRequest', mails);
   });
 };
@@ -108,6 +111,30 @@ const mailReceiveHandler = () => {
     'ssafyssafy123',
     'imap.daum.net',
   );
+};
+
+/**
+ * 'test' : 메일 테스트
+ */
+const mailTestHandler = () => {
+  setTimeout(async () => {
+    const chartWindow = new BrowserWindow({
+      width: 300,
+      height: 300,
+      show: false,
+      transparent: true,
+      focusable: false,
+      frame: false,
+      webPreferences: {
+        preload: app.isPackaged
+          ? path.join(__dirname, '../preload.js')
+          : path.join(__dirname, '../../../.erb/dll/preload.js'),
+      },
+    });
+    await chartWindow.loadURL(resolveHtmlPath('index.html'));
+    chartWindow.webContents.openDevTools();
+    chartWindow.webContents.send('sub', 'createchart');
+  }, 5000);
 };
 
 export default mailHandler;

@@ -5,6 +5,8 @@ export { default as Character } from './Character';
 export { default as ChatGPT } from './ChatGPT';
 export { default as Closed } from './Closed';
 export { default as DeleteCharacter } from './DeleteCharacter';
+export { default as CreateChart } from './CreateChart';
+export { default as CreatedChart } from './CreatedChart';
 export { default as JobTime } from './JobTime';
 export { default as MailContent } from './MailContent';
 export { default as MyEmail } from './MyEmail';

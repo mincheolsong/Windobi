@@ -18,18 +18,6 @@ class AppUpdater {
 dbInstance.init();
 subDbInstance.init();
 
-ipcMain.handle('env', async (_event, key) => {
-  return process.env[key];
-});
-
-ipcMain.on('application', (event, applicationPath) => {
-  try {
-    shell.openExternal(applicationPath);
-  } catch (e) {
-    console.log(e);
-  }
-});
-
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -81,9 +69,9 @@ app
   .then(() => {
     createWindow().then(async () => {
       // 윈도우가 만들어지고난 후
-      const { mainWindow, mainVariables } = await import("./windows")
-      const moveScheduling = await import("./chracter/moveScheduling");
-      const moving = await import("./chracter/moving");
+      const { mainWindow, mainVariables } = await import('./windows');
+      const moveScheduling = await import('./chracter/moveScheduling');
+      const moving = await import('./chracter/moving');
 
       const { curX, curY, winHeight, winWidth } = mainVariables.character;
 
@@ -91,7 +79,7 @@ app
         x: curX,
         y: curY,
         width: winWidth,
-        height: winHeight
+        height: winHeight,
       });
 
       const communication = await import('./windows/communication');
@@ -103,19 +91,29 @@ app
       const createTray = await import('./tray/tray');
       createTray.default();
 
-      const { characterHandler, jobTimeHandler, windowsHandler, mailHandler } =
-        await import('./ipcMainHandler');
+      const {
+        characterHandler,
+        jobTimeHandler,
+        mailHandler,
+        processHandler,
+        windowsHandler,
+      } = await import('./ipcMainHandler');
       const globalShortcutHandler = await import(
         './shortcut/globalShortcutHandler'
       );
 
       // ipc관련 핸들러들 등록
       characterHandler();
-      windowsHandler();
       jobTimeHandler(dbInstance, subDbInstance);
       mailHandler();
+      processHandler();
+      windowsHandler();
 
-      mainVariables.characterMoveId = setInterval(moving.default, 30, mainVariables.character); // 이동 시작
+      mainVariables.characterMoveId = setInterval(
+        moving.default,
+        30,
+        mainVariables.character,
+      ); // 이동 시작
       mainVariables.scheduleId = setInterval(moveScheduling.default, 2000); // 스케줄링 시작
 
       globalShortcutHandler.default();

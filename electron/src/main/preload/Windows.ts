@@ -3,6 +3,7 @@ export type WindowsChannel =
   | 'size'
   | 'windowMoving'
   | 'toggleMenuOn'
+  | 'hideMenuWindow'
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
   | 'start-move'
