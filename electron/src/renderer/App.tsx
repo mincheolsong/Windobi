@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   MemoryRouter as Router,
   Routes,
@@ -33,11 +35,10 @@ import Music from './pages/Music';
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
-
+  const [accessToken, setAccessToken] = useState('');
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
     // console.log("mainRenderer Mail 수신", mail);
     // 메일 수신 알림 주기
-    console.log('서브 수신 완료');
     ipcRenderer.sendMessage('sub', 'alarm');
   });
 
@@ -115,7 +116,7 @@ function MyApp() {
           path="/googleOAuth"
           element={
             <SubWindow title="Google OAuth">
-              <GoogleOAuth />
+              <Music />
             </SubWindow>
           }
         />

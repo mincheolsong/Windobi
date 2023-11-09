@@ -1,4 +1,4 @@
-import { session } from 'electron';
+import { session, ipcMain } from 'electron';
 import { subWindow } from '../windows';
 import { resolveHtmlPath } from '../util';
 
@@ -29,14 +29,17 @@ const oauthHandelr = () => {
       const parsedQuery = querystring.parse(query);
 
       // Get the value of the access_token parameter
-      const accessToken = parsedQuery.access_token;
+      const token = parsedQuery.access_token;
 
-      console.log(accessToken);
+      ipcMain.handle('token', async () => {
+        return token;
+      });
 
       (async () => {
         await subWindow.loadURL(resolveHtmlPath('index.html'));
         subWindow.webContents.send('sub', 'music');
       })();
+
       // accessToken을 music 컴포넌트에 넘겨주
       // don't forget to let the request proceed
       callback({
