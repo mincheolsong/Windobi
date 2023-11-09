@@ -1,8 +1,8 @@
+/* eslint-disable import/no-cycle */
 import { BrowserWindow, Display, app, screen, shell } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from '../util';
 import Character from '../chracter/Character';
-
 
 const primaryDisplay = screen.getPrimaryDisplay();
 const height = 110;
@@ -55,7 +55,12 @@ type TVariables = {
   height: number;
 };
 const variables: TVariables = {
-  character: new Character(primaryDisplay.workAreaSize.width, primaryDisplay.workAreaSize.height, width, height),
+  character: new Character(
+    primaryDisplay.workAreaSize.width,
+    primaryDisplay.workAreaSize.height,
+    width,
+    height,
+  ),
   scheduleId: null,
   characterMoveId: null,
   primaryDisplay: screen.getPrimaryDisplay(),
@@ -76,8 +81,6 @@ mainWindow.once('ready-to-show', () => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
-
-
 });
 // #endregion
 

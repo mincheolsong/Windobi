@@ -69,27 +69,15 @@ app
   .then(() => {
     createWindow().then(async () => {
       // 윈도우가 만들어지고난 후
-      const { mainWindow, mainVariables } = await import('./windows');
-      const moveScheduling = await import('./chracter/moveScheduling');
-      const moving = await import('./chracter/moving');
-
-      const { curX, curY, winHeight, winWidth } = mainVariables.character;
-
-      mainWindow.setBounds({
-        x: curX,
-        y: curY,
-        width: winWidth,
-        height: winHeight,
-      });
-
       const communication = await import('./windows/communication');
       communication.default();
 
       const SettingHandler = await import('./setting/setting');
       SettingHandler.default();
 
-      const createTray = await import('./tray/tray');
-      createTray.default();
+      await import('./tray/tray');
+
+      const { default: moveHandler } = await import('./chracter/moveHandler');
 
       const {
         characterHandler,
@@ -98,7 +86,7 @@ app
         processHandler,
         windowsHandler,
       } = await import('./ipcMainHandler');
-      const globalShortcutHandler = await import(
+      const { default: globalShortcutHandler } = await import(
         './shortcut/globalShortcutHandler'
       );
 
@@ -108,15 +96,9 @@ app
       mailHandler();
       processHandler();
       windowsHandler();
+      moveHandler();
 
-      mainVariables.characterMoveId = setInterval(
-        moving.default,
-        30,
-        mainVariables.character,
-      ); // 이동 시작
-      mainVariables.scheduleId = setInterval(moveScheduling.default, 2000); // 스케줄링 시작
-
-      globalShortcutHandler.default();
+      globalShortcutHandler();
     });
 
     app.on('activate', async () => {
