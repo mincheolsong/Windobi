@@ -24,13 +24,13 @@ function RegistEmail() {
         아이디:{' '}
         <S.InputField type="text" value={id} onChange={(e) => setId(e.target.value)} />
         @
-        <select onChange={handleDomainChange} value={domain}>
+        <S.Select onChange={handleDomainChange} value={domain}>
           {domains.map((item) => (
             <option value={item} key={item}>
               {item}
             </option>
           ))}
-        </select>
+        </S.Select>
       </S.InputContainer>
       <S.InputContainer>
         비밀번호:{' '}

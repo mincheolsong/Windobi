@@ -4,6 +4,8 @@ const Container = styled.div`
   display: felx;
   flex-direction: column;
   aligh-items: center;
+  background-color: black;
+  color: white;
 `;
 
 const InputContainer = styled.div`
@@ -15,7 +17,11 @@ const InputContainer = styled.div`
 `;
 
 const InputField = styled.input`
-  border-radius: 5px;
+  border: none;
+  border-bottom: 1px solid white;
+  outline: none;
+  background: transparent;
+  color: white;
   margin-top: 5px;
   width: 150px;
 `;
@@ -23,7 +29,7 @@ const InputField = styled.input`
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
 `;
 
@@ -35,6 +41,7 @@ const Button = styled.button`
   padding: 5px 10px;
   font-family: Jalnan;
   width: 100px;
+  height: 60px;
   cursor: pointer;
   &:hover {
     background-color: white;
@@ -42,4 +49,16 @@ const Button = styled.button`
   }
 `;
 
-export { Container, InputContainer, InputField, Button, ButtonContainer };
+const Select = styled.select`
+  background-color: black;
+  color: white;
+`;
+
+export {
+  Container,
+  InputContainer,
+  InputField,
+  Button,
+  ButtonContainer,
+  Select,
+};

@@ -11,14 +11,14 @@ import news from '../../../../assets/icons/news.svg';
 import setting from '../../../../assets/icons/setting.svg';
 import login from '../../../../assets/icons/login.svg';
 import close from '../../../../assets/icons/close.svg';
-
+import weather from '../../../../assets/icons/weather.svg';
 function MenuModal() {
   const [active, setActive] = useState(false);
   const { ipcRenderer } = window.electron;
   const [currentIndex, setCurrentIndex] = useState(0);
   const menuItems = [
     { jobtime: jobtime },
-    { calendar: calendar },
+    { weather: weather },
     { notification: notification },
     { chatGPT: chatGPT },
     { setting: setting },
