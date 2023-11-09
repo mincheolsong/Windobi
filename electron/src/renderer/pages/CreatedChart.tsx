@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { toPng } from 'html-to-image';
 import BarChart from '../components/jobtime/BarChart';
+import { ipcRenderer } from 'electron';
 
 function CreatedChart() {
   const { state } = useLocation();
@@ -12,18 +13,18 @@ function CreatedChart() {
     setTimeout(() => {
       if (ref.current === null) return;
       toPng(ref.current, { cacheBust: true }).then((dataUrl) => {
-        console.log(dataUrl);
+        window.electron.ipcRenderer.sendMessage("chartChannel", dataUrl);
       });
-    }, 10000);
+    }, 3000);
   }, []);
 
   return (
     <div ref={ref}>
       <BarChart
-        dailyJobs={[]}
-        weeklyJobs={state.weeklyJobs}
+        dailyJobs={state.dailyJobs}
+        weeklyJobs={[]}
         setApplication={setDummy}
-        type="weekly"
+        type="daily"
       />
     </div>
   );

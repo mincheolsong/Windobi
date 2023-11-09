@@ -7,6 +7,7 @@ import { resolveHtmlPath } from '../util';
 
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
+const fs = require('fs');
 
 const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
 const mailAddress = 'honeycomb201';
@@ -31,6 +32,7 @@ const mailHandler = () => {
   mailSendHandler();
   mailReceiveHandler();
   // mailTestHandler();
+  chartReceivingHadler();
 };
 
 /**
@@ -102,7 +104,7 @@ const mailSendHandler = () => {
 const mailReceiveHandler = () => {
   timerId = setInterval(
     getMails,
-    10000,
+    60000,
     mainWindow,
     subWindow,
     received,
@@ -132,9 +134,28 @@ const mailTestHandler = () => {
       },
     });
     await chartWindow.loadURL(resolveHtmlPath('index.html'));
-    chartWindow.webContents.openDevTools();
     chartWindow.webContents.send('sub', 'createchart');
   }, 5000);
 };
+
+
+/**
+ * 'chartReceivingHadler : 차트 이미지 수신
+ */
+const chartReceivingHadler = () => {
+  ipcMain.on('chartChannel', (_event, chart) => {
+    // 차트 이미지 수신
+    // 이미지 저장하기
+    let dataUrl =  chart.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    let buffer =  Buffer.from(dataUrl[2],'base64');
+    fs.writeFile('barChart.png',buffer, (e : any) => {
+      if(!e){
+        console.log("file is created")
+      }
+    });
+
+  });
+};
+
 
 export default mailHandler;
