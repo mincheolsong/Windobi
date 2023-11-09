@@ -7,7 +7,6 @@ import jobtime from '../../../../assets/icons/jobtime.svg';
 import calendar from '../../../../assets/icons/calendar.svg';
 import notification from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
-import news from '../../../../assets/icons/news.svg';
 import setting from '../../../../assets/icons/setting.svg';
 import login from '../../../../assets/icons/login.svg';
 import close from '../../../../assets/icons/close.svg';
@@ -23,7 +22,7 @@ function MenuModal() {
     { chatGPT },
     { setting },
     { close },
-    { news },
+    { weather },
     { email: login },
   ];
 
