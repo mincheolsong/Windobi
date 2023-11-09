@@ -5,6 +5,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
+import { useEffect } from 'react';
 import {
   AddCharacter,
   Alarm,
@@ -12,6 +13,8 @@ import {
   Character,
   ChatGPT,
   Closed,
+  CreateChart,
+  CreatedChart,
   DeleteCharacter,
   JobTime,
   MailContent,
@@ -140,6 +143,8 @@ function MyApp() {
             </SubWindow>
           }
         />
+        <Route path="/createchart" element={<CreateChart />} />
+        <Route path="/createdchart" element={<CreatedChart />} />
       </Routes>
     </>
   );

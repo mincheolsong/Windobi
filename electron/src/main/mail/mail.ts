@@ -1,19 +1,33 @@
 import { BrowserWindow } from 'electron';
-import Imap from 'imap'
+import Imap from 'imap';
 // const Imap = require('imap');
-const MailParser = require("mailparser").MailParser;
+const { MailParser } = require('mailparser');
 
 // 메일 하나를 담당하는 클래스
 class Mail {
   seq: number;
+
   from: string;
+
   date: Date;
+
   subject: string;
+
   content: string;
+
   to: string;
+
   host: string;
 
-  constructor(seq: number, from: string, date: Date, subject: string, content: string, to: string, host: string) {
+  constructor(
+    seq: number,
+    from: string,
+    date: Date,
+    subject: string,
+    content: string,
+    to: string,
+    host: string,
+  ) {
     this.seq = seq;
     this.from = from;
     this.date = date;
@@ -28,31 +42,43 @@ class Mail {
 // crypto module!!
 let mails: [] = [];
 let received: [] | null = null;
-function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], allMails: [], user: string, password: string, host: string) {
+function getMails(
+  mainWindow: BrowserWindow,
+  subWindow: BrowserWindow,
+  r: [],
+  allMails: [],
+  user: string,
+  password: string,
+  host: string,
+) {
   received = r;
   // console.log("dd");
 
-  var imap = new Imap({
+  const imap = new Imap({
     user,
     password,
     host,
     port: 993,
-    tls: true
+    tls: true,
   }); // imap 설정
 
   function openInbox(cb) {
     imap.openBox('INBOX', true, cb);
   }
 
-  imap.on('ready', function () { // 준비된 경우
+  imap.on('ready', function () {
+    // 준비된 경우
     openInbox(function (err, box) {
       if (err) throw err;
 
-      var f = imap.seq.fetch(box.messages.total - 2 + ':' + box.messages.total, { bodies: [''] }); // 메일을 총 3개 받아오기
+      const f = imap.seq.fetch(
+        `${box.messages.total - 2}:${box.messages.total}`,
+        { bodies: [''] },
+      ); // 메일을 총 3개 받아오기
       f.on('message', processMessage, mails); // 메시지 처리 부분
 
       f.on('error', function (err) {
-        console.log('Fetch error: ' + err);
+        console.log(`Fetch error: ${err}`);
       });
 
       f.on('end', function () {
@@ -66,9 +92,10 @@ function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], al
     console.log(err);
   });
 
-  imap.on('end', function () { //연결이 종료 되는 부분
+  imap.on('end', function () {
+    // 연결이 종료 되는 부분
     for (let i = 0; i < mails.length; ++i) {
-      let match = received.filter((m) => m.seq === mails[i].seq) // 방금 받은 메일과 원래 있는 메일 겹침 여부 확인
+      const match = received.filter((m) => m.seq === mails[i].seq); // 방금 받은 메일과 원래 있는 메일 겹침 여부 확인
 
       if (match.length === 0) {
         // 메일 받은 경우 !! 이벤트 발생
@@ -77,7 +104,7 @@ function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], al
         mails[i].to = user;
         mails[i].host = host;
         allMails.push(mails[i]);
-        console.log("sending:", mails[i]);
+        // console.log("sending:", mails[i]);
       }
     }
 
@@ -88,47 +115,40 @@ function getMails(mainWindow: BrowserWindow, subWindow: BrowserWindow, r: [], al
     // console.log('Connection ended');
   });
 
-
   // console.log("connect");
   imap.connect();
 }
 
 function processMessage(msg, seqno) {
   // console.log("seqno", seqno);
-  let mail = new Mail(seqno); // 저장할 메일 객체 생성
+  const mail = new Mail(seqno); // 저장할 메일 객체 생성
   mails.push(mail); // 저장할 리스트에 삽입
 
-  var parser = new MailParser(); // 메일을 파싱할 라이브러리
-  parser.on("headers", function (headers) {
-    let mail = mails.filter((mail) => mail.seq == seqno)[0]; // 리스트에서 해당 seq 메일을 찾기
+  const parser = new MailParser(); // 메일을 파싱할 라이브러리
+  parser.on('headers', function (headers) {
+    const mail = mails.filter((mail) => mail.seq == seqno)[0]; // 리스트에서 해당 seq 메일을 찾기
 
     mail.from = headers.get('from').text;
     mail.date = headers.get('date');
     mail.subject = headers.get('subject');
-
   });
 
-  parser.on('data', data => {
+  parser.on('data', (data) => {
     if (data.type === 'text') {
-      let mail = mails.filter((mail) => mail.seq == seqno)[0]; // 리스트에서 해당 seq 메일을 찾기
-      mail.content = data.text;
+      const mail = mails.filter((mail) => mail.seq == seqno)[0]; // 리스트에서 해당 seq 메일을 찾기
+      // mail.content = data.text;
     }
   });
 
-  msg.on("body", function (stream) {
-    stream.on("data", function (chunk) {
-      parser.write(chunk.toString("utf8"));
+  msg.on('body', function (stream) {
+    stream.on('data', function (chunk) {
+      parser.write(chunk.toString('utf8'));
     });
   });
 
-  msg.on("end", function () {
+  msg.on('end', function () {
     parser.end();
   });
 }
 
-
 export default getMails;
-
-
-
-
