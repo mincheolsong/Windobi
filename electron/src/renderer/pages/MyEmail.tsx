@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import naverImage from '../../../assets/naver.png';
 import defaultImage from '../../../assets/icon.png';
 import * as S from '../components/myEmail/MailBox.style';
-import { useNavigate } from 'react-router-dom';
-
 
 function MyEmail() {
   const navigate = useNavigate();
@@ -42,7 +41,7 @@ function MyEmail() {
 
   const handleDeleteEmail = (email: String) => {
     // 이메일 삭제 로직 구현
-    console.log(email);
+    // console.log(email);
   };
   return (
     <S.Container>
