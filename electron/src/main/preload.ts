@@ -11,6 +11,7 @@ export type Channels =
   | 'get-setting'
   | 'env'
   | 'deleteMail'
+  | 'chartChannel'
   | TCharacterChannel
   | JobTimeChannel
   | WindowsChannel;

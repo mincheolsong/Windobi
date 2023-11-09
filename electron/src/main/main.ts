@@ -3,6 +3,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { Worker } from 'worker_threads';
 import path from 'path';
+import createReport from './mail/createReport'; // 나중에 지우기
 
 const { dbInstance } = require('./jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
@@ -116,6 +117,8 @@ app
       ); // 이동 시작
       mainVariables.scheduleId = setInterval(moveScheduling.default, 2000); // 스케줄링 시작
 
+      // setTimeout(createReport, 5000, new Date());
+      createReport(new Date());
       globalShortcutHandler.default();
     });
 
