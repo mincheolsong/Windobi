@@ -2,7 +2,7 @@ import { ipcMain, screen } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { mainVariables, mainWindow, menuWindow } from '../windows';
-import { variables as trayVariables } from '../tray/tray';
+import tray, { variables as trayVariables } from '../tray/tray';
 
 let moveTimer: IntervalId = null;
 
@@ -87,6 +87,9 @@ const characterImagesHandler = () => {
         console.log(e);
       }
     });
+
+    // 이미지를 불러올때 tray의 이미지도 변경하자
+    tray.setImage(path.join(TARGET_DIRECTORY, 'stop', '1.png'));
 
     return motionImages;
   });
