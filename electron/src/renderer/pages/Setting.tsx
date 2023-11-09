@@ -17,6 +17,7 @@ function Setting() {
       <S.Ul>
         <S.Li onClick={() => navigate('/changecharacter')}>캐릭터 변경</S.Li>
         <S.Li onClick={() => navigate('/addcharacter')}>캐릭터 추가</S.Li>
+        <S.Li onClick={() => navigate('/deletecharacter')}>캐릭터 삭제</S.Li>
       </S.Ul>
     </S.Wrapper>
   );

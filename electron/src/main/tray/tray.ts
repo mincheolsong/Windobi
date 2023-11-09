@@ -1,57 +1,94 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable import/no-cycle */
-import Electron, { App, Menu, Tray, globalShortcut } from 'electron';
+import Electron, { Menu, Tray, app, globalShortcut } from 'electron';
 import path from 'path';
-import { TWindows } from '../main';
+import settingDB from '../setting/settingDB';
+import { mainWindow, subWindow } from '../windows';
 
-const createTray = (app: App, windows: TWindows) => {
-  const iconPath = path.join('assets', 'icons', 'hanbyul.png');
-  const tray = new Tray(iconPath);
+const iconPath = path.join('assets', 'icons', 'hanbyul.png');
+const tray = new Tray(iconPath);
 
-  // 툴팁 설정
-  tray.setToolTip('윈도비');
-
-  // 메뉴 만들기
-  createMenu(tray, app, windows);
+type TVariables = {
+  menu: Electron.Menu;
 };
 
-function createMenu(tray: Tray, app: App, windows: TWindows) {
-  const initTemplate: Array<
-    Electron.MenuItemConstructorOptions | Electron.MenuItem
-  > = [{ label: '종료', type: 'normal', click: exit }];
+const variables: TVariables = {
+  menu: Menu.buildFromTemplate([]),
+};
 
-  function hide() {
-    const contextMenu = Menu.buildFromTemplate([
-      { label: '보이기', type: 'normal', click: show },
-      ...initTemplate,
-    ]);
-    tray.setContextMenu(contextMenu);
-    windows.main?.hide();
-    windows.sub?.hide();
-  }
+// 툴팁 설정
+tray.setToolTip('windobi');
 
-  function show() {
-    const contextMenu = Menu.buildFromTemplate([
-      { label: '숨기기', type: 'normal', click: hide },
-      ...initTemplate,
-    ]);
-    tray.setContextMenu(contextMenu);
-    windows.main?.show();
-    windows.sub?.show();
-  }
+// 트레이를 더블클릭하면 다시 보여주자
+tray.on('double-click', show);
 
-  function exit() {
-    if (process.platform !== 'darwin') {
-      globalShortcut.unregisterAll();
-      app.quit();
-    }
-  }
+const initTemplate: Array<Electron.MenuItemConstructorOptions> = [
+  {
+    label: '종료',
+    type: 'normal',
+    click: exit,
+  },
+];
 
+/**
+ * 윈도우들 숨기기
+ */
+function hide() {
   const contextMenu = Menu.buildFromTemplate([
-    { label: '숨기기', type: 'normal', click: hide },
+    {
+      label: '보이기',
+      type: 'normal',
+      click: show,
+      accelerator: settingDB.hideOrShow,
+    },
     ...initTemplate,
   ]);
   tray.setContextMenu(contextMenu);
+  variables.menu = contextMenu;
+
+  mainWindow.hide();
+  subWindow.hide();
 }
 
-export default createTray;
+/**
+ * 숨겼던 윈도우들 보이게 하기
+ */
+function show() {
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '숨기기',
+      type: 'normal',
+      click: hide,
+      accelerator: settingDB.hideOrShow,
+    },
+    ...initTemplate,
+  ]);
+  tray.setContextMenu(contextMenu);
+  variables.menu = contextMenu;
+
+  mainWindow.show();
+  subWindow.show();
+}
+
+/**
+ * 프로그램 종료
+ */
+function exit() {
+  if (process.platform !== 'darwin') {
+    globalShortcut.unregisterAll();
+    app.quit();
+  }
+}
+
+const contextMenu = Menu.buildFromTemplate([
+  {
+    label: '숨기기',
+    type: 'normal',
+    click: hide,
+    accelerator: settingDB.hideOrShow,
+  },
+  ...initTemplate,
+]);
+tray.setContextMenu(contextMenu);
+variables.menu = contextMenu;
+
+export default tray;
+export { variables };
