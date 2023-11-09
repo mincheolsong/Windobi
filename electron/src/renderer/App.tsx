@@ -22,6 +22,7 @@ import MyEmail from './pages/MyEmail';
 import RegistEmail from './pages/RegistEmail';
 import Alarm from './pages/Alarm';
 import SubWindowBack from './layout/SubWindowBack';
+import Weather from './pages/Weather';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -74,10 +75,9 @@ function MyApp() {
           element={
             <SubWindowBack title="메일">
               <MailContent />
-              </SubWindowBack>
+            </SubWindowBack>
           }
         />
-
         <Route
           path="/changecharacter"
           element={
@@ -125,6 +125,14 @@ function MyApp() {
           element={
             <SubWindow title="알림">
               <Alarm />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/weather"
+          element={
+            <SubWindow title="날씨">
+              <Weather />
             </SubWindow>
           }
         />
