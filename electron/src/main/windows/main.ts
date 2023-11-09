@@ -3,8 +3,9 @@ import path from 'path';
 import { resolveHtmlPath } from '../util';
 import Character from '../chracter/Character';
 
+
 const primaryDisplay = screen.getPrimaryDisplay();
-const height = 100;
+const height = 110;
 const width = 100;
 
 // #region 유틸리티 정의
@@ -19,7 +20,7 @@ const getAssetPath = (...paths: string[]): string => {
 
 // #region 윈도우 설정 정의
 const mainWindow = new BrowserWindow({
-  resizable: true,
+  resizable: false,
   show: false,
   width,
   height,
@@ -54,7 +55,7 @@ type TVariables = {
   height: number;
 };
 const variables: TVariables = {
-  character: new Character(primaryDisplay.bounds.width, primaryDisplay.bounds.height, width, height + 2),
+  character: new Character(primaryDisplay.workAreaSize.width, primaryDisplay.workAreaSize.height, width, height),
   scheduleId: null,
   characterMoveId: null,
   primaryDisplay: screen.getPrimaryDisplay(),
@@ -75,6 +76,8 @@ mainWindow.once('ready-to-show', () => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
+
+
 });
 // #endregion
 
