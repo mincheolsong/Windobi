@@ -40,6 +40,7 @@ function GoogleOAuth() {
       width: 500,
       height: 500,
     });
+    window.electron.ipcRenderer.sendMessage('frameOn');
 
     oauthSignIn();
   }, []);

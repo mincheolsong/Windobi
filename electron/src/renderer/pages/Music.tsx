@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import { useState, useEffect } from 'react';
 import OpenAI from 'openai';
 import axios from 'axios';
@@ -5,7 +6,8 @@ import axios from 'axios';
 import * as S from '../components/music/Music.style';
 
 const GOOGLE_API_KEY = 'AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk';
-
+const { ipcRenderer } = window.electron;
+const playlist_prefix = 'https://music.youtube.com/browse/VL';
 let example_json = `
 [
   {"song": "Hurt", "artist": "Johnny Cash"},
@@ -15,11 +17,13 @@ let example_json = `
   {"song": "Yesterday", "artist": "The Beatles"}
 ]
 `;
+
 function Music() {
   const [openai, setOpenai] = useState();
   const [prompt, setPrompt] = useState('');
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState();
   let playlistId;
+  let videoId;
 
   const messages = [
     {
@@ -40,10 +44,8 @@ function Music() {
     },
   ];
   const settingOpenAi = async () => {
-    const key = await window.electron.ipcRenderer.invoke(
-      'env',
-      'OPENAI_API_KEY',
-    );
+    const key = await ipcRenderer.invoke('env', 'OPENAI_API_KEY');
+
     setOpenai(
       new OpenAI({
         apiKey: key,
@@ -53,7 +55,6 @@ function Music() {
   };
 
   useEffect(() => {
-    console.log('music!');
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
       height: 300,
@@ -62,11 +63,9 @@ function Music() {
     settingOpenAi();
   }, []);
 
-  const [playlist, setPlaylist] = useState([]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const accessToken = await ipcRenderer.invoke('token');
     try {
       // openai에게 추천받기
       const openaiResponse = await openai.chat.completions.create({
@@ -74,7 +73,7 @@ function Music() {
         messages: messages,
       });
 
-      const parsedOneaiResponse = JSON.parse(
+      const parsedOpenaiResponse = JSON.parse(
         openaiResponse.choices[0].message.content,
       ); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
 
@@ -91,22 +90,42 @@ function Music() {
         },
         {
           headers: {
-            Authorization:
-              'Bearer ya29.a0AfB_byBG5FLoZwNmiRNHLSo4KMHzGVD40AxmVMxSFarkDUwM88WrFodwOEHn97pQ-g6E-3ObJqL21xWqXBNmCd5QT9tZoUdOBjsXjPuvbZDt0RBq4yhsayLyV73uS3_a5P00cnjHCzIJl6tunSEJQ0MJtdZexi5yLAaCgYKATASARMSFQHGX2Micbk8RrN3P814efKMEnDgSg0169',
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
 
-      playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디
+      playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디 (insertitem 할때 필요한 값)
+      const playlistUrl = `${playlist_prefix}${playlistId}`;
+      for (let i = 0; i < parsedOpenaiResponse.length; i++) {
+        // youtube에 노래 검색
+        const youtubeSearchResponse = await axios.get(
+          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${parsedOpenaiResponse[i].song}%7C${parsedOpenaiResponse[i].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
+        );
 
-      console.log('생성된 플레이리스트 아이디 '.concat(playlistId));
+        videoId = youtubeSearchResponse.data.items[0].id.videoId; // insertitem할때 필요한 값
 
-      // youtube에 노래 검색
-      const youtubeSearchResponse = await axios.get(
-        `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${parsedOneaiResponse[0].song}%7C${parsedOneaiResponse[0].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
-      );
+        const playListItemsResponse = await axios.post(
+          `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${GOOGLE_API_KEY}`,
+          {
+            snippet: {
+              playlistId,
+              resourceId: {
+                kind: 'youtube#video',
+                videoId,
+              },
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
 
-      console.log(youtubeSearchResponse.data.items[0]);
+        console.log('playListItemsResponse : ' + playListItemsResponse);
+        console.log(playlistUrl);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -114,22 +133,23 @@ function Music() {
 
   return (
     <S.Wrapper>
-      <input
-        onChange={(e) => {
-          setPrompt(e.target.value);
-        }}
-      ></input>
-      <input
-        onChange={(e) => {
-          setCount(e.target.valueAsNumber);
-        }}
-        type="number"
-      ></input>
-      <button onClick={handleSubmit}>제출</button>
+      <S.Header>어떤 노래를 듣고 싶으세요?</S.Header>
 
-      {prompt}
-      <br></br>
-      {count}
+      <S.Body>
+        <S.TitleInput
+          onChange={(e) => {
+            setPrompt(e.target.value);
+          }}
+          placeholder='코딩할 때 듣기 좋은 노래'
+        ></S.TitleInput>
+        <input
+          onChange={(e) => {
+            setCount(e.target.valueAsNumber);
+          }}
+          type="number"
+        ></input>
+        <button onClick={handleSubmit}>제출</button>
+      </S.Body>
     </S.Wrapper>
   );
 }
