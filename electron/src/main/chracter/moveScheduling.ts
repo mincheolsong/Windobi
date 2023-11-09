@@ -3,14 +3,13 @@ import { mainVariables } from '../windows';
 const max = 3;
 // const behavior = ['left', 'right', 'stop', 'up', 'down']; // 현재 2까지 사용
 
-const { character } = mainVariables;
 
 function moveScheduling() {
+  const { character } = mainVariables;
   let flag = true;
   const flag2 = character.fallTrigger;
   while (flag && !flag2) {
     const rand = Math.floor(Math.random() * max);
-    console.log("rand", rand);
     // rand값에 따라 (0,1,2) 멈추거나(2) 오른쪽가거나(1) 왼쪽으로 가기(0)
     switch (rand) {
       case 0:
@@ -22,7 +21,6 @@ function moveScheduling() {
         }
         break;
       case 1:
-        console.log("curX:", character.curX, "maxWidth", character.maxWidth, "winWidth", character.winWidth);
         if (character.curX < character.maxWidth - character.winWidth) {
           // 오른쪽 벽을 안넘긴 경우
           flag = false;

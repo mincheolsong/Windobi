@@ -80,15 +80,20 @@ app
   .whenReady()
   .then(() => {
     createWindow().then(async () => {
-      const {mainWindow, mainVariables} = await import("./windows")
-      const {curX, curY, winHeight, winWidth} = mainVariables.character;
+      // 윈도우가 만들어지고난 후
+      const { mainWindow, mainVariables } = await import("./windows")
+      const moveScheduling = await import("./chracter/moveScheduling");
+      const moving = await import("./chracter/moving");
+
+      const { curX, curY, winHeight, winWidth } = mainVariables.character;
+
       mainWindow.setBounds({
         x: curX,
         y: curY,
         width: winWidth,
         height: winHeight
       });
-      // 윈도우가 만들어지고난 후
+
       const communication = await import('./windows/communication');
       communication.default();
 
@@ -110,8 +115,12 @@ app
       jobTimeHandler(dbInstance, subDbInstance);
       mailHandler();
 
+      mainVariables.characterMoveId = setInterval(moving.default, 30, mainVariables.character); // 이동 시작
+      mainVariables.scheduleId = setInterval(moveScheduling.default, 2000); // 스케줄링 시작
+
       globalShortcutHandler.default();
     });
+
     app.on('activate', async () => {
       const { mainWindow } = await import('./windows');
       if (mainWindow === null) createWindow();
