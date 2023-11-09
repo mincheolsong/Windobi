@@ -14,15 +14,15 @@ const getAssetPath = (...paths: string[]): string => {
 
 // #region 추가적인 값 정의
 const variables = {
-  width: 0,
-  height: 0,
+  width: 500,
+  height: 700,
 };
 // #endregion
 
 // #region 윈도우 설정 정의
-const subWindow = new BrowserWindow({
-  width: 0,
-  height: 0,
+const etcWindow = new BrowserWindow({
+  width: variables.width,
+  height: variables.height,
   icon: getAssetPath('icon.png'),
   webPreferences: {
     preload: app.isPackaged
@@ -32,23 +32,23 @@ const subWindow = new BrowserWindow({
     webviewTag: true,
   },
   frame: false,
-  movable: false,
-  alwaysOnTop: true,
+  movable: true,
+  alwaysOnTop: false,
   transparent: true,
   skipTaskbar: true,
-  resizable: false,
   show: false,
+  resizable: true,
 });
-subWindow.loadURL(resolveHtmlPath('index.html'));
+etcWindow.loadURL(resolveHtmlPath('index.html'));
+
 // #endregion
 
 // #region 이벤트 정의
-subWindow.on('ready-to-show', () => {
-  subWindow.webContents.send('sub', 'closed');
-  subWindow.webContents.closeDevTools();
+etcWindow.on('ready-to-show', () => {
+  etcWindow.webContents.send('sub', 'youtubeMusic');
+  etcWindow.webContents.closeDevTools();
 });
 // #endregion
 
-export default subWindow;
-
+export default etcWindow;
 export { variables };

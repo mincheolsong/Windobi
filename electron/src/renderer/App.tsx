@@ -31,6 +31,7 @@ import SubWindowBack from './layout/SubWindowBack';
 import Test from './pages/Test';
 import GoogleOAuth from './pages/GoogleOAuth';
 import Music from './pages/Music';
+import YoutubeMusic from './pages/YoutubeMusic';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -129,6 +130,15 @@ function MyApp() {
             </SubWindow>
           }
         />
+
+        <Route
+          path="/youtubeMusic"
+          element={
+            <SubWindow title="플레이리스트">
+              <YoutubeMusic />
+            </SubWindow>
+          }
+        ></Route>
 
         <Route
           path="/deletecharacter"

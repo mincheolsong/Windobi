@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import OpenAI from 'openai';
 import axios from 'axios';
-
 import * as S from '../components/music/Music.style';
+import playBtn from '../../../assets/icons/playBtn.svg';
 
 const GOOGLE_API_KEY = 'AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk';
 const { ipcRenderer } = window.electron;
@@ -22,6 +22,10 @@ function Music() {
   const [openai, setOpenai] = useState();
   const [prompt, setPrompt] = useState('');
   const [count, setCount] = useState();
+  const [loading, setLoading] = useState(false);
+  const [playlistUrl, setPlaylistUrl] = useState(
+    'https://music.youtube.com/browse/VLPLDRiSsyuI9qDl5zYIaEDgoyRzHw3hcCRB',
+  );
   let playlistId;
   let videoId;
 
@@ -54,6 +58,10 @@ function Music() {
     );
   };
 
+  const openNewWindow = (url) => {
+    window.open(url, '_blank', 'nodeIntegration=no');
+  };
+
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
@@ -65,6 +73,7 @@ function Music() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const accessToken = await ipcRenderer.invoke('token');
     try {
       // openai에게 추천받기
@@ -125,6 +134,9 @@ function Music() {
 
         console.log('playListItemsResponse : ' + playListItemsResponse);
         console.log(playlistUrl);
+        setLoading(false);
+        setPlaylistUrl(playlistUrl);
+        setPrompt('');
       }
     } catch (err) {
       console.log(err);
@@ -136,20 +148,45 @@ function Music() {
       <S.Header>어떤 노래를 듣고 싶으세요?</S.Header>
 
       <S.Body>
-        <S.TitleInput
-          onChange={(e) => {
-            setPrompt(e.target.value);
-          }}
-          placeholder='코딩할 때 듣기 좋은 노래'
-        ></S.TitleInput>
-        <input
-          onChange={(e) => {
-            setCount(e.target.valueAsNumber);
-          }}
-          type="number"
-        ></input>
-        <button onClick={handleSubmit}>제출</button>
+        <S.Input>
+          <S.TitleInput
+            onChange={(e) => {
+              setPrompt(e.target.value);
+            }}
+            placeholder="코딩할 때 듣기 좋은 노래"
+          ></S.TitleInput>
+          <S.CountInput
+            onChange={(e) => {
+              setCount(e.target.valueAsNumber);
+            }}
+            type="number"
+            min={1}
+          ></S.CountInput>
+        </S.Input>
+        <S.PlayButton
+          onClick={handleSubmit}
+          disabled={loading || prompt.length === 0}
+        >
+          {loading === true ? (
+            <S.Loading></S.Loading>
+          ) : (
+            <S.playImg src={playBtn}></S.playImg>
+          )}
+        </S.PlayButton>
       </S.Body>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          left: 107,
+        }}
+        onClick={() => {
+          // openNewWindow(playlistUrl);
+          ipcRenderer.sendMessage('showYouTubeMusicWindow', playlistUrl);
+        }}
+      >
+        만들었어요
+      </div>
     </S.Wrapper>
   );
 }

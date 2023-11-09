@@ -5,6 +5,7 @@ import {
   mainVariables,
   subWindow,
   menuWindow,
+  etcWindow,
   menuVariables,
 } from '../windows';
 
@@ -24,6 +25,8 @@ const windowsHandler = () => {
   restartMovingHandler();
   hideSubWindowHandler();
   hideMenuWindowHandler();
+  showYouTubeMusicWindow();
+  hideYouTubeMusicWindow();
   // sizeUpMenuWindowHandler();
 };
 
@@ -34,6 +37,15 @@ const subHandler = () => {
   ipcMain.on('sub', (_event, path) => {
     subWindow.webContents.send('sub', path);
     subWindow.show();
+  });
+};
+
+/**
+ * 'showYouTubeMusicWindow : 유튜브 뮤직윈도우 보이기
+ */
+const showYouTubeMusicWindow = () => {
+  ipcMain.on('showYouTubeMusicWindow', () => {
+    etcWindow.show();
   });
 };
 
@@ -97,6 +109,15 @@ const hideMenuWindowHandler = () => {
   ipcMain.on('hideMenuWindow', async () => {
     await sleep(500);
     menuWindow.hide();
+  });
+};
+
+/**
+ * 'hideYouTubeMusicWindow : 유튜브 뮤직윈도우 숨기기
+ */
+const hideYouTubeMusicWindow = () => {
+  ipcMain.on('hideYouTubeMusicWindow', () => {
+    etcWindow.hide();
   });
 };
 
