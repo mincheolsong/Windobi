@@ -7,29 +7,31 @@ const Wrapper = styled.div`
   background-color: rgba(240, 240, 240, 0.75);
   overflow-x: hidden;
   overflow-y: hidden;
-
   border-radius: 10px;
-
   padding-top: 5px;
-
   border: 0.5px #ddd solid;
+`;
+
+const Top = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `;
 
 const Header = styled.div`
   width: 100%;
   height: 35px;
-
+  -webkit-app-region: drag;
   padding-top: 5px;
   font-family: GmarketSansTTFBold;
   font-size: 20px;
-
+  margin-left: 22px;
   color: black;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  position: fixed;
   z-index: 999;
 
   border-top-left-radius: 10px;
@@ -37,16 +39,12 @@ const Header = styled.div`
 `;
 
 const Close = styled(AiOutlineClose)`
-  position: fixed;
-  top: 12px;
-  right: 12px;
-
   width: 15px;
   height: 15px;
 
   border-radius: 13px;
   color: gray;
-
+  margin-right: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,7 +58,6 @@ const Close = styled(AiOutlineClose)`
 `;
 
 const Body = styled.div`
-  margin-top: 55px;
   padding-left: 10px;
   padding-right: 10px;
   margin-bottom: 10px;
@@ -85,4 +82,4 @@ const Body = styled.div`
   }
 `;
 
-export { Wrapper, Header, Close, Body };
+export { Wrapper, Header, Close, Body, Top };

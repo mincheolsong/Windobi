@@ -17,7 +17,7 @@ const Header = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 45px;
-  background-image: linear-gradient(to top, #fad0c4 0%, #ffd1ff 100%);
+  background-color: #fffffeb3;
 `;
 
 const Input = styled.div`
@@ -25,20 +25,23 @@ const Input = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  height: 31px;
 `;
 
 const TitleInput = styled.input`
   border: none;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  height: 25px;
+  border-radius: 10px;
+  height: 100%;
   width: 200px;
+  box-shadow:
+    inset -5px -5px 9px rgba(255, 255, 255, 0.45),
+    inset 5px 5px 9px rgba(94, 104, 121, 0.3);
 `;
 
 const CountInput = styled.input`
   border: none;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
   height: 25px;
   width: 25px;
 `;
@@ -53,7 +56,7 @@ const Body = styled.div`
   justify-content: space-evenly;
   align-items: center;
   height: 180px;
-  background-image: linear-gradient(to top, #fad0c4 0%, #ffd1ff 100%);
+  background-color: #fffffeb3;
   border-radius: 25px;
 `;
 
@@ -118,6 +121,21 @@ const Loading = styled.div`
 
 const playImg = styled.img`
   cursor: pointer;
+  border-radius: 50%;
+  box-shadow:
+    -5px -5px 9px rgba(255, 255, 255, 0.45),
+    5px 5px 9px rgba(94, 104, 121, 0.3);
+`;
+
+const gae = styled.div`
+  background: white;
+  height: 25px;
+  width: 25px;
+  border-top-right-radius: 10px;
+  vertical-align: center;
+  border-bottom-right-radius: 10px;
+  display: flex;
+  align-items: center;
 `;
 
 export {
@@ -131,4 +149,5 @@ export {
   PlayButton,
   Loading,
   playImg,
+  gae,
 };

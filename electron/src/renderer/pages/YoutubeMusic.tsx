@@ -10,7 +10,7 @@ function YoutubeMusic() {
   });
   useEffect(() => {
     ipcRenderer.sendMessage('etcSize', {
-      width: 500,
+      width: 400,
       height: 700,
     });
   }, []);

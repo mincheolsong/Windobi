@@ -44,16 +44,6 @@ function ChatGPT() {
       content:
         'this is test message.this is test message.this is test message.this is test message.',
     },
-    {
-      type: 1,
-      content:
-        'this is test message.this is test message.this is test message.this is test message.this is test message.',
-    },
-    {
-      type: 0,
-      content:
-        'this is test message.this is test message.this is test message.this is test message.',
-    },
   ]); // 채팅 말풍선을 보여주기 위한 state
   const [message, setMessage] = useState([]); // 챗봇을 위한 message
 
@@ -134,8 +124,8 @@ function ChatGPT() {
           onClick={handleSubmit}
           style={{
             border: 'none',
-            color: 'white',
-            background: 'rgb(11, 108, 255)',
+            color: 'black',
+            background: '#f9eb54',
             borderRadius: '10px',
             height: '100%',
             padding: '5px',

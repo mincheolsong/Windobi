@@ -51,7 +51,6 @@ function MyApp() {
   });
 
   ipcRenderer.on('sub', (path) => {
-    console.log(path, '가 왔어요');
     navigate(`/${path}`);
   });
 
@@ -125,7 +124,7 @@ function MyApp() {
           path="/googleOAuth"
           element={
             <SubWindow title="Google OAuth">
-              <Music />
+              <GoogleOAuth />
             </SubWindow>
           }
         />
@@ -142,7 +141,7 @@ function MyApp() {
         <Route
           path="/youtubeMusic"
           element={
-            <EtcWindow title="플레이리스트">
+            <EtcWindow title="재생목록">
               <YoutubeMusic />
             </EtcWindow>
           }
@@ -159,7 +158,7 @@ function MyApp() {
         <Route
           path="/chatGPT"
           element={
-            <SubWindow title="한별이">
+            <SubWindow title="지피티">
               <ChatGPT />
             </SubWindow>
           }
