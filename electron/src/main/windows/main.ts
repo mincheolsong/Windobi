@@ -50,6 +50,7 @@ type TVariables = {
   character: Character;
   scheduleId: IntervalId;
   characterMoveId: IntervalId;
+  mailListners: Array<IntervalId>;
   primaryDisplay: Display;
   width: number;
   height: number;
@@ -58,6 +59,7 @@ const variables: TVariables = {
   character: new Character(primaryDisplay.workAreaSize.width, primaryDisplay.workAreaSize.height, width, height),
   scheduleId: null,
   characterMoveId: null,
+  mailListners: [],
   primaryDisplay: screen.getPrimaryDisplay(),
   width,
   height,

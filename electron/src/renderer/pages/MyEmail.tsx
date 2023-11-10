@@ -1,54 +1,53 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import naverImage from '../../../assets/naver.png';
-import defaultImage from '../../../assets/icon.png';
+import daumImage from '../../../assets/daum.png';
 import * as S from '../components/myEmail/MailBox.style';
 
 function MyEmail() {
+  const [emails, setEmails] = useState([]);
+
   const navigate = useNavigate();
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,
       height: 400,
     });
+
+    const getEmails = async () =>{
+      let temp = await window.electron.ipcRenderer.invoke('accountRequest');
+      const arr = temp.map((email)=>{
+        switch(email.host){
+          case "imap.naver.com":
+            email['img'] = naverImage;
+            break;
+          case "imap.daum.net":
+            email['img'] = daumImage;
+            break;
+        }
+      });
+      console.log(arr);
+
+
+      setEmails(temp);
+    };
+
+    getEmails();
+
   }, []);
 
-  // 이메일 도메인에 따른 이미지 가져오기
-  const getEmailImage = (email: String) => {
-    if (email.endsWith('@naver.com')) {
-      return naverImage;
-    }
-    if (email.endsWith('@gmail.com')) {
-      return defaultImage;
-    }
-    return defaultImage;
-  };
-  const emails = [
-    'wlgns1718@naver.com',
-    'wlgnsl1718@gmail.com',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-    'asd',
-  ];
 
   const handleDeleteEmail = (email: String) => {
     // 이메일 삭제 로직 구현
-    // console.log(email);
+    window.electron.ipcRenderer.sendMessage("accountDelete", email);
+    setEmails((prevMails) => prevMails.filter((m) => m.id !== email.id || m.host !== email.host));
   };
   return (
     <S.Container>
-      {emails.map((email) => (
+      {emails.length > 0 && emails.map((email) => (
         <S.Wrapper key={email}>
-          <S.Icon src={getEmailImage(email)} alt="email logo" />
-          <span>{email}</span>
+          <S.Icon src={email.img} alt="email logo" />
+          <span>{email.id}</span>
           <S.DeleteButton onClick={() => handleDeleteEmail(email)}>
             삭제
           </S.DeleteButton>

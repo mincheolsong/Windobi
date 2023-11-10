@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import Imap from 'imap';
 // const Imap = require('imap');
 const { MailParser } = require('mailparser');
@@ -151,4 +151,34 @@ function processMessage(msg, seqno) {
   });
 }
 
-export default getMails;
+
+function checkMail(mailId, mailPassword, mailHost) {
+  const imap = new Imap({
+    user: mailId,
+    password: mailPassword,
+    host: mailHost,
+    port: 993,
+    tls: true,
+  }); // imap 설정
+
+  imap.on('ready', () =>{
+    console.log("its Ok");
+    ipcMain.emit("connectSuccess");
+    imap.end();
+  });
+
+  imap.once('error', (err) => {
+    console.log("error:", err);
+    ipcMain.emit("connectFail");
+    imap.end();
+  });
+
+  imap.once('end', () => {
+    console.log("end");
+  })
+
+  imap.connect();
+
+}
+
+export  { getMails, checkMail };

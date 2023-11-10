@@ -1,9 +1,11 @@
-import { BrowserWindow, app, ipcMain } from 'electron';
+import { BrowserWindow, app, dialog, ipcMain } from 'electron';
 import path from 'path';
 import { mainWindow, subWindow } from '../windows';
 import createReport from '../mail/createReport';
-import getMails from '../mail/mail';
+import { getMails, checkMail } from '../mail/mail';
 import { resolveHtmlPath } from '../util';
+import { dbInstance } from '../mail/emailDB';
+
 
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
@@ -26,6 +28,10 @@ const mails: Array<TMail> = []; // 이제껏 수신한 메일들을 보관하는
 
 let timerId: IntervalId = null;
 
+// DB 실행
+dbInstance.init();
+dbInstance.createTable();
+
 const mailHandler = () => {
   mailRequestHandler();
   deleteMailHandler();
@@ -33,6 +39,9 @@ const mailHandler = () => {
   mailReceiveHandler();
   // mailTestHandler();
   chartReceivingHadler();
+  accountSaveHandler();
+  accountRequestHandler();
+  accountDeleteHandler();
 };
 
 /**
@@ -102,6 +111,8 @@ const mailSendHandler = () => {
  * 일정시간마다 메일 받아오기
  */
 const mailReceiveHandler = () => {
+  // timerId 관리하기
+
   timerId = setInterval(
     getMails,
     60000,
@@ -146,10 +157,10 @@ const chartReceivingHadler = () => {
   ipcMain.on('chartChannel', (_event, chart) => {
     // 차트 이미지 수신
     // 이미지 저장하기
-    let dataUrl =  chart.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    let buffer =  Buffer.from(dataUrl[2],'base64');
-    fs.writeFile('barChart.png',buffer, (e : any) => {
-      if(!e){
+    let dataUrl = chart.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    let buffer = Buffer.from(dataUrl[2], 'base64');
+    fs.writeFile('barChart.png', buffer, (e: any) => {
+      if (!e) {
         console.log("file is created")
       }
     });
@@ -157,5 +168,68 @@ const chartReceivingHadler = () => {
   });
 };
 
+
+/**
+ * 'accountSaveHandler : 이메일 계정 저장 핸들러
+ */
+const accountSaveHandler = () => {
+  ipcMain.on('accountSave', async (_event, email) => {
+    // 이메일 계정 Sqlite3에서 불러오기
+    // 중복체크
+    let res = await dbInstance.getAccountByIdAndHost(email.id, email.host);
+    if (res.length > 0) {
+      _event.sender.send("accountSave", { code: "400", content: "duplicateError" });
+      return;
+    }
+
+    ipcMain.on("connectSuccess", ()=>{
+      // 연결이 성공한 경우
+      _event.sender.send("accountSave", { code: "200", content: "success" });
+      ipcMain.removeAllListeners("connectSuccess");
+      dbInstance.insert(email);
+      return;
+    });
+    ipcMain.on("connectFail", ()=>{
+      // 연결이 실패한 경우 인증오류!
+      _event.sender.send("accountSave", { code: "401", content: "authentication error" });
+      ipcMain.removeAllListeners("connectFail");
+      return;
+    })
+    // imap을 통해 접속확인
+    checkMail(email.id, email.password, email.host);
+    // console.log(check);
+
+
+  });
+};
+
+/**
+ * 'accountRequestHandler : 이메일 계정 정보 요청 핸들러
+ */
+
+const accountRequestHandler = () => {
+  ipcMain.handle('accountRequest', async () => {
+    // 이메일 계정 Sqlite3에서 불러오기
+    // 이메일만 보내주기
+    const result = await dbInstance.getAll();
+    // console.log("Select query executed : ", result);
+    return result;
+  });
+};
+
+/**
+ * 'accountDeleteHandler : 이메일 계정 삭제 요청 핸들러
+ */
+
+const accountDeleteHandler = () => {
+  ipcMain.on('accountDelete', (_event, email) => {
+    // 기존에 실행중이던 이메일 리스너 끄기
+
+    // 이메일 계정 삭제
+    dbInstance.deleteByIdAndHost(email.id, email.host);
+
+  });
+
+};
 
 export default mailHandler;

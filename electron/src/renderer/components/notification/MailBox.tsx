@@ -6,12 +6,7 @@ import * as S from './Mail.style';
 import Time from './Time';
 import TMail from './TMail';
 import { useNavigate } from 'react-router-dom';
-import { ipcRenderer } from 'electron';
 
-// async function click(){
-//   let a = await window.electron.ipcRenderer.invoke('test', 1);
-//   alert(a);
-// }
 
 function MailBox({
   mails,
