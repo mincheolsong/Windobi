@@ -21,6 +21,7 @@ function AddCharacter() {
   const [able, setAble] = useState<boolean>(false);
 
   useEffect(() => {
+    ipcRenderer.sendMessage('windowOpened');
     ipcRenderer.sendMessage('size', { width: 440, height: 500 });
   }, []);
 

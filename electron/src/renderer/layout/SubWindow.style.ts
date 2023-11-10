@@ -8,14 +8,16 @@ const Wrapper = styled.div`
   overflow-y: hidden;
 
   border-radius: 10px;
+
+  padding-top: 5px;
 `;
 
 const Header = styled.div`
   width: 100%;
   height: 35px;
   font-family: NanumBarunGothicBold;
-  font-size: 20px;
-  color: white;
+  font-size: 25px;
+  color: black;
 
   display: flex;
   justify-content: center;
@@ -24,19 +26,17 @@ const Header = styled.div`
   position: fixed;
   z-index: 999;
 
-  background-color: rgb(11, 108, 255);
-
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 `;
 
 const Close = styled.div`
   position: fixed;
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   right: 20px;
 
-  background-color: red;
+  background-color: rgb(255, 96, 92);
   border-radius: 13px;
 
   display: flex;
@@ -45,19 +45,21 @@ const Close = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: rgb(220, 0, 0);
+    background-color: rgb(255, 50, 50);
+    transition: all 0.15s;
   }
 `;
 
 const Body = styled.div`
-  padding-top: 40px;
+  margin-top: 40px;
   padding-left: 10px;
   padding-right: 10px;
-  padding-bottom: 5px;
+  margin-bottom: 10px;
+
   width: 100%;
-  // height: calc(100% - 35px);
-  height: 100%;
-  overflow-y: scroll;
+  height: calc(100% - 50px);
+
+  overflow-y: auto;
   overflow-x: hidden;
 
   &::-webkit-scrollbar {

@@ -33,13 +33,13 @@ const Summary = styled.summary`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgb(50, 168, 255);
+  background: #cce4ff;
 
   font-size: 30px;
 
   &:hover {
     cursor: pointer;
-    background: rgb(30, 128, 255);
+    background: #80bdff;
     transition: 0.1s all ease-in-out;
   }
 `;
