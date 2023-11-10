@@ -1,5 +1,5 @@
 import { throttle, delay } from 'lodash';
-import { ipcMain } from 'electron';
+import { ipcMain, ipcRenderer } from 'electron';
 import mainWindow from './main';
 import {
   mainVariables,
