@@ -128,9 +128,13 @@ function processMessage(msg, seqno) {
   parser.on('headers', function (headers) {
     const mail = mails.filter((mail) => mail.seq == seqno)[0]; // 리스트에서 해당 seq 메일을 찾기
 
-    mail.from = headers.get('from').text;
-    mail.date = headers.get('date');
-    mail.subject = headers.get('subject');
+    try {
+      mail.from = headers.get('from').text;
+      mail.date = headers.get('date');
+      mail.subject = headers.get('subject');
+    } catch (e) {
+      console.log(e);
+    }
   });
 
   parser.on('data', (data) => {

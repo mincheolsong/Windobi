@@ -1,4 +1,3 @@
-/* eslint-disable no-use-before-define */
 import { ipcMain } from 'electron';
 import {
   mainWindow,
@@ -10,21 +9,14 @@ import {
 
 import moving from '../chracter/moving';
 import moveScheduling from '../chracter/moveScheduling';
-
-const sleep = (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-};
+import { sleep } from '../util';
 
 const windowsHandler = () => {
   subHandler();
-  windowMovingHandler();
   stopMovingHandler();
   restartMovingHandler();
   hideSubWindowHandler();
   hideMenuWindowHandler();
-  // sizeUpMenuWindowHandler();
 };
 
 /**
@@ -34,20 +26,6 @@ const subHandler = () => {
   ipcMain.on('sub', (_event, path) => {
     subWindow.webContents.send('sub', path);
     subWindow.show();
-  });
-};
-
-/**
- * 'windowMoving' : 윈도우 move 이벤트 일때
- */
-const windowMovingHandler = () => {
-  ipcMain.on('windowMoving', (_event, arg) => {
-    mainWindow.setBounds({
-      width: mainVariables.width,
-      height: mainVariables.height,
-      x: arg.mouseX - 50, // always changes in runtime
-      y: arg.mouseY - 50,
-    });
   });
 };
 
@@ -70,14 +48,13 @@ const stopMovingHandler = () => {
 const restartMovingHandler = () => {
   ipcMain.on('restartMoving', () => {
     const { characterMoveId, scheduleId, character } = mainVariables;
-    if (characterMoveId === null && scheduleId === null) {
-      mainWindow.focus();
-      character.fallTrigger = false;
-      mainVariables.characterMoveId = setInterval(moving, 30, character);
-      mainVariables.scheduleId = setInterval(moveScheduling, 2000);
-
-      mainWindow.webContents.send('character-move', character.direction);
-    }
+    if (characterMoveId !== null) clearInterval(characterMoveId);
+    if (scheduleId !== null) clearInterval(scheduleId);
+    mainVariables.characterMoveId = setInterval(moving, 30, character);
+    mainVariables.scheduleId = setInterval(moveScheduling, 2000);
+    mainWindow.webContents.send('character-move', character.direction);
+    mainWindow.focus();
+    character.fallTrigger = false;
   });
 };
 
