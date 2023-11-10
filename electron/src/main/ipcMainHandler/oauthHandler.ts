@@ -7,11 +7,15 @@ const querystring = require('node:querystring');
 
 const oauthHandelr = () => {
   const redirectUri = 'http://localhost:1212/callback';
-
+  let token;
   // Prepare to filter only the callbacks for my redirectUri
   const filter = {
     urls: [redirectUri + '*'],
   };
+
+  ipcMain.handle('token', async () => {
+    return token;
+  });
 
   // redirect가 발생하는 모든 요청을 intercept
   session.defaultSession.webRequest.onBeforeRequest(
@@ -29,11 +33,9 @@ const oauthHandelr = () => {
       const parsedQuery = querystring.parse(query);
 
       // Get the value of the access_token parameter
-      const token = parsedQuery.access_token;
+      const access_token = parsedQuery.access_token;
 
-      ipcMain.handle('token', async () => {
-        return token;
-      });
+      token = access_token;
 
       (async () => {
         await subWindow.loadURL(resolveHtmlPath('index.html'));

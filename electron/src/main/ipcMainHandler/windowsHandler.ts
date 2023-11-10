@@ -44,7 +44,13 @@ const subHandler = () => {
  * 'showYouTubeMusicWindow : 유튜브 뮤직윈도우 보이기
  */
 const showYouTubeMusicWindow = () => {
-  ipcMain.on('showYouTubeMusicWindow', () => {
+  ipcMain.on('showYouTubeMusicWindow', (_event, playlistUrl) => {
+    console.log('^@#$@#$@$@#$@#$#$$@#$');
+    etcWindow.setBounds({
+      width: 500,
+      height: 700,
+    });
+    etcWindow.webContents.send('url', playlistUrl);
     etcWindow.show();
   });
 };
