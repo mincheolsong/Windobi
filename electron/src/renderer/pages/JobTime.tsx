@@ -21,6 +21,7 @@ function JobTime() {
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
+    ipcRenderer.sendMessage('windowOpened');
     ipcRenderer.sendMessage('size', { width: 600, height: 350 });
 
     ipcRenderer.on('job-time', ({ type: returnType, result }) => {

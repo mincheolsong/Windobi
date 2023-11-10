@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 // 캐릭터 객체
 // 현재 좌표, 방향, 윈도우의 초기 크기, 최대 크기를 가짐
+import { ipcMain } from 'electron';
 import { mainVariables, mainWindow } from '../windows';
 
 type TDirection =
@@ -93,13 +94,14 @@ class Character {
   }
 
   set isMove(value) {
-    // mainVariables.characterMoveId = setInterval(moving, 30, character);
-    // mainVariables.scheduleId = setInterval(moveScheduling, 2000);
-
-    if (this.#isMove !== value) {
-      // 움직이는 상태로 변경일 경우
+    if (value !== this.#isMove) {
+      this.#isMove = value;
+      if (value === true) {
+        ipcMain.emit('restartMoving');
+      } else if (value === false) {
+        ipcMain.emit('stopMoving');
+      }
     }
-    this.#isMove = value;
   }
 }
 

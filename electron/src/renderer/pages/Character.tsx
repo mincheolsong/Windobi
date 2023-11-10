@@ -75,6 +75,8 @@ function Chracter() {
         // 만약 제대로 좌클릭이 떼어진 상태가 발동안되었으면
         ipcRenderer.sendMessage('stop-drag');
         ipcRenderer.sendMessage('restartMoving');
+
+        canRightClick.current = true;
         holdLeftClickId.current = null;
       }
     }
