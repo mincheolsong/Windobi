@@ -14,8 +14,8 @@ const getAssetPath = (...paths: string[]): string => {
 
 // #region 추가적인 값 정의
 const variables = {
-  width: 500,
-  height: 700,
+  width: 0,
+  height: 0,
 };
 // #endregion
 
@@ -36,7 +36,7 @@ const etcWindow = new BrowserWindow({
   alwaysOnTop: false,
   transparent: true,
   skipTaskbar: true,
-  show: false,
+  show: true,
   resizable: true,
 });
 etcWindow.loadURL(resolveHtmlPath('index.html'));
@@ -44,8 +44,8 @@ etcWindow.loadURL(resolveHtmlPath('index.html'));
 // #endregion
 
 // #region 이벤트 정의
-etcWindow.on('ready-to-show', () => {
-  etcWindow.webContents.send('sub', 'youtubeMusic');
+etcWindow.once('ready-to-show', () => {
+  etcWindow.webContents.send('sub', 'youtubeClosed');
   etcWindow.webContents.closeDevTools();
 });
 // #endregion
