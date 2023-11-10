@@ -15,6 +15,7 @@ import {
   Character,
   ChatGPT,
   Closed,
+  YoutubeClosed,
   CreateChart,
   CreatedChart,
   DeleteCharacter,
@@ -36,6 +37,7 @@ import Test from './pages/Test';
 import GoogleOAuth from './pages/GoogleOAuth';
 import Music from './pages/Music';
 import YoutubeMusic from './pages/YoutubeMusic';
+import EtcWindow from './layout/EtcWindow';
 
 function MyApp() {
   const navigate = useNavigate();
@@ -49,6 +51,7 @@ function MyApp() {
   });
 
   ipcRenderer.on('sub', (path) => {
+    console.log(path, '가 왔어요');
     navigate(`/${path}`);
   });
 
@@ -66,6 +69,7 @@ function MyApp() {
         />
         <Route path="/" element={<Character />} />
         <Route path="/closed" element={<Closed />} />
+        <Route path="/youtubeClosed" element={<YoutubeClosed />} />
         <Route
           path="/jobtime"
           element={
@@ -138,9 +142,9 @@ function MyApp() {
         <Route
           path="/youtubeMusic"
           element={
-            <SubWindowBack title="플레이리스트">
+            <EtcWindow title="플레이리스트">
               <YoutubeMusic />
-            </SubWindowBack>
+            </EtcWindow>
           }
         />
 

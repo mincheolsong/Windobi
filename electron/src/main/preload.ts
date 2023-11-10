@@ -13,6 +13,7 @@ export type Channels =
   | 'deleteMail'
   | 'token'
   | 'frameOn'
+  | 'url'
   | TCharacterChannel
   | JobTimeChannel
   | WindowsChannel;
