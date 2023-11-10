@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   useNavigate,
+  useLocation,
 } from 'react-router-dom';
 import './App.css';
 import { useEffect } from 'react';
@@ -33,6 +34,7 @@ import Weather from './pages/Weather';
 
 function MyApp() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { ipcRenderer } = window.electron;
 
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
@@ -88,26 +90,26 @@ function MyApp() {
         <Route
           path="/changecharacter"
           element={
-            <SubWindow title="캐릭터 변경">
+            <SubWindowBack title="캐릭터 변경">
               <ChangeCharacter />
-            </SubWindow>
+            </SubWindowBack>
           }
         />
 
         <Route
           path="/addcharacter"
           element={
-            <SubWindow title="캐릭터 추가">
+            <SubWindowBack title="캐릭터 추가">
               <AddCharacter />
-            </SubWindow>
+            </SubWindowBack>
           }
         />
         <Route
           path="/deletecharacter"
           element={
-            <SubWindow title="캐릭터 삭제">
+            <SubWindowBack title="캐릭터 삭제">
               <DeleteCharacter />
-            </SubWindow>
+            </SubWindowBack>
           }
         />
         <Route
