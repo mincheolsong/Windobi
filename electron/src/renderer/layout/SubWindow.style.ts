@@ -66,7 +66,7 @@ const Body = styled.div`
   margin-bottom: 10px;
 
   width: 100%;
-  height: calc(100% - 50px);
+  height: calc(100% - 65px);
 
   overflow-y: auto;
   overflow-x: hidden;
