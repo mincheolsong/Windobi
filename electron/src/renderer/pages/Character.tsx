@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useRef } from 'react';
 import * as S from '../components/character/Character.style';
@@ -15,54 +16,76 @@ function Chracter() {
     if (e.button === 0) {
       // 좌클릭인 경우
 
+      // 켜져있던 메뉴는 끄기
+      ipcRenderer.sendMessage('hide-menu');
+      // 좌클릭을 때기 전까지 우클릭은 막기
+      canRightClick.current = false;
       if (holdLeftClickId.current !== null) {
         clearTimeout(holdLeftClickId.current);
       }
 
-      ipcRenderer.sendMessage('stopMoving');
-
       // 일단 짧게 누르는 거라고 표시해놓고
       isShortHold.current = true;
 
-      // 일정시간 누르고 있을때만 움직이기 이벤트를 시작하자
+      // 좌클릭 길게 누르고 있을 때 발동
       holdLeftClickId.current = setTimeout(() => {
-        isShortHold.current = false;
-        ipcRenderer.sendMessage('start-move');
-      }, 200);
+        isShortHold.current = false; // 일단 짧은 좌클릭은 아니라고 표시
 
-      canRightClick.current = false;
+        ipcRenderer.sendMessage('start-drag');
+        ipcRenderer.sendMessage('stopMoving');
+      }, 150);
     } else if (e.button === 2) {
       // 우클릭인 경우
+
+      // 우클릭을 못하는 상태이면 아무것도 하지 않는다
       if (!canRightClick.current) return;
-      // 메뉴를 열어주자
-      window.electron.ipcRenderer.sendMessage('toggleMenuOn', {});
+
+      ipcRenderer.sendMessage('show-menu');
+      ipcRenderer.sendMessage('stopMoving');
     }
   };
 
   const onMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.button === 0) {
-      // 좌클릭인 경우
-      canRightClick.current = true;
-
       if (holdLeftClickId.current !== null) {
         clearTimeout(holdLeftClickId.current);
+        holdLeftClickId.current = null;
       }
 
+      // 짧게 누르는 경우이면
       if (isShortHold.current) {
-        // 짧게 누르는 경우이면
+        ipcRenderer.sendMessage('stopMoving');
         ipcRenderer.sendMessage('character-left-click');
-      } else {
-        // 길게 누르고 있던 경우이면
-        ipcRenderer.sendMessage('stop-move');
       }
-      ipcRenderer.sendMessage('restartMoving');
+      // 길게 누르고 있던 경우이면
+      else {
+        ipcRenderer.sendMessage('stop-drag');
+        ipcRenderer.sendMessage('restartMoving');
+      }
 
-      // 메뉴가 열려있지 않으면 다시 움직여주자
+      // 좌클릭을 놓는 경우 -> 우클릭 가능하게 바꾸기
+      canRightClick.current = true;
+    }
+  };
+
+  const onMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (e.buttons !== 1) {
+      // 좌클릭이 눌려있지 않으면
+      if (holdLeftClickId.current !== null) {
+        // 만약 제대로 좌클릭이 떼어진 상태가 발동안되었으면
+        ipcRenderer.sendMessage('stop-drag');
+        ipcRenderer.sendMessage('restartMoving');
+        holdLeftClickId.current = null;
+      }
     }
   };
 
   return (
-    <S.Wrapper onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+    <S.Wrapper
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
+      onMouseMove={onMouseMove}
+    >
       <CharacterImg />
     </S.Wrapper>
   );

@@ -1,10 +1,10 @@
 export type WindowsChannel =
   | 'sub'
   | 'size'
-  | 'windowMoving'
-  | 'toggleMenuOn'
+  | 'show-menu'
+  | 'hide-menu'
   | 'hideMenuWindow'
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
-  | 'start-move'
-  | 'stop-move';
+  | 'start-drag'
+  | 'stop-drag';

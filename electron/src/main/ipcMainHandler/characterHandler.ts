@@ -3,11 +3,13 @@ import fs from 'fs';
 import path from 'path';
 import { mainVariables, mainWindow, menuWindow } from '../windows';
 import tray, { variables as trayVariables } from '../tray/tray';
+import { sleep } from '../util';
 
 let moveTimer: IntervalId = null;
 
 const characterHandler = () => {
-  toggleMenuHandler();
+  showMenuHandler();
+  hideMenuHandler();
   characterListHandler();
   characterImagesHandler();
   changeCharacterHandler();
@@ -15,19 +17,34 @@ const characterHandler = () => {
   deleteCharacterHandler();
   addCharacterHandler();
   characterLeftClickHandler();
+  menuOffHandler();
   startMoveHandler();
   stopMoveHandler();
 };
 
 /**
- * 'toggleMenuOn' : 캐릭터 우클릭 시 메뉴 윈도우를 보여준다
+ * 'show-menu' : 캐릭터 우클릭 시 메뉴 윈도우를 보여준다
  */
-const toggleMenuHandler = () => {
-  ipcMain.on('toggleMenuOn', () => {
+const showMenuHandler = () => {
+  ipcMain.on('show-menu', () => {
     mainWindow.show();
     menuWindow.show();
     mainWindow.moveTop();
-    menuWindow.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
+    menuWindow.focus();
+
+    // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
+    menuWindow.webContents.send('show-menu');
+  });
+};
+
+/**
+ * 'hide-menu' : 메뉴 없애기
+ */
+const hideMenuHandler = () => {
+  ipcMain.on('hide-menu', async () => {
+    menuWindow.webContents.send('hide-menu');
+    await sleep(500);
+    menuWindow.hide();
   });
 };
 
@@ -211,11 +228,20 @@ const characterLeftClickHandler = () => {
   });
 };
 
-// 캐릭터 움직이기 시작 동작을 할 때
+/**
+ * 메뉴 트레이가 사라질때
+ */
+const menuOffHandler = () => {
+  trayVariables.menu.on('menu-will-close', () => {
+    ipcMain.emit('restartMoving');
+  });
+};
+
+// 캐릭터 드래그 시작
 const startMoveHandler = () => {
   const { character } = mainVariables;
 
-  ipcMain.on('start-move', () => {
+  ipcMain.on('start-drag', () => {
     character.direction = 'click';
     if (moveTimer !== null) clearInterval(moveTimer);
     moveTimer = setInterval(() => {
@@ -229,7 +255,7 @@ const startMoveHandler = () => {
 
 // 캐릭터 멈추기 동작을 할 때
 const stopMoveHandler = () => {
-  ipcMain.on('stop-move', () => {
+  ipcMain.on('stop-drag', () => {
     mainVariables.character.direction = 'stop';
     if (moveTimer !== null) {
       clearInterval(moveTimer);

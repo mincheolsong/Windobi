@@ -41,14 +41,12 @@ function MenuModal() {
   ];
 
   useEffect(() => {
-    ipcRenderer.on('toggleMenuOn', () => {
+    ipcRenderer.on('show-menu', () => {
       setActive(() => true);
-      ipcRenderer.sendMessage('stopMoving');
     });
 
-    ipcRenderer.on('character-left-click', () => {
-      setActive(() => false); // 클릭하면 메뉴를 닫음(애니메이션)
-      ipcRenderer.sendMessage('hideMenuWindow');
+    ipcRenderer.on('hide-menu', () => {
+      setActive(() => false);
     });
   }, []);
 

@@ -68,11 +68,12 @@ function move() {
       nextY = character.maxHeight - 105;
       nextX = curX;
       character.direction = 'downsleep';
+      character.position = { nextX, nextY };
     } else {
       nextY = curY + 5;
       nextX = curX;
+      character.position = { nextX, nextY };
     }
-    character.position = { nextX, nextY };
   }
   if (character.direction === 'downsleep') {
     if (curY > character.maxHeight - 105) {
@@ -80,6 +81,7 @@ function move() {
       nextY = character.maxHeight - 105;
       nextX = curX;
       character.direction = 'stop';
+      character.position = { nextX, nextY };
     } else {
       nextY = curY + 5;
       nextX = curX;
@@ -87,7 +89,6 @@ function move() {
     character.position = { nextX, nextY };
   }
 
-  character.position = { nextX, nextY };
   character.transition = false;
 }
 
