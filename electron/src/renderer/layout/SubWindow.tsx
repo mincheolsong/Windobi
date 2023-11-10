@@ -2,7 +2,6 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useEffect } from 'react';
-import { AiOutlineClose } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import * as S from './SubWindow.style';
 
