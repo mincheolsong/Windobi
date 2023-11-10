@@ -8,6 +8,7 @@ import NanumBarunGothicBold from '../../assets/fonts/NanumBarunGothicBold.ttf';
 import NanumBarunGothicLight from '../../assets/fonts/NanumBarunGothicLight.ttf';
 import NanumBarunGothicUltraLight from '../../assets/fonts/NanumBarunGothicUltraLight.ttf';
 import Jalnan from '../../assets/fonts/Jalnan.ttf';
+
 export default createGlobalStyle`
   @font-face {
         font-family: 'Jalnan';

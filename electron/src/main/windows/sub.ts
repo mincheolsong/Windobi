@@ -29,6 +29,7 @@ const subWindow = new BrowserWindow({
       ? path.join(__dirname, '../preload.js')
       : path.join(__dirname, '../../../.erb/dll/preload.js'),
     nodeIntegration: true,
+    webviewTag: true,
   },
   frame: false,
   movable: false,

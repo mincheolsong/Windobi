@@ -1,5 +1,5 @@
 import { throttle, delay } from 'lodash';
-import { ipcMain } from 'electron';
+import { ipcMain, ipcRenderer } from 'electron';
 import mainWindow from './main';
 import {
   mainVariables,
@@ -7,6 +7,8 @@ import {
   menuWindow,
   subVariables,
   subWindow,
+  etcWindow,
+  etcVariables,
 } from '.';
 
 type Area = 1 | 2 | 3 | 4;
@@ -149,6 +151,24 @@ const onChangeSizeSub = ({
   });
 };
 
+// etc 윈도우의 boundary를 재설정
+const onChangeSizeEtc = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) => {
+  etcVariables.width = width;
+  etcVariables.height = height;
+  etcWindow.setBounds({
+    width: Math.max(width, 1),
+    height: Math.max(height, 1),
+    x: 500,
+    y: 100,
+  });
+};
+
 // 초기화 작업
 const initialize = () => {
   // 메인 윈도우가 이동할때 발생
@@ -160,6 +180,11 @@ const initialize = () => {
   // 서브 윈도우의 사이즈가 바뀔 때 발생할 이벤트
   ipcMain.on('size', (_event, { width, height }) => {
     onChangeSizeSub({ width, height });
+  });
+
+  // etc 윈도우의 사이즈가 바뀔 때 발생할 이벤트
+  ipcMain.on('etcSize', (_event, { width, height }) => {
+    onChangeSizeEtc({ width, height });
   });
 };
 export default initialize;

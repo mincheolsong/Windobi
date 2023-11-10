@@ -11,6 +11,9 @@ export type Channels =
   | 'get-setting'
   | 'env'
   | 'deleteMail'
+  | 'token'
+  | 'frameOn'
+  | 'url'
   | TCharacterChannel
   | JobTimeChannel
   | WindowsChannel;

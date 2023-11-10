@@ -1,11 +1,12 @@
 import { globalShortcut } from 'electron';
-import { mainWindow, menuWindow, subWindow } from '../windows';
+import { mainWindow, menuWindow, subWindow, etcWindow } from '../windows';
 
 const globalShortcutHandler = () => {
   toggleAllDevToolsHandler();
   toggleMainWindowDevToolsHandler();
   toggleSubWindowDevToolsHandler();
   toggleMenuWindowDevToolsHandler();
+  toggleEtcWindowDevToolsHandler();
 };
 
 // 모든 윈도우의 devTools를 켜고 끄기
@@ -14,6 +15,7 @@ const toggleAllDevToolsHandler = () => {
     mainWindow.webContents.toggleDevTools();
     subWindow.webContents.toggleDevTools();
     menuWindow.webContents.toggleDevTools();
+    etcWindow.webContents.toggleDevTools();
   });
 };
 
@@ -35,6 +37,13 @@ const toggleSubWindowDevToolsHandler = () => {
 const toggleMenuWindowDevToolsHandler = () => {
   globalShortcut.register('CommandOrControl+Alt+D', () => {
     menuWindow.webContents.toggleDevTools();
+  });
+};
+
+// 메뉴 윈도우의 devTools를 켜고 끄기
+const toggleEtcWindowDevToolsHandler = () => {
+  globalShortcut.register('CommandOrControl+Alt+F', () => {
+    etcWindow.webContents.toggleDevTools();
   });
 };
 

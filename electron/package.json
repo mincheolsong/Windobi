@@ -127,7 +127,7 @@
     "react-icons": "^4.11.0",
     "react-moveable": "^0.54.2",
     "react-router-dom": "^6.16.0",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^4.0.3",
     "react-switch": "^7.0.0",
     "sqlite3": "^5.1.6",
     "styled-components": "^6.1.0"
@@ -140,6 +140,7 @@
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/react": "^14.0.0",
+    "@types/imap": "^0.8.40",
     "@types/jest": "^29.5.5",
     "@types/lodash": "^4.14.200",
     "@types/node": "20.6.2",

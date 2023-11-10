@@ -13,3 +13,4 @@ export { default as MyEmail } from './MyEmail';
 export { default as Notification } from './Notification';
 export { default as RegistEmail } from './RegistEmail';
 export { default as Setting } from './Setting';
+export { default as YoutubeClosed } from './YoutubeClosed';
