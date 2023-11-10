@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   MemoryRouter as Router,
   Routes,
@@ -6,7 +8,6 @@ import {
   useLocation,
 } from 'react-router-dom';
 import './App.css';
-import { useEffect } from 'react';
 import {
   AddCharacter,
   Alarm,
@@ -31,16 +32,19 @@ import MenuModal from './components/character/MenuModal';
 import TMail from './components/notification/TMail';
 import SubWindowBack from './layout/SubWindowBack';
 import Weather from './pages/Weather';
+import Test from './pages/Test';
+import GoogleOAuth from './pages/GoogleOAuth';
+import Music from './pages/Music';
+import YoutubeMusic from './pages/YoutubeMusic';
 
 function MyApp() {
   const navigate = useNavigate();
   const location = useLocation();
   const { ipcRenderer } = window.electron;
-
+  const [accessToken, setAccessToken] = useState('');
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
     // console.log("mainRenderer Mail 수신", mail);
     // 메일 수신 알림 주기
-    console.log('서브 수신 완료');
     ipcRenderer.sendMessage('sub', 'alarm');
   });
 
@@ -52,6 +56,14 @@ function MyApp() {
     <>
       <GlobalFont />
       <Routes>
+        <Route
+          path="/callback"
+          element={
+            <SubWindow title="리다이렉트">
+              <Test />
+            </SubWindow>
+          }
+        />
         <Route path="/" element={<Character />} />
         <Route path="/closed" element={<Closed />} />
         <Route
@@ -104,6 +116,34 @@ function MyApp() {
             </SubWindowBack>
           }
         />
+
+        <Route
+          path="/googleOAuth"
+          element={
+            <SubWindow title="Google OAuth">
+              <Music />
+            </SubWindow>
+          }
+        />
+
+        <Route
+          path="/music"
+          element={
+            <SubWindow title="음악 추천">
+              <Music />
+            </SubWindow>
+          }
+        />
+
+        <Route
+          path="/youtubeMusic"
+          element={
+            <SubWindowBack title="플레이리스트">
+              <YoutubeMusic />
+            </SubWindowBack>
+          }
+        />
+
         <Route
           path="/deletecharacter"
           element={
@@ -115,7 +155,7 @@ function MyApp() {
         <Route
           path="/chatGPT"
           element={
-            <SubWindow title="ChatGPT">
+            <SubWindow title="한별이">
               <ChatGPT />
             </SubWindow>
           }

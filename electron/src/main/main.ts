@@ -85,6 +85,7 @@ app
         mailHandler,
         processHandler,
         windowsHandler,
+        oauthHandelr,
       } = await import('./ipcMainHandler');
       const { default: globalShortcutHandler } = await import(
         './shortcut/globalShortcutHandler'
@@ -93,6 +94,7 @@ app
       // ipc관련 핸들러들 등록
       characterHandler();
       jobTimeHandler(dbInstance, subDbInstance);
+      oauthHandelr();
       mailHandler();
       processHandler();
       windowsHandler();
@@ -105,6 +107,7 @@ app
       const { mainWindow } = await import('./windows');
       if (mainWindow === null) createWindow();
     });
+
     return null;
   })
   .catch(console.log);

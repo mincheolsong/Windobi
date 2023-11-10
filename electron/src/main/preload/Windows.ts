@@ -9,4 +9,6 @@ export type WindowsChannel =
   | 'start-drag'
   | 'stop-drag'
   | 'windowOpened'
-  | 'windowClosed';
+  | 'windowClosed'
+  | 'showYouTubeMusicWindow'
+  | 'hideYouTubeMusicWindow';

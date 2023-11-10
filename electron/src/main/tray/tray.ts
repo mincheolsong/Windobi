@@ -1,7 +1,13 @@
 import Electron, { Menu, Tray, app, globalShortcut } from 'electron';
 import path from 'path';
 import settingDB from '../setting/settingDB';
-import { mainWindow, subWindow } from '../windows';
+import { mainWindow, menuWindow, subWindow } from '../windows';
+
+const sleep = (ms: number) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
 
 const iconPath = path.join('assets', 'icons', 'hanbyul.png');
 const tray = new Tray(iconPath);
