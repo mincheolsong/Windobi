@@ -20,7 +20,7 @@ const windowsHandler = () => {
   windowOpenedHandler();
   windowClosedHandler();
   showYouTubeMusicWindow();
-  hideYouTubeMusicWindow();
+  // hideYouTubeMusicWindow();
   // sizeUpMenuWindowHandler();
 };
 
@@ -39,12 +39,9 @@ const subHandler = () => {
  */
 const showYouTubeMusicWindow = () => {
   ipcMain.on('showYouTubeMusicWindow', (_event, playlistUrl) => {
-    etcWindow.setBounds({
-      width: 500,
-      height: 700,
-    });
+    etcWindow.webContents.send('sub', 'youtubeMusic');
     etcWindow.webContents.send('url', playlistUrl);
-    etcWindow.show();
+    etcWindow.moveTop();
   });
 };
 
@@ -119,10 +116,10 @@ const windowClosedHandler = () => {
 /**
  * 'hideYouTubeMusicWindow : 유튜브 뮤직윈도우 숨기기
  */
-const hideYouTubeMusicWindow = () => {
-  ipcMain.on('hideYouTubeMusicWindow', () => {
-    etcWindow.hide();
-  });
-};
+// const hideYouTubeMusicWindow = () => {
+//   ipcMain.on('hideYouTubeMusicWindow', () => {
+//     etcWindow.hide();
+//   });
+// };
 
 export default windowsHandler;
