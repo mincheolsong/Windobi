@@ -23,9 +23,7 @@ function Music() {
   const [prompt, setPrompt] = useState('');
   const [count, setCount] = useState();
   const [loading, setLoading] = useState(false);
-  const [playlistUrl, setPlaylistUrl] = useState(
-    'https://music.youtube.com/browse/VLPLDRiSsyuI9qDl5zYIaEDgoyRzHw3hcCRB',
-  );
+  const [playlistUrl, setPlaylistUrl] = useState('');
   let playlistId;
   let videoId;
 
@@ -58,9 +56,9 @@ function Music() {
     );
   };
 
-  const openNewWindow = (url) => {
-    window.open(url, '_blank', 'nodeIntegration=no');
-  };
+  // const openNewWindow = (url) => {
+  //   window.open(url, '_blank', 'nodeIntegration=no');
+  // };
 
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
@@ -86,6 +84,7 @@ function Music() {
         openaiResponse.choices[0].message.content,
       ); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
 
+      console.log('1. openai : ' + JSON.stringify(parsedOpenaiResponse));
       // youtube에 playlist만들기
       const playListResponse = await axios.post(
         `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${GOOGLE_API_KEY}`,
@@ -105,6 +104,9 @@ function Music() {
       );
 
       playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디 (insertitem 할때 필요한 값)
+
+      console.log('2. playlistId : ' + playlistId);
+
       const playlistUrl = `${playlist_prefix}${playlistId}`;
       for (let i = 0; i < parsedOpenaiResponse.length; i++) {
         // youtube에 노래 검색
@@ -114,6 +116,7 @@ function Music() {
 
         videoId = youtubeSearchResponse.data.items[0].id.videoId; // insertitem할때 필요한 값
 
+        console.log('3. videoId : ' + videoId);
         const playListItemsResponse = await axios.post(
           `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${GOOGLE_API_KEY}`,
           {
@@ -132,8 +135,7 @@ function Music() {
           },
         );
 
-        console.log('playListItemsResponse : ' + playListItemsResponse);
-        console.log(playlistUrl);
+        console.log('4. playListItemsResponse : ' + playListItemsResponse);
         setLoading(false);
         setPlaylistUrl(playlistUrl);
         setPrompt('');
@@ -174,19 +176,22 @@ function Music() {
           )}
         </S.PlayButton>
       </S.Body>
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 20,
-          left: 107,
-        }}
-        onClick={() => {
-          // openNewWindow(playlistUrl);
-          ipcRenderer.sendMessage('showYouTubeMusicWindow', playlistUrl);
-        }}
-      >
-        만들었어요
-      </div>
+
+      {loading === false && playlistUrl.length > 0 ? (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 20,
+            left: 107,
+          }}
+          onClick={() => {
+            // openNewWindow(playlistUrl);
+            ipcRenderer.sendMessage('showYouTubeMusicWindow', playlistUrl);
+          }}
+        >
+          만들었어요
+        </div>
+      ) : null}
     </S.Wrapper>
   );
 }

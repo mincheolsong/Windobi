@@ -1,5 +1,5 @@
 import { globalShortcut } from 'electron';
-import { mainWindow, menuWindow, subWindow } from '../windows';
+import { mainWindow, menuWindow, subWindow, etcWindow } from '../windows';
 
 const globalShortcutHandler = () => {
   toggleAllDevToolsHandler();
@@ -14,6 +14,7 @@ const toggleAllDevToolsHandler = () => {
     mainWindow.webContents.toggleDevTools();
     subWindow.webContents.toggleDevTools();
     menuWindow.webContents.toggleDevTools();
+    etcWindow.webContents.toggleDevTools();
   });
 };
 

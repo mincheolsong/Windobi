@@ -117,7 +117,7 @@ function MyApp() {
           path="/googleOAuth"
           element={
             <SubWindow title="Google OAuth">
-              <Music />
+              <GoogleOAuth />
             </SubWindow>
           }
         />
