@@ -5,6 +5,10 @@ import axios from 'axios';
 import * as S from '../components/music/Music.style';
 import playBtn from '../../../assets/icons/playBtn.svg';
 
+/**
+ * AIzaSyBqZxYFmowB7KkiTnbdn245IwTNGwkamJU (ㅇㅊ)
+ * AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk (ㅁㅊ)
+ */
 const GOOGLE_API_KEY = 'AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk';
 const { ipcRenderer } = window.electron;
 const playlist_prefix = 'https://music.youtube.com/browse/VL';
@@ -21,11 +25,9 @@ let example_json = `
 function Music() {
   const [openai, setOpenai] = useState();
   const [prompt, setPrompt] = useState('');
-  const [count, setCount] = useState();
+  const [count, setCount] = useState(5);
   const [loading, setLoading] = useState(false);
-  const [playlistUrl, setPlaylistUrl] = useState(
-    'https://music.youtube.com/playlist?list=PLDRiSsyuI9qBJC4sCd1_qEuLrO8E0hjzD',
-  );
+  const [playlistUrl, setPlaylistUrl] = useState('');
   let playlistId;
   let videoId;
 
@@ -65,7 +67,7 @@ function Music() {
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
-      height: 300,
+      height: 310,
     });
     ipcRenderer.sendMessage('windowOpened');
     settingOpenAi();
@@ -157,15 +159,17 @@ function Music() {
             onChange={(e) => {
               setPrompt(e.target.value);
             }}
-            placeholder="코딩할 때 듣기 좋은 노래"
+            placeholder="   코딩할 때 듣기 좋은 노래"
           ></S.TitleInput>
-          <S.CountInput
+          {/* <S.CountInput
             onChange={(e) => {
               setCount(e.target.valueAsNumber);
             }}
             type="number"
             min={1}
+            defaultValue={1}
           ></S.CountInput>
+          <S.gae>개</S.gae> */}
         </S.Input>
         <S.PlayButton
           onClick={handleSubmit}
@@ -184,14 +188,15 @@ function Music() {
           style={{
             position: 'absolute',
             bottom: 20,
-            left: 107,
+            left: 95,
+            cursor: 'pointer',
           }}
           onClick={() => {
             // openNewWindow(playlistUrl);
             ipcRenderer.sendMessage('showYouTubeMusicWindow', playlistUrl);
           }}
         >
-          만들었어요
+          요기 만들었어요
         </div>
       ) : null}
     </S.Wrapper>

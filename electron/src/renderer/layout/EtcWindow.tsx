@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import * as S from './SubWindow.style';
+import * as S from './EtcWindow.style';
 
 type TEtcWindow = {
   title?: string;
@@ -25,10 +25,10 @@ function EtcWindow({ title = '', children }: TEtcWindow) {
 
   return (
     <S.Wrapper>
-      <S.Header>
-        {title}
+      <S.Top>
+        <S.Header>{title}</S.Header>
         <S.Close onClick={onClickClose} />
-      </S.Header>
+      </S.Top>
       <S.Body>{children}</S.Body>
     </S.Wrapper>
   );

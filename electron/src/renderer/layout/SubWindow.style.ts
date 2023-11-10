@@ -18,7 +18,7 @@ const Wrapper = styled.div`
 const Header = styled.div`
   width: 100%;
   height: 35px;
-
+  // -webkit-app-region: drag;
   padding-top: 5px;
   font-family: GmarketSansTTFBold;
   font-size: 20px;
