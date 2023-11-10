@@ -12,6 +12,9 @@ export type Channels =
   | 'env'
   | 'deleteMail'
   | 'chartChannel'
+  | 'accountRequest'
+  | 'accountSave'
+  | 'accountDelete'
   | TCharacterChannel
   | JobTimeChannel
   | WindowsChannel;

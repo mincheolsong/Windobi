@@ -110,15 +110,11 @@ app
       processHandler();
       windowsHandler();
 
-      mainVariables.characterMoveId = setInterval(
-        moving.default,
-        30,
-        mainVariables.character,
-      ); // 이동 시작
+      mainVariables.characterMoveId = setInterval( moving.default, 30, mainVariables.character,); // 이동 시작
       mainVariables.scheduleId = setInterval(moveScheduling.default, 2000); // 스케줄링 시작
 
       // setTimeout(createReport, 5000, new Date());
-      createReport(new Date());
+      // createReport(new Date());
       globalShortcutHandler.default();
     });
 

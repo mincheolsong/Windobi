@@ -27,11 +27,11 @@ async function createReport(date: Date) {
       height: 300,
       show: true,
       frame: true,
+      focusable: true,
       // show: false,
       // frame: false,
       // focusable: false,
       transparent: true,
-      focusable: true,
       webPreferences: {
         preload: app.isPackaged
           ? path.join(__dirname, '../preload.js')

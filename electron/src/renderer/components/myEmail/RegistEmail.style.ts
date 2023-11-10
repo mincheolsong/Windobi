@@ -9,14 +9,28 @@ const Container = styled.div`
 const InputContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: 10px;
+  margin: 5px 0 10px 0;
   align-items: center;
   font-family: Jalnan;
 `;
 
+const InputSelect = styled.select`
+  width: 80px;
+  border-radius: 4px;
+  margin-left: 5px;
+  outline: 0.5px solid;
+`;
+
+const Message = styled.div`
+  display: flex;
+  font-family: GmarketSansTTFMedium;
+  font-size: 13px;
+  color: red;
+`;
+
 const InputField = styled.input`
   border-radius: 5px;
-  margin-top: 5px;
+  margin: 0px 5px 0 5px;
   width: 150px;
 `;
 
@@ -42,4 +56,4 @@ const Button = styled.button`
   }
 `;
 
-export { Container, InputContainer, InputField, Button, ButtonContainer };
+export { Container, InputContainer, InputField, Button, ButtonContainer, Message, InputSelect };
