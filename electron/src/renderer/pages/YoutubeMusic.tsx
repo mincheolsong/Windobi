@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 
-const { ipcRenderer } = window.electron;
 function YoutubeMusic() {
+  const { ipcRenderer } = window.electron;
   let [url, setUrl] = useState('');
 
   ipcRenderer.on('url', (playlisturl) => {
+    console.log(playlisturl);
     setUrl(playlisturl);
   });
-
-  useEffect(() => {}, [url]);
+  useEffect(() => {
+    ipcRenderer.sendMessage('etcSize', {
+      width: 500,
+      height: 700,
+    });
+  }, []);
 
   return (
     <webview

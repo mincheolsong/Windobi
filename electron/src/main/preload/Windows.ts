@@ -1,6 +1,7 @@
 export type WindowsChannel =
   | 'sub'
   | 'size'
+  | 'etcSize'
   | 'show-menu'
   | 'hide-menu'
   | 'hideMenuWindow'
