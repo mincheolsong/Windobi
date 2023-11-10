@@ -18,14 +18,16 @@ const Li = styled.li`
   justify-content: center;
   align-items: center;
 
-  background-color: #cce4ff;
+  background-color: rgb(255, 255, 255);
 
-  font-family: NanumBarunGothicBold;
+  font-family: GmarketSansTTFMedium;
+  border-radius: 8px;
 
   &:hover {
     cursor: pointer;
     background-color: rgba(50, 150, 255, 0.8);
     transition: all 0.15s ease-in-out;
+    color: white;
   }
   transition: all 0.1s ease-in-out;
 `;
