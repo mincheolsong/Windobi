@@ -1,21 +1,29 @@
-import { styled } from 'styled-components';
+import styled from 'styled-components';
+import { AiOutlineClose } from 'react-icons/ai';
 
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(240, 240, 240, 0.75);
   overflow-x: hidden;
   overflow-y: hidden;
 
   border-radius: 10px;
+
+  padding-top: 5px;
+
+  border: 0.5px #ddd solid;
 `;
 
 const Header = styled.div`
   width: 100%;
   height: 35px;
-  font-family: NanumBarunGothicBold;
+  // -webkit-app-region: drag;
+  padding-top: 5px;
+  font-family: GmarketSansTTFBold;
   font-size: 20px;
-  color: white;
+
+  color: black;
 
   display: flex;
   justify-content: center;
@@ -24,20 +32,20 @@ const Header = styled.div`
   position: fixed;
   z-index: 999;
 
-  background-color: rgb(11, 108, 255);
-
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 `;
 
-const Close = styled.div`
+const Close = styled(AiOutlineClose)`
   position: fixed;
-  width: 26px;
-  height: 26px;
-  right: 20px;
+  top: 12px;
+  right: 12px;
 
-  background-color: red;
+  width: 15px;
+  height: 15px;
+
   border-radius: 13px;
+  color: gray;
 
   display: flex;
   align-items: center;
@@ -45,19 +53,22 @@ const Close = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: rgb(220, 0, 0);
+    scale: 1.02;
+    transition: all 0.15s;
+    color: black;
   }
 `;
 
 const Body = styled.div`
-  padding-top: 40px;
+  margin-top: 55px;
   padding-left: 10px;
   padding-right: 10px;
-  padding-bottom: 5px;
+  margin-bottom: 10px;
+
   width: 100%;
-  // height: calc(100% - 35px);
-  height: 100%;
-  overflow-y: scroll;
+  height: calc(100% - 65px);
+
+  overflow-y: auto;
   overflow-x: hidden;
 
   &::-webkit-scrollbar {

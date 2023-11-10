@@ -1,29 +1,26 @@
-/* eslint-disable no-use-before-define */
 import { ipcMain } from 'electron';
 import {
   mainWindow,
   mainVariables,
   subWindow,
   menuWindow,
-  menuVariables,
+  etcWindow,
 } from '../windows';
 
 import moving from '../chracter/moving';
 import moveScheduling from '../chracter/moveScheduling';
-
-const sleep = (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-};
+import { sleep } from '../util';
 
 const windowsHandler = () => {
   subHandler();
-  windowMovingHandler();
   stopMovingHandler();
   restartMovingHandler();
   hideSubWindowHandler();
   hideMenuWindowHandler();
+  windowOpenedHandler();
+  windowClosedHandler();
+  showYouTubeMusicWindow();
+  // hideYouTubeMusicWindow();
   // sizeUpMenuWindowHandler();
 };
 
@@ -38,16 +35,13 @@ const subHandler = () => {
 };
 
 /**
- * 'windowMoving' : 윈도우 move 이벤트 일때
+ * 'showYouTubeMusicWindow : 유튜브 뮤직윈도우 보이기
  */
-const windowMovingHandler = () => {
-  ipcMain.on('windowMoving', (_event, arg) => {
-    mainWindow.setBounds({
-      width: mainVariables.width,
-      height: mainVariables.height,
-      x: arg.mouseX - 50, // always changes in runtime
-      y: arg.mouseY - 50,
-    });
+const showYouTubeMusicWindow = () => {
+  ipcMain.on('showYouTubeMusicWindow', (_event, playlistUrl) => {
+    etcWindow.webContents.send('sub', 'youtubeMusic');
+    etcWindow.webContents.send('url', playlistUrl);
+    etcWindow.moveTop();
   });
 };
 
@@ -70,14 +64,16 @@ const stopMovingHandler = () => {
 const restartMovingHandler = () => {
   ipcMain.on('restartMoving', () => {
     const { characterMoveId, scheduleId, character } = mainVariables;
-    if (characterMoveId === null && scheduleId === null) {
-      mainWindow.focus();
-      character.fallTrigger = false;
-      mainVariables.characterMoveId = setInterval(moving, 30, character);
-      mainVariables.scheduleId = setInterval(moveScheduling, 2000);
 
-      mainWindow.webContents.send('character-move', character.direction);
-    }
+    if (character.isMove === false) return;
+
+    if (characterMoveId !== null) clearInterval(characterMoveId);
+    if (scheduleId !== null) clearInterval(scheduleId);
+    mainVariables.characterMoveId = setInterval(moving, 30, character);
+    mainVariables.scheduleId = setInterval(moveScheduling, 2000);
+    mainWindow.webContents.send('character-move', character.direction);
+    mainWindow.focus();
+    character.fallTrigger = false;
   });
 };
 
@@ -99,5 +95,31 @@ const hideMenuWindowHandler = () => {
     menuWindow.hide();
   });
 };
+
+/**
+ * 'windowOpened' : 윈도우 열려 있을 경우
+ */
+const windowOpenedHandler = () => {
+  ipcMain.on('windowOpened', () => {
+    mainVariables.character.isMove = false;
+  });
+};
+
+/**
+ * 'windowClosed' : 윈도우 열려 있을 경우
+ */
+const windowClosedHandler = () => {
+  ipcMain.on('windowClosed', () => {
+    mainVariables.character.isMove = true;
+  });
+};
+/**
+ * 'hideYouTubeMusicWindow : 유튜브 뮤직윈도우 숨기기
+ */
+// const hideYouTubeMusicWindow = () => {
+//   ipcMain.on('hideYouTubeMusicWindow', () => {
+//     etcWindow.hide();
+//   });
+// };
 
 export default windowsHandler;

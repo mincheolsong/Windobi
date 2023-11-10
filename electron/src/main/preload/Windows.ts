@@ -1,11 +1,18 @@
 export type WindowsChannel =
   | 'sub'
   | 'size'
-  | 'windowMoving'
-  | 'toggleMenuOn'
+  | 'etcSize'
+  | 'show-menu'
+  | 'hide-menu'
   | 'hideMenuWindow'
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
   | 'start-move'
   | 'stop-move'
-  | 'weatherHandler';
+  | 'weatherHandler'
+  | 'start-drag'
+  | 'stop-drag'
+  | 'windowOpened'
+  | 'windowClosed'
+  | 'showYouTubeMusicWindow'
+  | 'hideYouTubeMusicWindow';

@@ -1,4 +1,4 @@
-import { BrowserWindow, app } from 'electron';
+import { BrowserWindow, app, ipcMain } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from '../util';
 
@@ -47,6 +47,12 @@ menuWindow.on('ready-to-show', () => {
   menuWindow.webContents.send('sub', 'menu');
   menuWindow.webContents.closeDevTools();
 });
+
+menuWindow.on('blur', () => {
+  ipcMain.emit('hide-menu');
+  ipcMain.emit('restartMoving');
+});
+
 // #endregion
 
 export default menuWindow;

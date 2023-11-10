@@ -36,3 +36,5 @@ log.txt
 
 # openAI key
 .env
+
+package-lock.json

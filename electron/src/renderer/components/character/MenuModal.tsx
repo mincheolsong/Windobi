@@ -4,21 +4,22 @@
 import { useEffect, useState } from 'react';
 import './MenuModal.scss';
 import jobtime from '../../../../assets/icons/jobtime.svg';
-import calendar from '../../../../assets/icons/calendar.svg';
-import notification from '../../../../assets/icons/alarm.svg';
+import alarm from '../../../../assets/icons/alarm.svg';
 import chatGPT from '../../../../assets/icons/chatGPT.svg';
 import setting from '../../../../assets/icons/setting.svg';
 import login from '../../../../assets/icons/login.svg';
 import close from '../../../../assets/icons/close.svg';
 import weather from '../../../../assets/icons/weather.svg';
+import music from '../../../../assets/icons/music.svg';
+
 function MenuModal() {
   const [active, setActive] = useState(false);
   const { ipcRenderer } = window.electron;
   const [currentIndex, setCurrentIndex] = useState(0);
   const menuItems = [
+    { notification: alarm },
+    { googleOAuth: music },
     { jobtime },
-    { calendar },
-    { notification },
     { chatGPT },
     { setting },
     { close },
@@ -40,21 +41,18 @@ function MenuModal() {
   ];
 
   useEffect(() => {
-    ipcRenderer.on('toggleMenuOn', () => {
+    ipcRenderer.on('show-menu', () => {
       setActive(() => true);
-      ipcRenderer.sendMessage('stopMoving');
     });
 
-    ipcRenderer.on('character-left-click', () => {
-      setActive(() => false); // 클릭하면 메뉴를 닫음(애니메이션)
-      ipcRenderer.sendMessage('hideMenuWindow');
+    ipcRenderer.on('hide-menu', () => {
+      setActive(() => false);
     });
   }, []);
 
   const navigate = (path: string) => {
     setActive(() => false); // 클릭하면 메뉴를 닫음(애니메이션)
     ipcRenderer.sendMessage('hideMenuWindow');
-
     if (path === 'close') {
       ipcRenderer.sendMessage('restartMoving');
     } else {
