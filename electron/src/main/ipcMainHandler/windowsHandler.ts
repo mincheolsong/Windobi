@@ -4,7 +4,7 @@ import {
   mainVariables,
   subWindow,
   menuWindow,
-  menuVariables,
+  etcWindow,
 } from '../windows';
 
 import moving from '../chracter/moving';
@@ -19,6 +19,9 @@ const windowsHandler = () => {
   hideMenuWindowHandler();
   windowOpenedHandler();
   windowClosedHandler();
+  showYouTubeMusicWindow();
+  hideYouTubeMusicWindow();
+  // sizeUpMenuWindowHandler();
 };
 
 /**
@@ -28,6 +31,20 @@ const subHandler = () => {
   ipcMain.on('sub', (_event, path) => {
     subWindow.webContents.send('sub', path);
     subWindow.show();
+  });
+};
+
+/**
+ * 'showYouTubeMusicWindow : 유튜브 뮤직윈도우 보이기
+ */
+const showYouTubeMusicWindow = () => {
+  ipcMain.on('showYouTubeMusicWindow', (_event, playlistUrl) => {
+    etcWindow.setBounds({
+      width: 500,
+      height: 700,
+    });
+    etcWindow.webContents.send('url', playlistUrl);
+    etcWindow.show();
   });
 };
 
@@ -97,6 +114,14 @@ const windowOpenedHandler = () => {
 const windowClosedHandler = () => {
   ipcMain.on('windowClosed', () => {
     mainVariables.character.isMove = true;
+  });
+};
+/**
+ * 'hideYouTubeMusicWindow : 유튜브 뮤직윈도우 숨기기
+ */
+const hideYouTubeMusicWindow = () => {
+  ipcMain.on('hideYouTubeMusicWindow', () => {
+    etcWindow.hide();
   });
 };
 
