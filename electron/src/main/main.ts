@@ -84,6 +84,7 @@ app
         jobTimeHandler,
         mailHandler,
         processHandler,
+        weatherHandler,
         windowsHandler,
       } = await import('./ipcMainHandler');
       const { default: globalShortcutHandler } = await import(
@@ -95,6 +96,7 @@ app
       jobTimeHandler(dbInstance, subDbInstance);
       mailHandler();
       processHandler();
+      weatherHandler();
       windowsHandler();
       moveHandler();
 
