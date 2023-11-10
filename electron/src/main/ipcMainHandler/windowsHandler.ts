@@ -17,6 +17,8 @@ const windowsHandler = () => {
   restartMovingHandler();
   hideSubWindowHandler();
   hideMenuWindowHandler();
+  windowOpenedHandler();
+  windowClosedHandler();
 };
 
 /**
@@ -48,6 +50,9 @@ const stopMovingHandler = () => {
 const restartMovingHandler = () => {
   ipcMain.on('restartMoving', () => {
     const { characterMoveId, scheduleId, character } = mainVariables;
+
+    if (character.isMove === false) return;
+
     if (characterMoveId !== null) clearInterval(characterMoveId);
     if (scheduleId !== null) clearInterval(scheduleId);
     mainVariables.characterMoveId = setInterval(moving, 30, character);
@@ -74,6 +79,24 @@ const hideMenuWindowHandler = () => {
   ipcMain.on('hideMenuWindow', async () => {
     await sleep(500);
     menuWindow.hide();
+  });
+};
+
+/**
+ * 'windowOpened' : 윈도우 열려 있을 경우
+ */
+const windowOpenedHandler = () => {
+  ipcMain.on('windowOpened', () => {
+    mainVariables.character.isMove = false;
+  });
+};
+
+/**
+ * 'windowClosed' : 윈도우 열려 있을 경우
+ */
+const windowClosedHandler = () => {
+  ipcMain.on('windowClosed', () => {
+    mainVariables.character.isMove = true;
   });
 };
 

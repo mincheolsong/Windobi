@@ -29,8 +29,8 @@ const showMenuHandler = () => {
   ipcMain.on('show-menu', () => {
     mainWindow.show();
     menuWindow.show();
-    mainWindow.moveTop();
     menuWindow.focus();
+    mainWindow.moveTop();
 
     // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
     menuWindow.webContents.send('show-menu');

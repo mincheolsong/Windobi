@@ -12,13 +12,13 @@ const Ul = styled.ul`
 `;
 
 const Li = styled.li`
-  height: 30px;
+  height: 40px;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  background-color: rgba(50, 150, 255, 1);
+  background-color: #cce4ff;
 
   font-family: NanumBarunGothicBold;
 
@@ -27,6 +27,7 @@ const Li = styled.li`
     background-color: rgba(50, 150, 255, 0.8);
     transition: all 0.15s ease-in-out;
   }
+  transition: all 0.1s ease-in-out;
 `;
 
 export { Wrapper, Ul, Li };

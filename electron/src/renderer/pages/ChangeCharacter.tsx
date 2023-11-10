@@ -20,6 +20,7 @@ function ChangeCharacter() {
 
   // 캐릭터 리스트들을 불러오자
   useEffect(() => {
+    ipcRenderer.sendMessage('windowOpened');
     ipcRenderer.sendMessage('size', { width: 400, height: 400 });
 
     (async () => {

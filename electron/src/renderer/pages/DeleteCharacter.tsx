@@ -12,7 +12,8 @@ function DeleteCharacter() {
   const [characters, setCharacters] = useState<Array<TCharacter>>([]);
 
   useEffect(() => {
-    ipcRenderer.sendMessage('size', { width: 400, height: 300 });
+    ipcRenderer.sendMessage('windowOpened');
+    ipcRenderer.sendMessage('size', { width: 400, height: 400 });
   }, []);
 
   useEffect(() => {

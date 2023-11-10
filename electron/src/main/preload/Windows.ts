@@ -7,4 +7,6 @@ export type WindowsChannel =
   | 'closeMenuWindow'
   | 'sizeUpMenuWindow'
   | 'start-drag'
-  | 'stop-drag';
+  | 'stop-drag'
+  | 'windowOpened'
+  | 'windowClosed';
