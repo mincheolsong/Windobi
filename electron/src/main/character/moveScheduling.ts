@@ -1,8 +1,6 @@
 import { mainVariables } from '../windows';
 
 const max = 3;
-// const behavior = ['left', 'right', 'stop', 'up', 'down']; // 현재 2까지 사용
-
 
 function moveScheduling() {
   const { character } = mainVariables;

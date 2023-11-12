@@ -10,11 +10,7 @@ function move() {
   let nextY: number = 0;
   const { maxHeight, winHeight } = character;
 
-  if (
-    curY < maxHeight - winHeight &&
-    curY > maxHeight - winHeight - 20 &&
-    character.fallTrigger
-  ) {
+  if (curY < maxHeight - winHeight && curY > maxHeight - winHeight - 20 && character.fallTrigger) {
     character.direction = 'downsleep';
   }
 

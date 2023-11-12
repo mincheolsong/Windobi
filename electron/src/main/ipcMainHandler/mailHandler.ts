@@ -48,11 +48,7 @@ const mailRequestHandler = () => {
 const deleteMailHandler = () => {
   ipcMain.on('deleteMail', (_event, mail) => {
     for (let i = 0; i < mails.length; ++i) {
-      if (
-        mails[i].seq === mail.seq &&
-        mails[i].to === mail.to &&
-        mails[i].host === mail.host
-      ) {
+      if (mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host) {
         // 해당 메일 삭제
         mails.splice(i, 1);
         return;
@@ -127,7 +123,7 @@ const mailTestHandler = () => {
       frame: false,
       webPreferences: {
         preload: app.isPackaged
-          ? path.join(__dirname, '../preload.js')
+          ? path.join(__dirname, 'preload.js')
           : path.join(__dirname, '../../../.erb/dll/preload.js'),
       },
     });

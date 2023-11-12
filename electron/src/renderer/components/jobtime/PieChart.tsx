@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { PieChart as Pie, PieValueType } from '@mui/x-charts';
+// import { PieChart as Pie, PieValueType } from '@mui/x-charts';
 import * as S from './PieChart.style';
 
 type TPiechart = {
@@ -11,89 +11,88 @@ type TPiechart = {
 };
 
 function PieChart({ application, day, type }: TPiechart) {
-  const [data, setData] = useState<Array<PieValueType>>([]);
-  const [totalActiveTime, setTotalActiveTime] = useState<number>(1);
-  const [filtered, setFiltered] = useState<Array<PieValueType>>([]);
+  return <div>파이차트 예정</div>;
 
-  const { ipcRenderer } = window.electron;
+  // const [data, setData] = useState<Array<PieValueType>>([]);
+  // const [totalActiveTime, setTotalActiveTime] = useState<number>(1);
+  // const [filtered, setFiltered] = useState<Array<PieValueType>>([]);
 
-  const getPercentage = (item: PieValueType) => {
-    const percent = item.value / totalActiveTime;
-    return percent * 100;
-  };
+  // const { ipcRenderer } = window.electron;
 
-  useEffect(() => {
-    if (!application) {
-      setData([]);
-      return;
-    }
+  // const getPercentage = (item: PieValueType) => {
+  //   const percent = item.value / totalActiveTime;
+  //   return percent * 100;
+  // };
 
-    (async () => {
-      const result = await ipcRenderer.invoke('sub-job-time', {
-        application,
-        date: day,
-        type,
-      });
+  // useEffect(() => {
+  //   if (!application) {
+  //     setData([]);
+  //     return;
+  //   }
 
-      const d = result.map((r: { sub_application: any; active_time: any }) => {
-        const { sub_application, active_time } = r;
-        return {
-          id: sub_application,
-          value: active_time,
-          label: sub_application,
-        };
-      });
+  //   (async () => {
+  //     const result = await ipcRenderer.invoke('sub-job-time', {
+  //       application,
+  //       date: day,
+  //       type,
+  //     });
 
-      setData(d);
-    })();
-  }, [application, day]);
+  //     const d = result.map((r: { sub_application: any; active_time: any }) => {
+  //       const { sub_application, active_time } = r;
+  //       return {
+  //         id: sub_application,
+  //         value: active_time,
+  //         label: sub_application,
+  //       };
+  //     });
 
-  useEffect(() => {
-    let acc = 0;
-    data.forEach((d) => {
-      acc += d.value;
-    });
-    setTotalActiveTime(acc);
+  //     setData(d);
+  //   })();
+  // }, [application, day]);
 
-    const result = data.filter((item) => {
-      return item.value / acc >= 0.1;
-    });
-    const etcs = data.filter((item) => {
-      return item.value / acc < 0.1;
-    });
+  // useEffect(() => {
+  //   let acc = 0;
+  //   data.forEach((d) => {
+  //     acc += d.value;
+  //   });
+  //   setTotalActiveTime(acc);
 
-    const sumOfEtc = etcs
-      .map((e) => e.value)
-      .reduce((accu, curr) => accu + curr, 0);
+  //   const result = data.filter((item) => {
+  //     return item.value / acc >= 0.1;
+  //   });
+  //   const etcs = data.filter((item) => {
+  //     return item.value / acc < 0.1;
+  //   });
 
-    if (sumOfEtc !== 0)
-      result.push({ id: '기타', value: sumOfEtc, label: '기타' });
+  //   const sumOfEtc = etcs.map((e) => e.value).reduce((accu, curr) => accu + curr, 0);
 
-    setFiltered(result);
-  }, [data]);
+  //   if (sumOfEtc !== 0) result.push({ id: '기타', value: sumOfEtc, label: '기타' });
 
-  return (
-    <>
-      <S.Application>{application}</S.Application>
-      <S.Centerize>
-        <Pie
-          series={[
-            {
-              data: filtered,
-              arcLabel: (i) => `${getPercentage(i).toFixed(0)}%`,
-              sortingValues: 'desc',
-            },
-          ]}
-          width={220}
-          height={220}
-          margin={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          slotProps={{
-            legend: { hidden: true },
-          }}
-        />
-      </S.Centerize>
-    </>
-  );
+  //   setFiltered(result);
+  // }, [data]);
+
+  // return (
+  //   <>
+  //     <S.Application>{application}</S.Application>
+  //     <S.Centerize>
+  //       {/* <Pie
+  //         series={[
+  //           {
+  //             data: filtered,
+  //             arcLabel: (i) => `${getPercentage(i).toFixed(0)}%`,
+  //             sortingValues: 'desc',
+  //           },
+  //         ]}
+  //         width={220}
+  //         height={220}
+  //         margin={{ top: 10, bottom: 10, left: 10, right: 10 }}
+  //         slotProps={{
+  //           legend: { hidden: true },
+  //         }}
+  //       /> */}
+  //     </S.Centerize>
+  //   </>
+  // );
 }
 
 export default PieChart;

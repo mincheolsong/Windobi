@@ -1,11 +1,6 @@
-import { app, globalShortcut, ipcMain, shell } from 'electron';
+import { app, dialog, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { Worker } from 'worker_threads';
-import path from 'path';
-
-const { dbInstance } = require('./jobtime/jobTimeDB');
-const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
 
 class AppUpdater {
   constructor() {
@@ -15,16 +10,12 @@ class AppUpdater {
   }
 }
 
-dbInstance.init();
-subDbInstance.init();
-
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
 
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
@@ -69,6 +60,7 @@ app
   .then(() => {
     createWindow().then(async () => {
       // 윈도우가 만들어지고난 후
+
       const communication = await import('./windows/communication');
       communication.default();
 
@@ -77,7 +69,7 @@ app
 
       await import('./tray/tray');
 
-      const { default: moveHandler } = await import('./chracter/moveHandler');
+      const { default: moveHandler } = await import('./character/moveHandler');
 
       const {
         characterHandler,
@@ -88,13 +80,10 @@ app
         windowsHandler,
         oauthHandelr,
       } = await import('./ipcMainHandler');
-      const { default: globalShortcutHandler } = await import(
-        './shortcut/globalShortcutHandler'
-      );
 
       // ipc관련 핸들러들 등록
       characterHandler();
-      jobTimeHandler(dbInstance, subDbInstance);
+      jobTimeHandler();
       oauthHandelr();
       mailHandler();
       processHandler();
@@ -102,7 +91,11 @@ app
       windowsHandler();
       moveHandler();
 
+      const { default: globalShortcutHandler } = await import('./shortcut/globalShortcutHandler');
       globalShortcutHandler();
+
+      // 사용시간 체크
+      await import('./jobtime/jobTime');
     });
 
     app.on('activate', async () => {
@@ -113,5 +106,3 @@ app
     return null;
   })
   .catch(console.log);
-
-const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));

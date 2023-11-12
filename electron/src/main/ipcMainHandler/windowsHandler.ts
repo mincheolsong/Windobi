@@ -1,14 +1,9 @@
 import { ipcMain } from 'electron';
-import {
-  mainWindow,
-  mainVariables,
-  subWindow,
-  menuWindow,
-  etcWindow,
-} from '../windows';
+import path from 'path';
+import { mainWindow, mainVariables, subWindow, menuWindow, etcWindow } from '../windows';
 
-import moving from '../chracter/moving';
-import moveScheduling from '../chracter/moveScheduling';
+import moving from '../character/moving';
+import moveScheduling from '../character/moveScheduling';
 import { sleep } from '../util';
 
 const windowsHandler = () => {
