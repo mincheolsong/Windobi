@@ -1,5 +1,5 @@
 import { throttle, delay } from 'lodash';
-import { ipcMain, ipcRenderer } from 'electron';
+import { ipcMain } from 'electron';
 import mainWindow from './main';
 import {
   mainVariables,
@@ -32,31 +32,19 @@ const getArea = (): Area => {
   };
 
   // 1사분면
-  if (
-    windowCenter.x > halfDisplay.width &&
-    windowCenter.y < halfDisplay.height
-  ) {
+  if (windowCenter.x > halfDisplay.width && windowCenter.y < halfDisplay.height) {
     return 1;
   }
   // 2사분면
-  if (
-    windowCenter.x <= halfDisplay.width &&
-    windowCenter.y < halfDisplay.height
-  ) {
+  if (windowCenter.x <= halfDisplay.width && windowCenter.y < halfDisplay.height) {
     return 2;
   }
   // 3사분면
-  if (
-    windowCenter.x <= halfDisplay.width &&
-    windowCenter.y >= halfDisplay.height
-  ) {
+  if (windowCenter.x <= halfDisplay.width && windowCenter.y >= halfDisplay.height) {
     return 3;
   }
   // 4사분면
-  if (
-    windowCenter.x > halfDisplay.width &&
-    windowCenter.y >= halfDisplay.height
-  ) {
+  if (windowCenter.x > halfDisplay.width && windowCenter.y >= halfDisplay.height) {
     return 4;
   }
 
@@ -99,10 +87,8 @@ const moveSubWindow = throttle(() => {
   const { afterX, afterY } = nextPosition();
 
   const update = (tick: number) => {
-    const currX =
-      prevX + Math.floor(((afterX - prevX) / MAX_TICK) * (tick + 1));
-    const currY =
-      prevY + Math.floor(((afterY - prevY) / MAX_TICK) * (tick + 1));
+    const currX = prevX + Math.floor(((afterX - prevX) / MAX_TICK) * (tick + 1));
+    const currY = prevY + Math.floor(((afterY - prevY) / MAX_TICK) * (tick + 1));
 
     subWindow.setBounds({
       x: currX,
@@ -132,13 +118,7 @@ const moveMenuWindow = throttle(() => {
 });
 
 // 서브 윈도우의 boundary를 재설정
-const onChangeSizeSub = ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) => {
+const onChangeSizeSub = ({ width, height }: { width: number; height: number }) => {
   subVariables.width = width;
   subVariables.height = height;
 
@@ -152,13 +132,7 @@ const onChangeSizeSub = ({
 };
 
 // etc 윈도우의 boundary를 재설정
-const onChangeSizeEtc = ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) => {
+const onChangeSizeEtc = ({ width, height }: { width: number; height: number }) => {
   etcVariables.width = width;
   etcVariables.height = height;
   etcWindow.setBounds({
