@@ -5,6 +5,8 @@ import * as sqlite from 'sqlite3';
 import { app } from 'electron';
 import { TSubActiveMap, TSubJobTime } from './jobTime.d';
 
+type TSubJob = Pick<TSubJobTime, 'sub_application' | 'active_time'>;
+
 const sqlite3 = sqlite.verbose();
 
 const RESOURCES_PATH = app.isPackaged
@@ -67,9 +69,7 @@ const insertAll = (activeMap: TSubActiveMap, tickTime: number) => {
   });
 };
 
-const combine = (
-  jobs: Array<TSubJobTime>,
-): Array<Pick<TSubJobTime, 'sub_application' | 'active_time'>> => {
+const combine = (jobs: Array<TSubJobTime>): Array<TSubJob> => {
   const combined = new Map();
   jobs.forEach((job) => {
     if (combined.has(job.sub_application)) {
@@ -80,7 +80,7 @@ const combine = (
     }
   });
 
-  const result: Array<Pick<TSubJobTime, 'sub_application' | 'active_time'>> = [];
+  const result: Array<TSubJob> = [];
   combined.forEach((value) => {
     const { sub_application, active_time } = value;
     result.push({ sub_application, active_time });
@@ -93,15 +93,15 @@ const combine = (
  *
  * @param { string } application application이름
  * @param { Date } day 해당 날짜
- * @returns { Array<SubJob> }
+ * @returns { Promise<Array<TSubJob>> }
  */
-const getByDay = (application: string, day: Date) => {
+const getByDay = (application: string, day: Date): Promise<Array<TSubJob>> => {
   const target = dateToNumber(day);
 
   return new Promise((resolve, reject) => {
     return instance.all(
       `SELECT sub_application, active_time, day FROM ${TABLE_NAME} WHERE day = ${target} AND application = '${application}'`,
-      (err, rows) => {
+      (err, rows: Array<TSubJobTime>) => {
         if (err) {
           return reject(err);
         }
@@ -114,9 +114,9 @@ const getByDay = (application: string, day: Date) => {
 /**
  * 오늘을 기준으로 최근 7일간의 활동 정보
  * @param { string } application application 이름
- * @returns { Array<SubJob> }
+ * @returns { Promise<Array<TSubJob>> }
  */
-const getRecentWeek = (application) => {
+const getRecentWeek = (application: string): Promise<Array<TSubJob>> => {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 6);
 
@@ -125,7 +125,7 @@ const getRecentWeek = (application) => {
   return new Promise((resolve, reject) => {
     return instance.all(
       `SELECT sub_application, active_time, day FROM ${TABLE_NAME} where day >= ${target} AND application = '${application}'`,
-      (err, rows) => {
+      (err, rows: Array<TSubJobTime>) => {
         if (err) {
           return reject(err);
         }

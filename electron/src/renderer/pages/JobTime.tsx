@@ -14,9 +14,7 @@ function JobTime() {
   const [prevDay, setPrevDay] = useState<number>(0);
   const [day, setDay] = useState<Date>(new Date());
   const [type, setType] = useState<boolean>(true);
-  const [stringType, setStringType] = useState<TType>(
-    type ? 'daily' : 'weekly',
-  );
+  const [stringType, setStringType] = useState<TType>(type ? 'daily' : 'weekly');
 
   const { ipcRenderer } = window.electron;
 
@@ -80,11 +78,7 @@ function JobTime() {
         />
       </S.Half>
       <S.Half>
-        <PieChart
-          application={selectedApplication}
-          day={day}
-          type={stringType}
-        />
+        <PieChart application={selectedApplication} day={day} type={stringType} />
       </S.Half>
     </S.Wrapper>
   );
