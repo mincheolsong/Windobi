@@ -1,17 +1,18 @@
-import { BrowserWindow, app, dialog, ipcMain } from 'electron';
+import { BrowserWindow, app, ipcMain } from 'electron';
 import path from 'path';
-import { mainWindow, subWindow } from '../windows';
+import { mainWindow, subWindow, mainVariables } from '../windows';
 import createReport from '../mail/createReport';
 import { getMails, checkMail } from '../mail/mail';
 import { resolveHtmlPath } from '../util';
 import { dbInstance } from '../mail/emailDB';
 
-
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 
-const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
+const receivedList: Array<Array<any>> = [];
+// const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
+const mails: Array<TMail> = []; // 이제껏 수신한 메일들을 보관하는 배열
 const mailAddress = 'honeycomb201';
 const mailPassword = 'ssafyssafy123';
 
@@ -23,10 +24,6 @@ type TMail = {
   host: string;
   content: string;
 };
-
-const mails: Array<TMail> = []; // 이제껏 수신한 메일들을 보관하는 배열
-
-let timerId: IntervalId = null;
 
 // DB 실행
 dbInstance.init();
@@ -49,6 +46,8 @@ const mailHandler = () => {
  */
 const mailRequestHandler = () => {
   ipcMain.on('mailRequest', () => {
+    console.log('Requesting!!');
+    console.log('mails', mails);
     subWindow.webContents.send('mailRequest', mails);
   });
 };
@@ -87,7 +86,7 @@ const mailSendHandler = () => {
   });
 
   const sendTime = 9;
-  cron.schedule(`39 ${sendTime} * * * `, () => {
+  cron.schedule(`0 ${sendTime} * * * `, () => {
     const cur = new Date();
     createReport(cur)
       .then((res) => {
@@ -110,20 +109,53 @@ const mailSendHandler = () => {
 /**
  * 일정시간마다 메일 받아오기
  */
-const mailReceiveHandler = () => {
-  // timerId 관리하기
+const mailReceiveHandler = async () => {
+  const accounts = await dbInstance.getAll();
+  console.log('accounts', accounts);
+  for (let i = 0; i < accounts.length; ++i) {
+    const received: Array<any> = [];
+    receivedList.push(received);
+    const timerId: IntervalId = setInterval(
+      getMails,
+      10000,
+      mainWindow,
+      subWindow,
+      received,
+      mails,
+      accounts[i].id,
+      accounts[i].password,
+      accounts[i].host,
+    );
+    const timer = {};
+    let name =
+      accounts[i].id +
+      (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+    timer['key'] = name;
+    timer['timerId'] = timerId;
+    mainVariables.mailListners.push(timer);
+    console.log(mainVariables.mailListners);
+  }
+};
 
-  timerId = setInterval(
+const addMailListener = (id: string, password: string, host: string) => {
+  const received: Array<any> = [];
+  receivedList.push(received);
+  const timerId: IntervalId = setInterval(
     getMails,
-    60000,
+    10000,
     mainWindow,
     subWindow,
     received,
     mails,
-    'honeycomb201',
-    'ssafyssafy123',
-    'imap.daum.net',
+    id,
+    password,
+    host,
   );
+  const timer = {};
+  let name = id + (host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+  timer['key'] = name;
+  timer['timerId'] = timerId;
+  mainVariables.mailListners.push(timer);
 };
 
 /**
@@ -149,7 +181,6 @@ const mailTestHandler = () => {
   }, 5000);
 };
 
-
 /**
  * 'chartReceivingHadler : 차트 이미지 수신
  */
@@ -161,13 +192,11 @@ const chartReceivingHadler = () => {
     let buffer = Buffer.from(dataUrl[2], 'base64');
     fs.writeFile('barChart.png', buffer, (e: any) => {
       if (!e) {
-        console.log("file is created")
+        console.log('file is created');
       }
     });
-
   });
 };
-
 
 /**
  * 'accountSaveHandler : 이메일 계정 저장 핸들러
@@ -178,28 +207,33 @@ const accountSaveHandler = () => {
     // 중복체크
     let res = await dbInstance.getAccountByIdAndHost(email.id, email.host);
     if (res.length > 0) {
-      _event.sender.send("accountSave", { code: "400", content: "duplicateError" });
+      _event.sender.send('accountSave', {
+        code: '400',
+        content: 'duplicateError',
+      });
       return;
     }
 
-    ipcMain.on("connectSuccess", ()=>{
+    ipcMain.on('connectSuccess', () => {
       // 연결이 성공한 경우
-      _event.sender.send("accountSave", { code: "200", content: "success" });
-      ipcMain.removeAllListeners("connectSuccess");
+      _event.sender.send('accountSave', { code: '200', content: 'success' });
+      ipcMain.removeAllListeners('connectSuccess');
       dbInstance.insert(email);
+      addMailListener(email.id, email.password, email.host);
       return;
     });
-    ipcMain.on("connectFail", ()=>{
+    ipcMain.on('connectFail', () => {
       // 연결이 실패한 경우 인증오류!
-      _event.sender.send("accountSave", { code: "401", content: "authentication error" });
-      ipcMain.removeAllListeners("connectFail");
+      _event.sender.send('accountSave', {
+        code: '401',
+        content: 'authentication error',
+      });
+      ipcMain.removeAllListeners('connectFail');
       return;
-    })
+    });
     // imap을 통해 접속확인
     checkMail(email.id, email.password, email.host);
     // console.log(check);
-
-
   });
 };
 
@@ -227,9 +261,13 @@ const accountDeleteHandler = () => {
 
     // 이메일 계정 삭제
     dbInstance.deleteByIdAndHost(email.id, email.host);
-
+    let name =
+      email.id + (email.host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+    const timer = mainVariables.mailListners.filter((m) => m.key === name);
+    clearInterval(timer[0].timerId);
+    console.log(timer[0].timerId, 'clear');
+    // 정리 완료!
   });
-
 };
 
 export default mailHandler;

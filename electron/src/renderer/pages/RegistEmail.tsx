@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import * as S from '../../../src/renderer/components/myEmail/RegistEmail.style';
 import { useNavigate } from 'react-router-dom';
 
-
 function RegistEmail() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
@@ -20,13 +19,11 @@ function RegistEmail() {
       id,
       password,
       main_email: false,
-      host : domain === "naver.com" ? "imap.naver.com" : "imap.daum.net"
+      host: domain === 'naver.com' ? 'imap.naver.com' : 'imap.daum.net',
     };
 
-    window.electron.ipcRenderer.sendMessage("accountSave", email);
-
-  }
-
+    window.electron.ipcRenderer.sendMessage('accountSave', email);
+  };
 
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
@@ -34,16 +31,15 @@ function RegistEmail() {
       height: 200,
     });
 
-    window.electron.ipcRenderer.on("accountSave", (result)=>{
-      if(result.code === "200"){
+    window.electron.ipcRenderer.on('accountSave', (result) => {
+      if (result.code === '200') {
         navigate(-1);
         // 메일 리스너 돌아가기
-
-      } else if(result.code === "400") {
-        setMessage("중복된 이메일 입니다");
+      } else if (result.code === '400') {
+        setMessage('중복된 이메일 입니다');
         // alert("중복된 이메일 입니다.");
-      } else if(result.code === "401") {
-        setMessage("인증 오류입니다");
+      } else if (result.code === '401') {
+        setMessage('인증 오류입니다');
         // alert("인증 오류입니다.");
       }
     });
@@ -53,8 +49,7 @@ function RegistEmail() {
     <S.Container>
       <S.InputContainer>
         아이디:{' '}
-        <S.InputField type="text" onChange={(e) => setId(e.target.value)} />
-        @
+        <S.InputField type="text" onChange={(e) => setId(e.target.value)} />@
         <S.InputSelect onChange={handleDomainChange} value={domain}>
           {domains.map((item) => (
             <option value={item} key={item}>
