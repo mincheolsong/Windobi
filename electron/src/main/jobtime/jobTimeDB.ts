@@ -16,6 +16,8 @@ if (!fs.existsSync(DB_FILE)) {
   fs.writeFileSync(DB_FILE, '');
 }
 
+type TJob = Omit<TJobTime, 'day'>;
+
 const TABLE_NAME = 'job_time';
 const dateToNumber = (date: Date) => {
   const numberDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
@@ -62,7 +64,7 @@ const insertAll = (activeMap: TActiveMap, tickTime: number) => {
   });
 };
 
-const combine = (jobs: Array<TJobTime>) => {
+const combine = (jobs: Array<TJobTime>): Array<TJob> => {
   const combined = new Map();
   jobs.forEach((job) => {
     if (combined.has(job.application)) {
@@ -73,7 +75,7 @@ const combine = (jobs: Array<TJobTime>) => {
     }
   });
 
-  const result: Array<Omit<TJobTime, 'day'>> = [];
+  const result: Array<TJob> = [];
   combined.forEach((value) => {
     const { application, active_time, icon, path: vPath } = value;
     result.push({ application, active_time, icon, path: vPath });
@@ -82,11 +84,11 @@ const combine = (jobs: Array<TJobTime>) => {
   return result;
 };
 
-const getAll = (): Promise<Array<Omit<TJobTime, 'day'>>> => {
+const getAll = (): Promise<Array<TJob>> => {
   return new Promise((resolve, reject) => {
     return instance.all(
       `SELECT application, active_time, icon, path, day FROM ${TABLE_NAME}`,
-      (err, rows) => {
+      (err, rows: Array<TJobTime>) => {
         if (err) {
           return reject(err);
         }
@@ -101,13 +103,14 @@ const getAll = (): Promise<Array<Omit<TJobTime, 'day'>>> => {
  * @param { Date } day 원하는 날짜
  * @returns { Array<Job> }
  */
-const getByDay = (day: Date): Promise<Array<Omit<TJobTime, 'day'>>> => {
+
+const getByDay = (day: Date): Promise<Array<TJob>> => {
   const target = dateToNumber(day);
 
   return new Promise((resolve, reject) => {
     return instance.all(
       `SELECT application, active_time, icon, path, day FROM ${TABLE_NAME} WHERE day = ${target}`,
-      (err, rows) => {
+      (err, rows: Array<TJobTime>) => {
         if (err) {
           return reject(err);
         }
@@ -121,7 +124,7 @@ const getByDay = (day: Date): Promise<Array<Omit<TJobTime, 'day'>>> => {
 //    * 최근 7일간의 활동 정보
 //    * @returns { Array<Job> }
 //    */
-const getRecentWeek = (): Promise<Array<Omit<TJobTime, 'day'>>> => {
+const getRecentWeek = (): Promise<Array<TJob>> => {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 6);
 
@@ -130,7 +133,7 @@ const getRecentWeek = (): Promise<Array<Omit<TJobTime, 'day'>>> => {
   return new Promise((resolve, reject) => {
     return instance.all(
       `SELECT application, active_time, icon, path, day FROM ${TABLE_NAME} where day >= ${target}`,
-      (err, rows) => {
+      (err, rows: Array<TJobTime>) => {
         if (err) {
           return reject(err);
         }
