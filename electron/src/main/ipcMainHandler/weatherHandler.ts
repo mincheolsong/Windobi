@@ -31,7 +31,7 @@ const setImage = () => {
     const dir = 'assets/weather';
     const result = {};
     imges.forEach((img) => {
-      result[img] = fs.readFileSync(path.join(dir, img +'.png'), { encoding: 'base64' });
+      result[img] = fs.readFileSync(path.join(dir, `${img}.png`), { encoding: 'base64' });
     });
     return result;
   });
