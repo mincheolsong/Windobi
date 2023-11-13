@@ -5,13 +5,12 @@ function YoutubeMusic() {
   let [url, setUrl] = useState('');
 
   ipcRenderer.on('url', (playlisturl) => {
-    console.log(playlisturl);
     setUrl(playlisturl);
   });
   useEffect(() => {
     ipcRenderer.sendMessage('etcSize', {
-      width: 400,
-      height: 700,
+      width: 640,
+      height: 690,
     });
   }, []);
 
