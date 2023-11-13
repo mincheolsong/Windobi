@@ -34,12 +34,11 @@ const mailHandler = () => {
   deleteMailHandler();
   mailSendHandler();
   mailReceiveHandler();
-  // mailTestHandler();
   chartReceivingHadler();
   accountSaveHandler();
   accountRequestHandler();
   accountDeleteHandler();
-  mailTestHandler();
+  reportTestHandler();
 };
 
 /**
@@ -163,16 +162,16 @@ const addMailListener = (id: string, password: string, host: string) => {
 };
 
 /**
- * 'test' : 메일 테스트
+ * 'test' : 보고서 테스트
  */
-const mailTestHandler = () => {
+const reportTestHandler = () => {
   setTimeout(async () => {
     const chartWindow = new BrowserWindow({
-      width: 600,
-      height: 600,
+      width: 1400,
+      height: 800,
       show: true,
       transparent: false,
-      focusable: false,
+      focusable: true,
       frame: false,
       webPreferences: {
         preload: app.isPackaged
@@ -182,6 +181,7 @@ const mailTestHandler = () => {
     });
     await chartWindow.loadURL(resolveHtmlPath('index.html'));
     chartWindow.webContents.send('sub', 'createchart');
+    chartWindow.webContents.toggleDevTools();
   }, 5000);
 };
 

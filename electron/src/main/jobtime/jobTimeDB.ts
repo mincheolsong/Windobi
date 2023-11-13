@@ -144,10 +144,10 @@ const getRecentWeek = (): Promise<Array<TJob>> => {
   });
 };
 
-//   /**
-//    * 최근 7일간의 활동 정보 (요일별)
-//    * @returns { Array<Job> }
-//    */
+/**
+ * 최근 7일간의 활동 정보 (요일별)
+ * @returns { Array<Job> }
+ */
 const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 6);
@@ -158,6 +158,31 @@ const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
     return instance.all(
       // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'
       `SELECT substr(day,5,2) || '월' || substr(day,7,2) || '일' as day, round(sum(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${target} group by day`,
+      (err, rows: Array<TJobTime>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+/**
+ * 최근 지난주 평균 사용시간
+ * @returns { Array<Job> }
+ */
+const getAvgTimeofLastWeek = (): Promise<Array<TJob>> => {
+  const weekAgo = new Date();
+  const start = weekAgo.setDate(weekAgo.getDate() - 13);
+  const end = weekAgo.setDate(weekAgo.getDate() - 6);
+
+  const target = dateToNumber(weekAgo);
+
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'
+      `SELECT round(avg(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${start} and day < ${end}`,
       (err, rows: Array<TJobTime>) => {
         if (err) {
           return reject(err);
@@ -204,4 +229,5 @@ export {
   getRecentWeek,
   getRecentDayOfWeek,
   getRecentWeekPerApplication,
+  getAvgTimeofLastWeek,
 };
