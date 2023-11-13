@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-use-before-define */
-/* eslint-disable jsx-a11y/alt-text */
 import React, { useState, useEffect, useCallback } from 'react';
 import * as S from './BarChart.style';
 
@@ -37,9 +33,7 @@ function BarChart({ dailyJobs, weeklyJobs, type, setApplication }: TBarChart) {
   const [sortedDailyJobs, setSortedDailyJobs] = useState<Array<IJobTimed>>([]);
 
   const [weeklyMax, setWeeklyMax] = useState<number>(1);
-  const [sortedweeklyJobs, setSortedWeeklyJobs] = useState<Array<IJobTimed>>(
-    [],
-  );
+  const [sortedweeklyJobs, setSortedWeeklyJobs] = useState<Array<IJobTimed>>([]);
 
   const timeToString = (time: number) => {
     const hour = Math.floor(time / 3600);
@@ -47,7 +41,8 @@ function BarChart({ dailyJobs, weeklyJobs, type, setApplication }: TBarChart) {
 
     let result = '';
     result = result.concat(hour > 0 ? `${hour}:` : '');
-    result = result.concat(minute > 0 ? `${minute}` : '');
+    const minuteString = minute.toString().padStart(2, '0');
+    result = result.concat(hour > 0 ? minuteString : minute.toString());
 
     return result;
   };
