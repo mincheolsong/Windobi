@@ -1,12 +1,6 @@
 import { useState } from 'react';
 
-import {
-  MemoryRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-  useLocation,
-} from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import {
   AddCharacter,
@@ -15,28 +9,28 @@ import {
   Character,
   ChatGPT,
   Closed,
-  YoutubeClosed,
   CreateChart,
   CreatedChart,
   DeleteCharacter,
+  GoogleOAuth,
   JobTime,
   MailContent,
+  MenuModal,
+  Music,
   MyEmail,
   Notification,
   RegistEmail,
   Setting,
+  Test,
+  Weather,
+  YoutubeClosed,
+  YoutubeMusic,
 } from './pages';
 
 import SubWindow from './layout/SubWindow';
 import GlobalFont from './global';
-import MenuModal from './components/menu/MenuModal';
 import TMail from './components/notification/TMail';
 import SubWindowBack from './layout/SubWindowBack';
-import Weather from './pages/Weather';
-import Test from './pages/Test';
-import GoogleOAuth from './pages/GoogleOAuth';
-import Music from './pages/Music';
-import YoutubeMusic from './pages/YoutubeMusic';
 import EtcWindow from './layout/EtcWindow';
 
 function MyApp() {

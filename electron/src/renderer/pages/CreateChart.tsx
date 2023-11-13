@@ -6,13 +6,9 @@ function CreateChart() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.electron.ipcRenderer.sendMessage('size', {
-      width: 600,
-      height: 800,
-    });
+
     (async () => {
-      const weeklyJobs = await ipcRenderer.invoke('job-time', 'week');
-      console.log(weeklyJobs);
+      const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
       navigate('/createdchart', { state: { weeklyJobs } });
     })();
   }, []);

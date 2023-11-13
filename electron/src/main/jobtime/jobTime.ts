@@ -1,43 +1,20 @@
-const { ActiveWindow } = require('@paymoapp/active-window');
-const fs = require('fs');
-const { dbInstance } = require('./jobTimeDB');
-const { dbInstance: subDbInstance } = require('./subJobTimeDB');
-
-/**
- * @typedef {{
- *  title: string,
- *  application:
- *  string,
- *  path: string,
- *  pid: number,
- *  icon: string,
- *  windows?: {
- *   isUWPApp: boolean,
- *   uwpPackage: string
- *  }
- * }} WindowInfo
- */
+import ActiveWindow, { WindowInfo } from '@paymoapp/active-window';
+import { SubActivemapValue, TActiveMap, TSubActiveMap } from './jobTime.d';
+import * as JobDB from './jobTimeDB';
+import * as SubJobDB from './subJobTimeDB';
 
 const TICK_TIME = 10; // TIME_TICK당 한번씩 사용중인 프로그램을 수집
 const SAVE_TICK = 6;
 
-const activeMap = new Map(); // key: application, value: {tick, icon, path}
-const subActiveMap = new Map(); // key: application, value: Map<sub_application, tick>
+const activeMap: TActiveMap = new Map(); // key: application, value: {tick, icon, path}
+const subActiveMap: TSubActiveMap = new Map(); // key: application, value: Map<sub_application, tick>
 const subActiveHandler = new Map();
 const extensionMap = new Map();
-
-const fd = fs.openSync('log.txt', 'a');
 
 setExtensions();
 setSubApplicationHandler();
 
-dbInstance.init();
-dbInstance.createTable();
-
-subDbInstance.init();
-subDbInstance.createTable();
-
-// 짧은 주기마다 현재 활성화된 윈도우를 map에 저장하자`
+// // 짧은 주기마다 현재 활성화된 윈도우를 map에 저장하자`
 setInterval(() => {
   try {
     const activeWindow = ActiveWindow.getActiveWindow();
@@ -49,37 +26,30 @@ setInterval(() => {
   }
 }, TICK_TIME * 1000);
 
-// 긴 주기마다 현재까지 저장된 것들을 DB로 넣어주자
+// // 긴 주기마다 현재까지 저장된 것들을 DB로 넣어주자
 setInterval(
   () => {
-    dbInstance.insertAll(activeMap, TICK_TIME);
-    subDbInstance.insertAll(subActiveMap, TICK_TIME);
+    JobDB.insertAll(activeMap, TICK_TIME);
+    SubJobDB.insertAll(subActiveMap, TICK_TIME);
   },
   TICK_TIME * 1000 * SAVE_TICK,
 ); // SAVE_TICK에 한번 DB에 저장을 수행
 
-/**
- *
- * @param {WindowInfo} activeWindow
- */
-const processJobTime = (activeWindow) => {
+// #region 활성화된 윈도우에 대해 어떻게 처리할 지 정의
+
+const processJobTime = (activeWindow: WindowInfo) => {
   const { application, icon, path } = activeWindow;
-  if (activeMap.has(application)) {
-    const saved = activeMap.get(application);
+  const saved = activeMap.get(application);
+  if (saved) {
     saved.tick += 1;
   } else {
     activeMap.set(application, { tick: 1, icon, path });
   }
 };
 
-/**
- * 각각의 application에 대해 처리
- * @param {WindowInfo} activeWindow
- */
-const processSubJobTime = (activeWindow) => {
+const processSubJobTime = (activeWindow: WindowInfo) => {
   const { application } = activeWindow;
   const handler = subActiveHandler.get(application);
-  fs.appendFileSync(fd, `application : ${application}\n`, 'utf8');
   if (handler) {
     const sub_application = handler(activeWindow);
     if (sub_application) {
@@ -88,17 +58,19 @@ const processSubJobTime = (activeWindow) => {
         // application에 대해 정보가 없었으면 넣자
         subActiveMap.set(application, new Map());
       }
-      const subApplicationMap = subActiveMap.get(application);
+      const subApplicationMap = subActiveMap.get(application) as SubActivemapValue;
       if (!subApplicationMap.has(sub_application)) {
         subApplicationMap.set(sub_application, 0);
       }
-      const savedTick = subApplicationMap.get(sub_application);
+      const savedTick = subApplicationMap.get(sub_application) as number;
       subApplicationMap.set(sub_application, savedTick + 1);
     }
   }
 };
 
-// 각각의 확장자에 대해 정의
+// #endregion
+
+// // 각각의 확장자에 대해 정의
 function setExtensions() {
   extensionMap.set('js', 'Javascript');
   extensionMap.set('ts', 'Typescript');
@@ -122,7 +94,9 @@ function setExtensions() {
   extensionMap.set('py', 'Python');
 }
 
-// 각각의 application의 세부정보에 대해 추출
+// #region 어플리케이션별 세부 정보 핸들러 정의
+
+// // 각각의 application의 세부정보에 대해 추출
 function setSubApplicationHandler() {
   subActiveHandler.set('Visual Studio Code', vscodeHandler);
   subActiveHandler.set('IntelliJ IDEA', intellijHandler);
@@ -135,7 +109,8 @@ function setSubApplicationHandler() {
  * @param { WindowInfo } activeWindow
  * @returns { string } 언어
  */
-function vscodeHandler(activeWindow) {
+type TLanguage = string | null;
+function vscodeHandler(activeWindow: WindowInfo): TLanguage {
   const { title } = activeWindow;
   for (const [key, value] of extensionMap) {
     if (title.match(new RegExp(`^.*(.${key} )`))) {
@@ -153,25 +128,27 @@ function vscodeHandler(activeWindow) {
  * @param { WindowInfo } activeWindow
  * @returns {string} 언어
  */
-function intellijHandler(activeWindow) {
+function intellijHandler(activeWindow: WindowInfo): TLanguage {
   return vscodeHandler(activeWindow);
 }
 
 /**
  * KakaoTalk에 대해 처리
  * @param { WindowInfo } activeWindow
- * @returns {string} 언어
+ * @returns {string} 대화방
  */
-function kakaoTalkHandler(activeWindow) {
+type TRoom = string;
+function kakaoTalkHandler(activeWindow: WindowInfo): TRoom {
   return activeWindow.title;
 }
 
 /**
  * Google Chrome에 대해 처리
  * @param { WindowInfo } activeWindow
- * @returns {string} 언어
+ * @returns {string} 탭 이름
  */
-function chromeHandler(activeWindow) {
+type TTab = string;
+function chromeHandler(activeWindow: WindowInfo): TTab {
   const { title } = activeWindow;
   let index = title.lastIndexOf(' - ');
   if (index === -1) return title;
@@ -180,9 +157,9 @@ function chromeHandler(activeWindow) {
   index = sub_application.lastIndexOf(' - ');
   if (index === -1) return sub_application;
 
-  sub_application = sub_application.substring(
-    index + 3,
-    sub_application.length,
-  );
+  sub_application = sub_application.substring(index + 3, sub_application.length);
   return sub_application;
 }
+// #endregion
+
+export {};
