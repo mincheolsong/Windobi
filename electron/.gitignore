@@ -31,3 +31,4 @@ npm-debug.log.*
 pidtest.txt
 assets/database.db
 assets/setting.json
+.env
