@@ -23,13 +23,21 @@ const registJobTimeHandler = () => {
 
   ipcMain.handle(
     'job-time',
-    async (_event, type: 'day' | 'week' | 'dayOfWeek', target: Date) => {
+    async (
+      _event,
+      type: 'day' | 'week' | 'dayOfWeek' | 'weekPerApplication',
+      target: Date,
+    ) => {
       if (type === 'day') {
         const result = await JobTimeDB.getByDay(target);
         return result;
       }
       if (type === 'week') {
         const result = await JobTimeDB.getRecentWeek();
+        return result;
+      }
+      if (type === 'weekPerApplication') {
+        const result = await JobTimeDB.getRecentWeekPerApplication();
         return result;
       }
       if (type === 'dayOfWeek') {

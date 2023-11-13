@@ -121,10 +121,10 @@ const getByDay = (day: Date): Promise<Array<TJob>> => {
   });
 };
 
-//   /**
-//    * 최근 7일간의 활동 정보
-//    * @returns { Array<Job> }
-//    */
+/**
+ * 최근 7일간의 활동 정보
+ * @returns { Array<Job> }
+ */
 const getRecentWeek = (): Promise<Array<TJob>> => {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 6);
@@ -168,4 +168,40 @@ const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
   });
 };
 
-export { insertAll, getAll, getByDay, getRecentWeek, getRecentDayOfWeek };
+/**
+ * 최근 7일간의 활동 정보를 application별로 반환
+ */
+type TJobTimePerApplication = {
+  application: string;
+  active_time: number;
+  icon: string;
+};
+const getRecentWeekPerApplication = (): Promise<
+  Array<TJobTimePerApplication>
+> => {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 6);
+
+  const target = dateToNumber(weekAgo);
+
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      `SELECT application, sum(active_time) as sum_of_active_time, icon FROM ${TABLE_NAME} where day >= ${target} group by application order by sum_of_active_time desc`,
+      (err, rows: Array<TJobTimePerApplication>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+export {
+  insertAll,
+  getAll,
+  getByDay,
+  getRecentWeek,
+  getRecentDayOfWeek,
+  getRecentWeekPerApplication,
+};
