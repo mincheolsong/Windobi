@@ -40,6 +40,10 @@ function ImageManager({ images, setImages }: TImageManager) {
 
   return (
     <S.Wrapper>
+      <S.Row>
+        <ImageDrop fileHandler={upload} />
+        {images[imageIndex] && <Thumbnail image={images[imageIndex]} />}
+      </S.Row>
       {images.map((image, index) => {
         return (
           <Thumbnail
@@ -49,10 +53,6 @@ function ImageManager({ images, setImages }: TImageManager) {
           />
         );
       })}
-      <S.Row>
-        <ImageDrop fileHandler={upload} />
-        {images[imageIndex] && <Thumbnail image={images[imageIndex]} />}
-      </S.Row>
     </S.Wrapper>
   );
 }

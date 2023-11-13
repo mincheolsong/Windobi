@@ -1,11 +1,7 @@
-import {
-  MemoryRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from 'react-router-dom';
+import { useState } from 'react';
+
+import { MemoryRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
-import { useEffect } from 'react';
 import {
   AddCharacter,
   Alarm,
@@ -16,28 +12,35 @@ import {
   CreateChart,
   CreatedChart,
   DeleteCharacter,
+  GoogleOAuth,
   JobTime,
   MailContent,
+  MenuModal,
+  Music,
   MyEmail,
   Notification,
   RegistEmail,
   Setting,
+  Test,
+  Weather,
+  YoutubeClosed,
+  YoutubeMusic,
 } from './pages';
 
 import SubWindow from './layout/SubWindow';
 import GlobalFont from './global';
-import MenuModal from './components/character/MenuModal';
 import TMail from './components/notification/TMail';
 import SubWindowBack from './layout/SubWindowBack';
+import EtcWindow from './layout/EtcWindow';
 
 function MyApp() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { ipcRenderer } = window.electron;
-
+  const [accessToken, setAccessToken] = useState('');
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
     // console.log("mainRenderer Mail 수신", mail);
     // 메일 수신 알림 주기
-    console.log('서브 수신 완료');
     ipcRenderer.sendMessage('sub', 'alarm');
   });
 
@@ -49,8 +52,17 @@ function MyApp() {
     <>
       <GlobalFont />
       <Routes>
+        <Route
+          path="/callback"
+          element={
+            <SubWindow title="리다이렉트">
+              <Test />
+            </SubWindow>
+          }
+        />
         <Route path="/" element={<Character />} />
         <Route path="/closed" element={<Closed />} />
+        <Route path="/youtubeClosed" element={<YoutubeClosed />} />
         <Route
           path="/jobtime"
           element={
@@ -84,36 +96,63 @@ function MyApp() {
             </SubWindowBack>
           }
         />
-
         <Route
           path="/changecharacter"
           element={
-            <SubWindow title="캐릭터 변경">
+            <SubWindowBack title="캐릭터 변경">
               <ChangeCharacter />
-            </SubWindow>
+            </SubWindowBack>
           }
         />
 
         <Route
           path="/addcharacter"
           element={
-            <SubWindow title="캐릭터 추가">
+            <SubWindowBack title="캐릭터 추가">
               <AddCharacter />
+            </SubWindowBack>
+          }
+        />
+
+        <Route
+          path="/googleOAuth"
+          element={
+            <SubWindow title="Google OAuth">
+              <GoogleOAuth />
             </SubWindow>
           }
         />
+
+        <Route
+          path="/music"
+          element={
+            <SubWindow title="음악 추천">
+              <Music />
+            </SubWindow>
+          }
+        />
+
+        <Route
+          path="/youtubeMusic"
+          element={
+            <EtcWindow title="재생목록">
+              <YoutubeMusic />
+            </EtcWindow>
+          }
+        />
+
         <Route
           path="/deletecharacter"
           element={
-            <SubWindow title="캐릭터 삭제">
+            <SubWindowBack title="캐릭터 삭제">
               <DeleteCharacter />
-            </SubWindow>
+            </SubWindowBack>
           }
         />
         <Route
           path="/chatGPT"
           element={
-            <SubWindow title="ChatGPT">
+            <SubWindow title="지피티">
               <ChatGPT />
             </SubWindow>
           }
@@ -140,6 +179,14 @@ function MyApp() {
           element={
             <SubWindow title="알림">
               <Alarm />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/weather"
+          element={
+            <SubWindow title="날씨">
+              <Weather />
             </SubWindow>
           }
         />

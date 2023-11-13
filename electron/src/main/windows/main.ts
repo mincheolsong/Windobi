@@ -1,7 +1,8 @@
-import { BrowserWindow, Display, app, screen, shell } from 'electron';
+/* eslint-disable import/no-cycle */
+import { BrowserWindow, Display, app, screen, shell, dialog } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from '../util';
-import Character from '../chracter/Character';
+import Character from '../character/Character';
 
 const primaryDisplay = screen.getPrimaryDisplay();
 const height = 110;
@@ -10,7 +11,7 @@ const width = 100;
 // #region 유틸리티 정의
 const RESOURCES_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'assets')
-  : path.join(__dirname, '../../assets');
+  : path.join(__dirname, '../../../assets');
 
 const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
@@ -18,21 +19,22 @@ const getAssetPath = (...paths: string[]): string => {
 // #endregion
 
 // #region 윈도우 설정 정의
+
 const mainWindow = new BrowserWindow({
-  resizable: false,
-  show: false,
   width,
   height,
-  icon: getAssetPath('icon.png'),
+  icon: getAssetPath('naver.png'),
   webPreferences: {
     preload: app.isPackaged
-      ? path.join(__dirname, '../preload.js')
+      ? path.join(__dirname, 'preload.js')
       : path.join(__dirname, '../../../.erb/dll/preload.js'),
     nodeIntegration: true,
     sandbox: false,
   },
-  transparent: true,
+  resizable: false,
+  show: true,
   frame: false,
+  transparent: true,
   alwaysOnTop: true,
   skipTaskbar: true,
   x: 0,
@@ -82,6 +84,10 @@ mainWindow.once('ready-to-show', () => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
+});
+
+mainWindow.on('closed', () => {
+  app.quit();
 });
 // #endregion
 

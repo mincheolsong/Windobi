@@ -3,11 +3,7 @@ import OpenAI from 'openai';
 import '../components/chatGPT/chatGPT.scss';
 
 function ChatGPT() {
-  // const { ipcRenderer } = window.electron;
-  window.electron.ipcRenderer.sendMessage('size', {
-    width: 300,
-    height: 500,
-  });
+  const { ipcRenderer } = window.electron;
 
   const [openai, setOpenai] = useState();
   const messageEndRef = useRef<HTMLDivElement | null>(null);
@@ -26,6 +22,11 @@ function ChatGPT() {
   };
 
   useEffect(() => {
+    ipcRenderer.sendMessage('stopMoving');
+    window.electron.ipcRenderer.sendMessage('size', {
+      width: 300,
+      height: 500,
+    });
     settingOpenAi();
   }, []);
 
@@ -37,16 +38,6 @@ function ChatGPT() {
       type: 1,
       content:
         'this is test message. this is test message.this is test message.this is test message.this is test message.',
-    },
-    {
-      type: 0,
-      content:
-        'this is test message.this is test message.this is test message.this is test message.',
-    },
-    {
-      type: 1,
-      content:
-        'this is test message.this is test message.this is test message.this is test message.this is test message.',
     },
     {
       type: 0,
@@ -133,8 +124,8 @@ function ChatGPT() {
           onClick={handleSubmit}
           style={{
             border: 'none',
-            color: 'white',
-            background: 'rgb(11, 108, 255)',
+            color: 'black',
+            background: '#f9eb54',
             borderRadius: '10px',
             height: '100%',
             padding: '5px',
