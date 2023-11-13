@@ -24,6 +24,7 @@ const Centerize = styled.div`
 const Tooltip = styled.div`
   background-color: rgba(255, 255, 255, 0.7);
   padding: 10px;
+  border-radius: 5px;
 `;
 
 export { Wrapper, Application, Centerize, Tooltip };
