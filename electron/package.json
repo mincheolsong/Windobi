@@ -51,7 +51,7 @@
   "browserslist": [],
   "prettier": {
     "singleQuote": true,
-    "printWidth": 100,
+    "printWidth": 80,
     "overrides": [
       {
         "files": [
@@ -97,6 +97,7 @@
     }
   },
   "dependencies": {
+    "@nivo/pie": "^0.83.0",
     "@paymoapp/active-window": "^2.0.6",
     "@types/sqlite3": "^3.1.11",
     "axios": "^1.6.1",
