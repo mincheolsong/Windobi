@@ -20,7 +20,8 @@ type TJob = Omit<TJobTime, 'day'>;
 
 const TABLE_NAME = 'job_time';
 const dateToNumber = (date: Date) => {
-  const numberDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+  const numberDate =
+    date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
   return numberDate;
 };
 
@@ -143,4 +144,28 @@ const getRecentWeek = (): Promise<Array<TJob>> => {
   });
 };
 
-export { insertAll, getAll, getByDay, getRecentWeek };
+//   /**
+//    * 최근 7일간의 활동 정보 (요일별)
+//    * @returns { Array<Job> }
+//    */
+const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 6);
+
+  const target = dateToNumber(weekAgo);
+
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'
+      `SELECT substr(day,5,2) || '월' || substr(day,7,2) || '일' as day, round(sum(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${target} group by day`,
+      (err, rows: Array<TJobTime>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+export { insertAll, getAll, getByDay, getRecentWeek, getRecentDayOfWeek };
