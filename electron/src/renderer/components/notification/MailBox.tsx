@@ -18,6 +18,7 @@ function MailBox({
   const navigate = useNavigate();
   useEffect(() => {
     if (!mails || mails.length === 0) return;
+
     for (let i = 0; i < mails.length; ++i) {
       console.log(mails[i].subject);
     }
@@ -25,7 +26,7 @@ function MailBox({
 
   return (
     <>
-      {mails.reverse().map((mail) => {
+      {mails.sort((a, b) => (a.date < b.date) ? 1 : -1).map((mail) => {
         let img;
         switch(mail.host){
           case "imap.naver.com":
