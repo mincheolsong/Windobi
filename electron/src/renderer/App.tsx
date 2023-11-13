@@ -29,7 +29,7 @@ import {
 
 import SubWindow from './layout/SubWindow';
 import GlobalFont from './global';
-import MenuModal from './components/character/MenuModal';
+import MenuModal from './components/menu/MenuModal';
 import TMail from './components/notification/TMail';
 import SubWindowBack from './layout/SubWindowBack';
 import Weather from './pages/Weather';

@@ -182,6 +182,10 @@ const initialize = () => {
     onChangeSizeSub({ width, height });
   });
 
+  ipcMain.on('frameOn', (_event) => {
+    subWindow.setSimpleFullScreen(true);
+  });
+
   // etc 윈도우의 사이즈가 바뀔 때 발생할 이벤트
   ipcMain.on('etcSize', (_event, { width, height }) => {
     onChangeSizeEtc({ width, height });

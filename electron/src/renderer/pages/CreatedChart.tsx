@@ -9,6 +9,11 @@ function CreatedChart() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    window.electron.ipcRenderer.sendMessage('size', {
+      width: 600,
+      height: 600,
+    });
+
     setTimeout(() => {
       if (ref.current === null) return;
       toPng(ref.current, { cacheBust: true }).then((dataUrl) => {
@@ -17,14 +22,19 @@ function CreatedChart() {
     }, 10000);
   }, []);
 
+  const result = state.weeklyJobs;
+
   return (
     <div ref={ref}>
-      <BarChart
+      {/* <BarChart
         dailyJobs={[]}
         weeklyJobs={state.weeklyJobs}
         setApplication={setDummy}
         type="weekly"
-      />
+      /> */}
+      {result.map((item, index) => (
+        <div key={index}>{JSON.stringify(item)}</div>
+      ))}
     </div>
   );
 }
