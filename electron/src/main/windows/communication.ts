@@ -1,5 +1,5 @@
 import { throttle, delay } from 'lodash';
-import { ipcMain, ipcRenderer } from 'electron';
+import { ipcMain } from 'electron';
 import mainWindow from './main';
 import {
   mainVariables,
@@ -180,6 +180,10 @@ const initialize = () => {
   // 서브 윈도우의 사이즈가 바뀔 때 발생할 이벤트
   ipcMain.on('size', (_event, { width, height }) => {
     onChangeSizeSub({ width, height });
+  });
+
+  ipcMain.on('frameOn', (_event) => {
+    subWindow.setSimpleFullScreen(true);
   });
 
   // etc 윈도우의 사이즈가 바뀔 때 발생할 이벤트

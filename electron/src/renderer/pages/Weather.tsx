@@ -1,8 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import * as S from '../components/weather/Weather.style';
 import { ReactComponent as Svg } from '../../../assets/nearme.svg';
+
 function Weather() {
+  const scrollRef = useRef(null);
+  const [isDrag, setIsDrag] = useState(false);
+  const [startX, setStartX] = useState();
+
+  const onDragStart = (e) => {
+    e.preventDefault();
+    setIsDrag(true);
+    setStartX(e.pageX + scrollRef.current.scrollLeft);
+  };
+  const onDragEnd = () => {
+    setIsDrag(false);
+  };
+
+  const onDragMove = (e) => {
+    if (isDrag) {
+      scrollRef.current.scrollLeft = startX - e.pageX;
+    }
+  };
+  const throttle = (func, ms) => {
+    let throttled = false;
+    return (...args) => {
+      if (!throttled) {
+        throttled = true;
+        setTimeout(() => {
+          func(...args);
+          throttled = false;
+        }, ms);
+      }
+    };
+  };
+  const delay = 10;
+  const onThrottleDragMove = throttle(onDragMove, delay);
+
   const [weather, setWeather] = useState({
     today_Day_String: '',
     today_Day_Number: '',
@@ -16,52 +50,82 @@ function Weather() {
     list: [],
     loading: true,
   });
+  const [icon, setIcon] = useState({
+    '01n': '',
+    '02n': '',
+    '03n': '',
+    '04n': '',
+    '09n': '',
+    '10n': '',
+    '11n': '',
+    '13n': '',
+    '50n': '',
+    '02d': '',
+    '01d': '',
+    '03d': '',
+    '04d': '',
+    '09d': '',
+    '10d': '',
+    '11d': '',
+    '13d': '',
+    '50d': '',
+  });
+  const [description, SetDescription] = useState({
+    'broken clouds': '대체로 흐림',
+    'light rain': '비',
+    'scattered clouds': '한 때 흐림',
+    'clear sky': '청명함',
+  });
   useEffect(() => {
     const apiKey = '2d7be5022ea1fcb5d5be566f85371efc';
+    window.electron.ipcRenderer.invoke('weatherHandler').then((response) => {
+      setIcon(response);
+      console.log(response);
+    });
     const url = `https://api.openweathermap.org/data/2.5/forecast?lat=36.10&lon=128.41&appid=${apiKey}`;
     axios
       .get(url)
       .then((responseData) => {
         console.log(responseData);
         const data = responseData.data;
-        let now_date = new Date();
+        let nowDate = new Date();
         setWeather(w => {
           return {
             ...w,
             cityName: data.city.name,
             today_Sunrise: new Date(data.city.sunrise * 1000).toTimeString().substring(0, 8),
             today_Sunset: new Date(data.city.sunset * 1000).toTimeString().substring(0, 8),
-            list: data.list.filter(ls => ls.dt * 1000 >= now_date.getTime()),
+            list: data.list,
           };
         });
-        const curDate = new Date(data.list[0].dt * 1000);
-        const curUtcDate = curDate.toUTCString();
         let maxTemp = 0;
         let minTemp = 999;
-
         for( let temp of data.list){
           let tempDate = new Date(temp.dt * 1000);
-          if(tempDate.getDay() != now_date.getDay()){
-            console.log(tempDate.getDay(), now_date.getDay());
+          if (tempDate.getDay() != nowDate.getDay()) {
+            if (maxTemp < temp.main.temp) {
+              maxTemp = temp.main.temp;
+            }
+            if (minTemp > temp.main.temp) {
+              minTemp = temp.main.temp;
+            }
+            console.log(tempDate.getDate(), nowDate.getDate());
             break;
           }
-          if(maxTemp < temp.main.temp){
+          if (maxTemp < temp.main.temp) {
             maxTemp = temp.main.temp;
           }
-          if(minTemp > temp.main.temp){
+          if (minTemp > temp.main.temp) {
             minTemp = temp.main.temp;
           }
         }
-
-
-        console.log(maxTemp, minTemp);
         setWeather(w => {
           return {
             ...w,
-            today_Day_String: curUtcDate.substring(0,3),
-            today_Day_Number: curUtcDate.substring(5,7),
-            today_Day_Month: curUtcDate.substring(8,11),
-            today_Day_Year: curUtcDate.substring(12,16),
+            today_Day_String: nowDate.toString().substring(0, 3),
+            today_Day_Number: nowDate.toString().substring(8, 10),
+            today_Day_Month: nowDate.toLocaleString().substring(6, 8),
+            today_Day_Year: nowDate.toString().substring(11, 15),
             today_Max_Temp: maxTemp,
             today_Min_Temp: minTemp,
             loading: false,
@@ -70,16 +134,11 @@ function Weather() {
       })
       .catch((error) => console.log(error));
 
-
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,
       height: 500,
     });
   }, []);
-
-  console.log(weather);
-
-  const imgSrc = `https://openweathermap.org/img/w/${weather.icon}.png`;
   if (weather.loading) {
     return <div>Loading...</div>;
   }
@@ -87,32 +146,33 @@ function Weather() {
     <S.Warpper>
       <S.SpaceAround>
         <S.LeftAround>
-          <S.CityName>서울특별시<Svg fill='white'/></S.CityName>
-          <span>7˚</span>
-          <div>최고: {(weather.today_Max_Temp - 273.12).toFixed(0)}˚ 최저: {(weather.today_Min_Temp - 273.12).toFixed(0)}˚</div>
+          <S.CityName>{weather.cityName}<Svg fill='white'/></S.CityName>
+          <span>{(weather.list[0].main.temp - 273.15).toFixed(0)}˚</span>
         </S.LeftAround>
-        <div>
-          날씨 정보
-        </div>
+        <S.RightAround>
+          <div>{weather.today_Day_Month}월 {weather.today_Day_Number}일({weather.today_Day_String})</div>
+          <S.WeatherIcon src={`data:image/png;base64,${icon[weather.list[0].weather[0].icon]}`} alter = '아이콘'/>
+          <div>{description[weather.list[0].weather[0].description]}</div>
+          <div>
+            최고: {(weather.today_Max_Temp - 273.15).toFixed(0)}˚ 최저: {(weather.today_Min_Temp - 273.15).toFixed(0)}˚
+          </div>
+        </S.RightAround>
       </S.SpaceAround>
       <S.WeatherCard>
-        <S.WeatherIcon src={imgSrc} alt="weather icon" />
-        <S.WeatherInfo>
-          {weather.list.slice(0, 5).map((info) => (
-            <div key={info.dt_txt}>
-              <span>안녕하세요</span>
-              <span>{info.main.temp}</span>
-              <span>{info.main.feels_like}</span>
-              <span>{info.main.temp_min}</span>
-              <span>{info.main.temp_max}</span>
-              <span>시간{info.dt}</span>
-              <span>ㅇ러니러ㅣ{weather.list[0].dt}</span>
-              <span>오늘 최고 온도 {weather.today_Max_Temp}</span>
-              <span>오늘 최저 온도 {weather.today_Min_Temp}</span>
-              <span>
-                {weather.today_Day_Year}년 | {weather.today_Day_Month} |{' '}
-                {weather.today_Day_String} |
-              </span>
+        <S.WeatherInfo
+          className="weatherInfos"
+          onMouseDown={onDragStart}
+          onMouseMove={isDrag ? onThrottleDragMove : null}
+          onMouseUp={onDragEnd}
+          onMouseLeave={onDragEnd}
+          ref={scrollRef}
+        >
+          {weather.list.slice(0, 20).map((info, index) => (
+            <div key={index}>
+              {/* <span>{index}</span> */}
+              <span>{new Date(info.dt * 1000).getHours()}시</span>
+              <S.WeatherIcon src={`data:image/png;base64,${icon[info.weather[0].icon]}`} alt="weather icon" />
+              <span>{(info.main.temp-273.15).toFixed(0)}˚</span>
             </div>
           ))}
         </S.WeatherInfo>
@@ -120,5 +180,4 @@ function Weather() {
     </S.Warpper>
   );
 }
-
 export default Weather;

@@ -7,7 +7,6 @@ function MailContent() {
   const location = useLocation();
   const { mail } = location.state;
 
-
   window.electron.ipcRenderer.sendMessage('size', { width: 300, height: 400 });
   if (!mail) {
     return <h2>Not</h2>;
@@ -27,7 +26,9 @@ function MailContent() {
         <S.Text width="100%" size="14px" bold="bold">
           {mail.subject}
         </S.Text>
-        <S.Time>{mail.date === undefined || mail.date === null ? '' : mail.date.toLocaleString()}</S.Time>
+        <S.Time>
+          {mail.date === undefined || mail.date === null ? '' : mail.date.toLocaleString()}
+        </S.Time>
       </S.Subject>
       <S.Line />
       <S.Content>{mail.content}</S.Content>

@@ -4,6 +4,7 @@ import { mainWindow, subWindow } from '../windows';
 import createReport from '../mail/createReport';
 import getMails from '../mail/mail';
 import { resolveHtmlPath } from '../util';
+import { truncateSync } from 'original-fs';
 
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
@@ -30,7 +31,7 @@ const mailHandler = () => {
   deleteMailHandler();
   mailSendHandler();
   mailReceiveHandler();
-  // mailTestHandler();
+  mailTestHandler();
 };
 
 /**
@@ -48,11 +49,7 @@ const mailRequestHandler = () => {
 const deleteMailHandler = () => {
   ipcMain.on('deleteMail', (_event, mail) => {
     for (let i = 0; i < mails.length; ++i) {
-      if (
-        mails[i].seq === mail.seq &&
-        mails[i].to === mail.to &&
-        mails[i].host === mail.host
-      ) {
+      if (mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host) {
         // 해당 메일 삭제
         mails.splice(i, 1);
         return;
@@ -119,15 +116,15 @@ const mailReceiveHandler = () => {
 const mailTestHandler = () => {
   setTimeout(async () => {
     const chartWindow = new BrowserWindow({
-      width: 300,
-      height: 300,
-      show: false,
-      transparent: true,
+      width: 600,
+      height: 600,
+      show: true,
+      transparent: false,
       focusable: false,
       frame: false,
       webPreferences: {
         preload: app.isPackaged
-          ? path.join(__dirname, '../preload.js')
+          ? path.join(__dirname, 'preload.js')
           : path.join(__dirname, '../../../.erb/dll/preload.js'),
       },
     });
