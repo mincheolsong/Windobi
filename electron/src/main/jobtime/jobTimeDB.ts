@@ -20,7 +20,8 @@ type TJob = Omit<TJobTime, 'day'>;
 
 const TABLE_NAME = 'job_time';
 const dateToNumber = (date: Date) => {
-  const numberDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+  const numberDate =
+    date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
   return numberDate;
 };
 
@@ -120,10 +121,10 @@ const getByDay = (day: Date): Promise<Array<TJob>> => {
   });
 };
 
-//   /**
-//    * 최근 7일간의 활동 정보
-//    * @returns { Array<Job> }
-//    */
+/**
+ * 최근 7일간의 활동 정보
+ * @returns { Array<Job> }
+ */
 const getRecentWeek = (): Promise<Array<TJob>> => {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 6);
@@ -143,4 +144,39 @@ const getRecentWeek = (): Promise<Array<TJob>> => {
   });
 };
 
-export { insertAll, getAll, getByDay, getRecentWeek };
+/**
+ * 최근 7일간의 활동 정보를 application별로 반환
+ */
+type TJobTimePerApplication = {
+  application: string;
+  active_time: number;
+  icon: string;
+};
+const getRecentWeekPerApplication = (): Promise<
+  Array<TJobTimePerApplication>
+> => {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 6);
+
+  const target = dateToNumber(weekAgo);
+
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      `SELECT application, sum(active_time) as sum_of_active_time, icon FROM ${TABLE_NAME} where day >= ${target} group by application order by sum_of_active_time desc`,
+      (err, rows: Array<TJobTimePerApplication>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+export {
+  insertAll,
+  getAll,
+  getByDay,
+  getRecentWeek,
+  getRecentWeekPerApplication,
+};
