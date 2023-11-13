@@ -6,12 +6,7 @@ import * as S from './Mail.style';
 import Time from './Time';
 import TMail from './TMail';
 import { useNavigate } from 'react-router-dom';
-import { ipcRenderer } from 'electron';
 
-// async function click(){
-//   let a = await window.electron.ipcRenderer.invoke('test', 1);
-//   alert(a);
-// }
 
 function MailBox({
   mails,
@@ -23,6 +18,7 @@ function MailBox({
   const navigate = useNavigate();
   useEffect(() => {
     if (!mails || mails.length === 0) return;
+
     for (let i = 0; i < mails.length; ++i) {
       console.log(mails[i].subject);
     }
@@ -30,7 +26,7 @@ function MailBox({
 
   return (
     <>
-      {mails.reverse().map((mail) => {
+      {mails.sort((a, b) => (a.date < b.date) ? 1 : -1).map((mail) => {
         let img;
         switch(mail.host){
           case "imap.naver.com":
