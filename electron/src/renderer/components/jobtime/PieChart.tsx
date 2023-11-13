@@ -10,6 +10,7 @@ import {
   ResponsivePie,
 } from '@nivo/pie';
 import * as S from './PieChart.style';
+import { timeToString } from '../../util';
 
 type TPiechart = {
   application: string;
@@ -116,6 +117,7 @@ function PieChart({ application, day, type }: TPiechart) {
         tooltip={createToolTip}
         arcLabel={createArcLabel}
         valueFormat={getPercentage}
+        enableArcLinkLabels={false}
       />
     </S.Wrapper>
   );
@@ -135,12 +137,7 @@ const createArcLabel = (item: ComputedDatum<IFilteredData>) => {
 
 const createToolTip = (e: PieTooltipProps<IFilteredData>) => {
   const { datum } = e;
-  const hour = Math.floor(datum.value / 3600);
-  const minute = Math.ceil((datum.value % 3600) / 60);
-
-  let time = '';
-  time = time.concat(hour > 0 ? `${hour}시간` : '');
-  time = time.concat(`${minute}분`);
+  const time = timeToString(datum.value);
 
   return <S.Tooltip>{`${datum.id} - ${time}`}</S.Tooltip>;
 };
