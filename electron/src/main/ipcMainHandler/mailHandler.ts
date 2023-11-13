@@ -10,7 +10,7 @@ const cron = require('node-cron');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 
-const receivedList: Array<Array<any>> = [];
+const receivedList: Array<Map<string, Array<any>>> = [];
 // const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
 const mails: Array<TMail> = []; // 이제껏 수신한 메일들을 보관하는 배열
 const mailAddress = 'honeycomb201';
@@ -46,8 +46,7 @@ const mailHandler = () => {
  */
 const mailRequestHandler = () => {
   ipcMain.on('mailRequest', () => {
-    console.log('Requesting!!');
-    console.log('mails', mails);
+    // console.log('mails', mails);
     subWindow.webContents.send('mailRequest', mails);
   });
 };
@@ -113,27 +112,29 @@ const mailReceiveHandler = async () => {
   const accounts = await dbInstance.getAll();
   console.log('accounts', accounts);
   for (let i = 0; i < accounts.length; ++i) {
-    const received: Array<any> = [];
+    let name = accounts[i].id + (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+    const received = {};
+    received['name'] = name;
+    received['array'] = [];
+    console.log(received);
     receivedList.push(received);
     const timerId: IntervalId = setInterval(
       getMails,
       10000,
       mainWindow,
       subWindow,
-      received,
+      receivedList,
       mails,
       accounts[i].id,
       accounts[i].password,
       accounts[i].host,
     );
     const timer = {};
-    let name =
-      accounts[i].id +
-      (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
     timer['key'] = name;
     timer['timerId'] = timerId;
     mainVariables.mailListners.push(timer);
     console.log(mainVariables.mailListners);
+    await setTimeout(()=>{}, 1000);
   }
 };
 
