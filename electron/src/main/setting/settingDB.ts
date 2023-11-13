@@ -1,10 +1,10 @@
 import path from 'node:path';
 import fs from 'fs';
+import { app } from 'electron';
 
-const RESOURCES_PATH =
-  process.env.NODE_ENV === 'development'
-    ? path.join(__dirname, '../../../assets')
-    : path.join(process.resourcesPath, 'assets');
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../../assets');
 
 const DB_FILE = path.join(RESOURCES_PATH, 'setting.json');
 

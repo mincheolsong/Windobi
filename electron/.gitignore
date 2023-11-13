@@ -28,11 +28,7 @@ npm-debug.log.*
 *.sass.d.ts
 *.scss.d.ts
 
+pidtest.txt
 assets/database.db
-assets/job_time.db
-assets/sub_job_time.db
 assets/setting.json
-log.txt
-
-# openAI key
 .env

@@ -1,16 +1,10 @@
 /* eslint-disable import/no-cycle */
 // 캐릭터 객체
 // 현재 좌표, 방향, 윈도우의 초기 크기, 최대 크기를 가짐
+import { ipcMain } from 'electron';
 import { mainVariables, mainWindow } from '../windows';
 
-type TDirection =
-  | 'left'
-  | 'right'
-  | 'stop'
-  | 'up'
-  | 'down'
-  | 'downsleep'
-  | 'click';
+type TDirection = 'left' | 'right' | 'stop' | 'up' | 'down' | 'downsleep' | 'click';
 
 class Character {
   #curX: number;
@@ -33,12 +27,7 @@ class Character {
 
   #isMove: boolean; // 움직일 수 있는 상태인지
 
-  constructor(
-    maxWidth: number,
-    maxHeight: number,
-    winWidth: number,
-    winHeight: number,
-  ) {
+  constructor(maxWidth: number, maxHeight: number, winWidth: number, winHeight: number) {
     this.winWidth = winWidth;
     this.winHeight = winHeight;
     this.#curX = maxWidth - winWidth;
@@ -64,7 +53,6 @@ class Character {
   set position({ nextX, nextY }: { nextX: number; nextY: number }) {
     if (this.#curX !== nextX || this.#curY !== nextY) {
       const { width, height } = mainVariables;
-
       mainWindow.setBounds({
         x: nextX,
         y: nextY,
@@ -93,13 +81,14 @@ class Character {
   }
 
   set isMove(value) {
-    // mainVariables.characterMoveId = setInterval(moving, 30, character);
-    // mainVariables.scheduleId = setInterval(moveScheduling, 2000);
-
-    if (this.#isMove !== value) {
-      // 움직이는 상태로 변경일 경우
+    if (value !== this.#isMove) {
+      this.#isMove = value;
+      if (value === true) {
+        ipcMain.emit('restartMoving');
+      } else if (value === false) {
+        ipcMain.emit('stopMoving');
+      }
     }
-    this.#isMove = value;
   }
 }
 

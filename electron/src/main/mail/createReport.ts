@@ -7,9 +7,8 @@ import { jsPDF } from "jspdf";
 const { dbInstance } = require('../jobtime/jobTimeDB');
 const { dbInstance: subDbInstance } = require('../jobtime/subJobTimeDB');
 
-
 async function createReport(date: Date) {
-  let result = EmailTemplate();
+  const result = EmailTemplate();
 
   dbInstance.init();
   subDbInstance.init();
@@ -58,7 +57,5 @@ async function createReport(date: Date) {
   // myChart.toFile('./pieChart.png');
 
 }
-
-
 
 export default createReport;

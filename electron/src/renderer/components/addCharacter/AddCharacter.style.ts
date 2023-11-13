@@ -33,14 +33,15 @@ const Summary = styled.summary`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgb(50, 168, 255);
+  background-color: rgb(255, 255, 255);
 
   font-size: 30px;
 
   &:hover {
     cursor: pointer;
-    background: rgb(30, 128, 255);
-    transition: 0.1s all ease-in-out;
+    background-color: rgba(50, 150, 255, 0.8);
+    transition: all 0.15s ease-in-out;
+    color: white;
   }
 `;
 

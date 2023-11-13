@@ -21,7 +21,8 @@ function JobTime() {
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
-    ipcRenderer.sendMessage('size', { width: 600, height: 350 });
+    ipcRenderer.sendMessage('windowOpened');
+    ipcRenderer.sendMessage('size', { width: 700, height: 450 });
 
     ipcRenderer.on('job-time', ({ type: returnType, result }) => {
       if (returnType === 'day') {
@@ -57,7 +58,7 @@ function JobTime() {
 
   return (
     <S.Wrapper>
-      <S.Half>
+      <S.LeftWrapper>
         <S.Header>
           <ReactSwitch
             checked={type}
@@ -77,14 +78,14 @@ function JobTime() {
           type={stringType}
           setApplication={setSelectedApplication}
         />
-      </S.Half>
-      <S.Half>
+      </S.LeftWrapper>
+      <S.RightWrapper>
         <PieChart
           application={selectedApplication}
           day={day}
           type={stringType}
         />
-      </S.Half>
+      </S.RightWrapper>
     </S.Wrapper>
   );
 }

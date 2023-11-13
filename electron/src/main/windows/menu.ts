@@ -1,11 +1,11 @@
-import { BrowserWindow, app } from 'electron';
+import { BrowserWindow, app, ipcMain } from 'electron';
 import path from 'path';
 import { resolveHtmlPath } from '../util';
 
 // #region 유틸리티 정의
 const RESOURCES_PATH = app.isPackaged
   ? path.join(process.resourcesPath, 'assets')
-  : path.join(__dirname, '../../assets');
+  : path.join(__dirname, '../../../assets');
 
 const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
@@ -26,7 +26,7 @@ const menuWindow = new BrowserWindow({
   icon: getAssetPath('icon.png'),
   webPreferences: {
     preload: app.isPackaged
-      ? path.join(__dirname, '../preload.js')
+      ? path.join(__dirname, 'preload.js')
       : path.join(__dirname, '../../../.erb/dll/preload.js'),
     nodeIntegration: true,
   },
@@ -47,6 +47,12 @@ menuWindow.on('ready-to-show', () => {
   menuWindow.webContents.send('sub', 'menu');
   menuWindow.webContents.closeDevTools();
 });
+
+menuWindow.on('blur', () => {
+  ipcMain.emit('hide-menu');
+  ipcMain.emit('restartMoving');
+});
+
 // #endregion
 
 export default menuWindow;
