@@ -1,4 +1,4 @@
-import { ipcMain, screen } from 'electron';
+import { app, ipcMain, screen } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { mainVariables, mainWindow, menuWindow } from '../windows';
@@ -6,6 +6,10 @@ import tray, { variables as trayVariables } from '../tray/tray';
 import { sleep } from '../util';
 
 let moveTimer: IntervalId = null;
+
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '..', '..', '..', 'assets');
 
 const characterHandler = () => {
   showMenuHandler();
@@ -53,11 +57,10 @@ const hideMenuHandler = () => {
  */
 const characterListHandler = () => {
   ipcMain.handle('character-list', async () => {
-    const RESOURCE_PATH = 'assets/character';
-    const characterList = fs.readdirSync(RESOURCE_PATH);
+    const characterList = fs.readdirSync(path.join(RESOURCES_PATH, 'character'));
     const result = characterList.map((character) => {
       const image = fs.readFileSync(
-        path.join(RESOURCE_PATH, character, 'stop', '1.png'),
+        path.join(RESOURCES_PATH, 'character', character, 'stop', '1.png'),
         { encoding: 'base64' },
       );
 
@@ -80,8 +83,7 @@ const characterImagesHandler = () => {
     up: Array<string>;
   };
   ipcMain.handle('character-images', async (_event, character: string) => {
-    const RESOURCE_PATH = 'assets/character';
-    const TARGET_DIRECTORY = path.join(RESOURCE_PATH, character);
+    const TARGET_DIRECTORY = path.join(RESOURCES_PATH, 'character', character);
     const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'up'];
     const motionImages: TMotionImage = {
       click: [],
@@ -94,10 +96,9 @@ const characterImagesHandler = () => {
       try {
         const imageList = fs.readdirSync(path.join(TARGET_DIRECTORY, motion));
         for (const image of imageList) {
-          const base64Image = fs.readFileSync(
-            path.join(TARGET_DIRECTORY, motion, image),
-            { encoding: 'base64' },
-          );
+          const base64Image = fs.readFileSync(path.join(TARGET_DIRECTORY, motion, image), {
+            encoding: 'base64',
+          });
           motionImages[motion].push(base64Image);
         }
       } catch (e) {
@@ -135,11 +136,10 @@ const getImageHandler = () => {
  */
 const deleteCharacterHandler = () => {
   ipcMain.handle('delete-character', (_event, name: string) => {
-    const RESOURCE_PATH = 'assets/character';
-    if (!fs.existsSync(path.join(RESOURCE_PATH, name))) {
+    if (!fs.existsSync(path.join(RESOURCES_PATH, 'character', name))) {
       return false;
     }
-    fs.rmSync(path.join(RESOURCE_PATH, name), { recursive: true, force: true });
+    fs.rmSync(path.join(RESOURCES_PATH, 'character', name), { recursive: true, force: true });
     return true;
   });
 };
@@ -182,15 +182,13 @@ const addCharacterHandler = () => {
         return result;
       }
 
-      const RESOURCE_PATH = 'assets/character';
-
-      if (fs.existsSync(path.join(RESOURCE_PATH, name))) {
+      if (fs.existsSync(path.join(RESOURCES_PATH, 'character', name))) {
         result.success = false;
         result.message = '이미 존재하는 캐릭터 이름입니다';
         return result;
       }
 
-      fs.mkdirSync(path.join(RESOURCE_PATH, name));
+      fs.mkdirSync(path.join(RESOURCES_PATH, 'character', name));
 
       const imageList = [
         { motion: 'stop', images: stop },
@@ -201,10 +199,10 @@ const addCharacterHandler = () => {
       ];
 
       imageList.forEach(({ motion, images }) => {
-        fs.mkdirSync(path.join(RESOURCE_PATH, name, motion));
+        fs.mkdirSync(path.join(RESOURCES_PATH, 'character', name, motion));
         images.forEach((image, index) => {
           fs.writeFileSync(
-            path.join(RESOURCE_PATH, name, motion, `${index + 1}.png`),
+            path.join(RESOURCES_PATH, 'character', name, motion, `${index + 1}.png`),
             image,
             'base64',
           );

@@ -1,16 +1,13 @@
 import Electron, { Menu, Tray, app, globalShortcut } from 'electron';
 import path from 'path';
 import settingDB from '../setting/settingDB';
-import { mainWindow, menuWindow, subWindow } from '../windows';
+import { mainVariables, mainWindow, subWindow } from '../windows';
 
-const sleep = (ms: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-};
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '..', '..', '..', 'assets');
 
-const iconPath = path.join('assets', 'icons', 'hanbyul.png');
-const tray = new Tray(iconPath);
+const tray = new Tray(path.join(RESOURCES_PATH, 'icons', 'hanbyul.png'));
 
 type TVariables = {
   menu: Electron.Menu;
@@ -80,6 +77,9 @@ function show() {
 function exit() {
   if (process.platform !== 'darwin') {
     globalShortcut.unregisterAll();
+    if (mainVariables.scheduleId) clearInterval(mainVariables.scheduleId);
+    if (mainVariables.characterMoveId) clearInterval(mainVariables.characterMoveId);
+
     app.quit();
   }
 }
