@@ -13,8 +13,9 @@ const fs = require('fs');
 const receivedList: Array<Map<string, Array<any>>> = [];
 // const received: [] = []; // 새로운 메일 수신 확인을 위해 임시로 저장하는 배열
 const mails: Array<TMail> = []; // 이제껏 수신한 메일들을 보관하는 배열
-const mailAddress = 'honeycomb201';
-const mailPassword = 'ssafyssafy123';
+let mailAddress: string | null = null;
+let mailPassword: string | null = null;
+let mailHost: string | null = null;
 
 type TMail = {
   seq: number;
@@ -69,36 +70,39 @@ const deleteMailHandler = () => {
 /**
  * 일정시간마다 메일 보내기
  */
-const mailSendHandler = () => {
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.daum.net',
-    secure: true, // 다른 포트를 사용해야 되면 false값을 주어야 합니다.
-    // port: 587,   //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
-    auth: {
-      user: mailAddress,
-      pass: mailPassword,
-    },
-  });
+const mailSendHandler = async () => {
+  const accounts = await dbInstance.getAll();
+  if (accounts.length > 0) {
+    mailAddress = accounts[0].id;
+    mailPassword = accounts[0].password;
+    mailHost = accounts[0].host;
+    console.log(mailAddress, mailPassword, mailHost);
+    const transporter = nodemailer.createTransport({
+      host: mailHost,
+      secure: true, // 다른 포트를 사용해야 되면 false값을 주어야 합니다.
+      // port: 587,   //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
+      auth: {
+        user: mailAddress,
+        pass: mailPassword,
+      },
+    });
 
-  const sendTime = 9;
-  cron.schedule(`0 ${sendTime} * * * `, () => {
-    const cur = new Date();
-    createReport(cur)
-      .then((res) => {
-        // let receiver = 'hyerdd@naver.com';
-        // let info = transporter.sendMail({
-        //   from: `"${mailAddress}@daum.net"`,
-        //   to: `hyerdd@naver.com`,
-        //   subject: `${cur.toLocaleString()} 보고서 입니다.`,
-        //   html: res,
-        //   attachments: []
-        // });
-      })
-      .catch((e) => {
-        console.log(e);
+    cron.schedule(`55 17 * * 1 `, () => {
+      const cur = new Date();
+      let account = `${mailAddress}@` + (accounts[0].host === "imap.naver.com" ? 'naver.com' : 'daum.net');
+      console.log(account);
+      let info = transporter.sendMail({
+        from: account,
+        to: account,
+        subject: `${cur.toLocaleString()} 보고서 입니다.`,
+        text: "hi",
+        attachments: []
       });
-    // 5시마다 보고서 보내기
-  });
+
+      console.log("seding!!");
+      // 5시마다 보고서 보내기
+    });
+  }
 };
 
 /**
@@ -130,7 +134,7 @@ const mailReceiveHandler = async () => {
     timer['timerId'] = timerId;
     mainVariables.mailListners.push(timer);
     console.log(mainVariables.mailListners);
-    await setTimeout(()=>{}, 1000);
+    await setTimeout(() => { }, 1000);
   }
 };
 
@@ -254,16 +258,13 @@ const accountRequestHandler = () => {
 
 const accountDeleteHandler = () => {
   ipcMain.on('accountDelete', (_event, email) => {
-    // 기존에 실행중이던 이메일 리스너 끄기
-
     // 이메일 계정 삭제
     dbInstance.deleteByIdAndHost(email.id, email.host);
     let name =
-      email.id + (email.host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+    email.id + (email.host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
     const timer = mainVariables.mailListners.filter((m) => m.key === name);
+    // 기존에 실행중이던 이메일 리스너 끄기
     clearInterval(timer[0].timerId);
-    console.log(timer[0].timerId, 'clear');
-    // 정리 완료!
   });
 };
 
