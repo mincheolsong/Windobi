@@ -21,34 +21,44 @@ const registJobTimeHandler = () => {
     }
   });
 
-  ipcMain.handle('job-time', async (_event, type: 'day' | 'week', target: Date) => {
-    if (type === 'day') {
-      const result = await JobTimeDB.getByDay(target);
-      return result;
-    }
-    if (type === 'week') {
-      const result = await JobTimeDB.getRecentWeek();
-      return result;
-    }
-    return [];
-  });
+  ipcMain.handle(
+    'job-time',
+    async (_event, type: 'day' | 'week' | 'dayOfWeek', target: Date) => {
+      if (type === 'day') {
+        const result = await JobTimeDB.getByDay(target);
+        return result;
+      }
+      if (type === 'week') {
+        const result = await JobTimeDB.getRecentWeek();
+        return result;
+      }
+      if (type === 'dayOfWeek') {
+        const result = await JobTimeDB.getRecentDayOfWeek();
+        return result;
+      }
+      return [];
+    },
+  );
 };
 
 /**
  * 'sub-job-time' : 세부 작업시간 불러오기 이벤트
  */
 const subJobTimeHandler = () => {
-  ipcMain.handle('sub-job-time', async (_event, { application, type, date }) => {
-    if (type === 'daily') {
-      const result = await SubJobTimeDB.getByDay(application, date);
-      return result;
-    }
-    if (type === 'weekly') {
-      const result = await SubJobTimeDB.getRecentWeek(application);
-      return result;
-    }
-    return [];
-  });
+  ipcMain.handle(
+    'sub-job-time',
+    async (_event, { application, type, date }) => {
+      if (type === 'daily') {
+        const result = await SubJobTimeDB.getByDay(application, date);
+        return result;
+      }
+      if (type === 'weekly') {
+        const result = await SubJobTimeDB.getRecentWeek(application);
+        return result;
+      }
+      return [];
+    },
+  );
 };
 
 export default jobTimeHandler;

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function CreateChart() {
@@ -7,15 +7,10 @@ function CreateChart() {
   const [_dummy, setDummy] = useState<string>('');
 
   useEffect(() => {
-    // window.electron.ipcRenderer.sendMessage("size", {
-    //   width: 300,
-    //   height: 300,
-    // });
-    // (async () => {
-    //   const dailyJobs = await ipcRenderer.invoke('job-time', 'day', new Date());
-    //   console.log(dailyJobs);
-    //   navigate('/createchart', { state: { dailyJobs } });
-    // })();
+    (async () => {
+      const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
+      navigate('/createdchart', { state: { weeklyJobs } });
+    })();
   }, []);
 
   return <div>sdafjlksadjflksadjklfs</div>;

@@ -39,6 +39,7 @@ const mailHandler = () => {
   accountSaveHandler();
   accountRequestHandler();
   accountDeleteHandler();
+  mailTestHandler();
 };
 
 /**
@@ -57,7 +58,11 @@ const mailRequestHandler = () => {
 const deleteMailHandler = () => {
   ipcMain.on('deleteMail', (_event, mail) => {
     for (let i = 0; i < mails.length; ++i) {
-      if (mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host) {
+      if (
+        mails[i].seq === mail.seq &&
+        mails[i].to === mail.to &&
+        mails[i].host === mail.host
+      ) {
         // 해당 메일 삭제
         mails.splice(i, 1);
         return;
@@ -108,7 +113,9 @@ const mailReceiveHandler = async () => {
   const accounts = await dbInstance.getAll();
   console.log('accounts', accounts);
   for (let i = 0; i < accounts.length; ++i) {
-    let name = accounts[i].id + (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+    let name =
+      accounts[i].id +
+      (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
     const received = {};
     received['name'] = name;
     received['array'] = [];
@@ -130,7 +137,7 @@ const mailReceiveHandler = async () => {
     timer['timerId'] = timerId;
     mainVariables.mailListners.push(timer);
     console.log(mainVariables.mailListners);
-    await setTimeout(()=>{}, 1000);
+    await setTimeout(() => {}, 1000);
   }
 };
 
@@ -161,10 +168,10 @@ const addMailListener = (id: string, password: string, host: string) => {
 const mailTestHandler = () => {
   setTimeout(async () => {
     const chartWindow = new BrowserWindow({
-      width: 300,
-      height: 300,
-      show: false,
-      transparent: true,
+      width: 600,
+      height: 600,
+      show: true,
+      transparent: false,
       focusable: false,
       frame: false,
       webPreferences: {
