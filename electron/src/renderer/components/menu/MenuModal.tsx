@@ -11,6 +11,7 @@ import login from '../../../../assets/icons/login.svg';
 import close from '../../../../assets/icons/close.svg';
 import weather from '../../../../assets/icons/weather.svg';
 import music from '../../../../assets/icons/music.svg';
+import report from '../../../../assets/icons/report.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
@@ -25,6 +26,7 @@ function MenuModal() {
     { close },
     { weather },
     { email: login },
+    { createchart: report },
   ];
 
   const handleWheel = (event) => {

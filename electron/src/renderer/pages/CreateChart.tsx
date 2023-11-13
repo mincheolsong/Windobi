@@ -6,9 +6,9 @@ function CreateChart() {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     (async () => {
-      const weeklyJobs = await ipcRenderer.invoke('job-time', 'week');
-      console.log(weeklyJobs);
+      const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
       navigate('/createdchart', { state: { weeklyJobs } });
     })();
   }, []);

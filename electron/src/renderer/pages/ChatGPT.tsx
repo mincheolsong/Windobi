@@ -49,6 +49,7 @@ function ChatGPT() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     setChat((chat) => [...chat, { type: 1, content: prompt }]);
 
@@ -75,6 +76,11 @@ function ChatGPT() {
     setPrompt('');
   };
 
+  const enterKey = (e) => {
+    if (e.keyCode === 13) {
+      handleSubmit(e);
+    }
+  };
   // chat이 변경될 때 마다 scroll을 항상 아래로 내리기 위함
   useEffect(() => {
     messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -110,6 +116,7 @@ function ChatGPT() {
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          onKeyUp={(e) => enterKey(e)}
           style={{
             height: '100%',
             border: 'none',

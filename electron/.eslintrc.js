@@ -32,6 +32,8 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'no-nested-ternary': 'warn',
     'no-plusplus': 'off',
+    'jsx-a11y/no-noninteractive-element-interactions': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

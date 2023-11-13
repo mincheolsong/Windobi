@@ -27,19 +27,16 @@ const LeftAround = styled.div`
   }
 `;
 const WeatherCard = styled.div`
-  background: transparent;
+
   font-family: GmarketSansTTFBold;
   border-radius: 10px;
-  padding: 20px;
+  background-color: rgba(48, 107, 121, 0.4);
+  overflow: auto;
   text-align: center;
-  max-width: 300px;
   margin: auto;
   color: white;
-  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
-  &:hover {
-    transition: all 0.1s linear;
-    transform: scale(1.1);
-  }
+  padding: 10px;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
 `;
 
 const CityName = styled.h2`
@@ -48,20 +45,31 @@ const CityName = styled.h2`
 `;
 
 const WeatherIcon = styled.img`
-  width: 100px;
-  height: 100px;
-  margin-bottom: 15px;
+  width: 50px;
+  height: 50px;
+  content: right;
 `;
 
 const WeatherInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  overflow-x: scroll;
+  // flex-direction: row;
+  // justify-content: center;
+  gap: 15px;
   align-items: center;
   span {
     font-size: 0.9em;
     margin-bottom: 10px;
   }
+  &::-webkit-scrollbar{
+    display: none;
+  }
+`;
+const RightAround = styled.div`
+  padding-right: 10px;
+  justify-content: center;
+  text-align: right;
+  font-size: 14px;
 `;
 
 export {
@@ -72,4 +80,5 @@ export {
   Warpper,
   SpaceAround,
   LeftAround,
+  RightAround,
 };

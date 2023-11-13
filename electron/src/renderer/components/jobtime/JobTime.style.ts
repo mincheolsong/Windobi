@@ -8,7 +8,12 @@ const Wrapper = styled.div`
   flex-direction: row;
 `;
 
-const Half = styled.div`
+const LeftWrapper = styled.div`
+  width: 50%;
+  height: 100%;
+  padding: 5px;
+`;
+const RightWrapper = styled.div`
   width: 50%;
   height: 100%;
 `;
@@ -69,4 +74,4 @@ const TypeText = styled.div`
   align-items: center;
 `;
 
-export { Wrapper, Half, Header, Left, Right, TypeText };
+export { Wrapper, LeftWrapper, RightWrapper, Header, Left, Right, TypeText };
