@@ -169,9 +169,9 @@ function MyApp() {
         <Route
           path="/registemail"
           element={
-            <SubWindow title="이메일 등록">
+            <SubWindowBack title="이메일 등록">
               <RegistEmail />
-            </SubWindow>
+            </SubWindowBack>
           }
         />
         <Route

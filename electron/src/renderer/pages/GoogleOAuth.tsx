@@ -36,16 +36,14 @@ function GoogleOAuth() {
   };
 
   useEffect(() => {
-    console.log('1');
+    window.electron.ipcRenderer.sendMessage('frameOn');
+
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,
       height: 500,
     });
-    window.electron.ipcRenderer.sendMessage('frameOn');
 
     oauthSignIn();
-
-    console.log('2');
   }, []);
 
   return <div></div>;

@@ -8,6 +8,7 @@ import login from '../../../assets/icons/login.svg';
 import close from '../../../assets/icons/close.svg';
 import weather from '../../../assets/icons/weather.svg';
 import music from '../../../assets/icons/music.svg';
+import report from '../../../assets/icons/report.svg';
 
 function MenuModal() {
   const [active, setActive] = useState(false);
@@ -23,6 +24,7 @@ function MenuModal() {
     { path: 'close', icon: close },
     { path: 'weather', icon: weather },
     { path: 'email', icon: login },
+    { path: 'createchart', icon: report },
   ];
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
@@ -33,7 +35,10 @@ function MenuModal() {
     }
   };
 
-  const reorderedItems = [...menuItems.slice(currentIndex), ...menuItems.slice(0, currentIndex)];
+  const reorderedItems = [
+    ...menuItems.slice(currentIndex),
+    ...menuItems.slice(0, currentIndex),
+  ];
 
   useEffect(() => {
     ipcRenderer.on('show-menu', () => {
@@ -65,8 +70,15 @@ function MenuModal() {
         {reorderedItems.map(({ path, icon }) => {
           return (
             <div className="rotater" key={path}>
-              <div className={`btn btn-icon ${path === 'close' && 'close-btn'}`}>
-                <img className="fa" src={icon} onClick={() => navigate(path)} alt={path} />
+              <div
+                className={`btn btn-icon ${path === 'close' && 'close-btn'}`}
+              >
+                <img
+                  className="fa"
+                  src={icon}
+                  onClick={() => navigate(path)}
+                  alt={path}
+                />
               </div>
             </div>
           );
