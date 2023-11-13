@@ -4,6 +4,7 @@ import { mainWindow, subWindow } from '../windows';
 import createReport from '../mail/createReport';
 import getMails from '../mail/mail';
 import { resolveHtmlPath } from '../util';
+import { truncateSync } from 'original-fs';
 
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
@@ -30,7 +31,7 @@ const mailHandler = () => {
   deleteMailHandler();
   mailSendHandler();
   mailReceiveHandler();
-  // mailTestHandler();
+  mailTestHandler();
 };
 
 /**
@@ -119,10 +120,10 @@ const mailReceiveHandler = () => {
 const mailTestHandler = () => {
   setTimeout(async () => {
     const chartWindow = new BrowserWindow({
-      width: 300,
-      height: 300,
+      width: 600,
+      height: 600,
       show: false,
-      transparent: true,
+      transparent: false,
       focusable: false,
       frame: false,
       webPreferences: {
