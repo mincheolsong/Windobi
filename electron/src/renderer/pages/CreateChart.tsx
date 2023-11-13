@@ -13,7 +13,7 @@ function CreateChart() {
     })();
   }, []);
 
-  return <div>sdafjlksadjflksadjklfs</div>;
+  return <div></div>;
 }
 
 export default CreateChart;
