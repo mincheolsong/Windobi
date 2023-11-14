@@ -1,4 +1,4 @@
-import { app, dialog, globalShortcut } from 'electron';
+import { app, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
@@ -96,6 +96,9 @@ app
         './shortcut/globalShortcutHandler'
       );
       globalShortcutHandler();
+
+      // 웹소켓
+      await import('./socket/chromeSocket');
 
       // 사용시간 체크
       await import('./jobtime/jobTime');
