@@ -87,6 +87,13 @@ const Body = styled.div`
 const MostLangTitle = styled.h3`
   margin-left: 19px;
 `;
+
+const GrassContainer = styled.div`
+  width: 520px;
+  height: 340px;
+  background: white;
+  padding-top: 15px;
+`;
 export {
   BarHeader,
   Bolder,
@@ -101,4 +108,5 @@ export {
   MostLangTitle,
   LastWeekContainer,
   LastWeekHeader,
+  GrassContainer,
 };
