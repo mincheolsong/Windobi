@@ -9,11 +9,20 @@ function CreateChart() {
   useEffect(() => {
     (async () => {
       const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
-      navigate('/createdchart', { state: { weeklyJobs } });
+      const lastWeekAvg = await ipcRenderer.invoke('job-time', 'lastWeekAvg');
+      const entireDevAmt = await ipcRenderer.invoke('sub-job-time', {
+        application: null,
+        type: 'entire',
+        date: null,
+      });
+
+      navigate('/createdchart', {
+        state: { weeklyJobs, lastWeekAvg, entireDevAmt },
+      });
     })();
   }, []);
 
-  return <div>sdafjlksadjflksadjklfs</div>;
+  return <div></div>;
 }
 
 export default CreateChart;

@@ -113,12 +113,15 @@ function PieChart({ application, day, type }: TPiechart) {
     <S.Wrapper>
       <S.Application>{application}</S.Application>
       <ResponsivePie
+        borderWidth={1}
+        cornerRadius={5}
         data={filtered}
-        colors={{ scheme: 'paired' }}
+        colors={{ scheme: 'nivo' }}
         tooltip={createToolTip}
         arcLabel={createArcLabel}
         valueFormat={getPercentage}
         enableArcLinkLabels={false}
+        innerRadius={0.4}
       />
     </S.Wrapper>
   );
