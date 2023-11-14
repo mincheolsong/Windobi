@@ -25,7 +25,7 @@ const registJobTimeHandler = () => {
     'job-time',
     async (
       _event,
-      type: 'day' | 'week' | 'dayOfWeek' | 'weekPerApplication' | 'lasyWeekAvg',
+      type: 'day' | 'week' | 'dayOfWeek' | 'weekPerApplication' | 'lastWeekAvg',
       target: Date,
     ) => {
       if (type === 'day') {
@@ -44,7 +44,7 @@ const registJobTimeHandler = () => {
         const result = await JobTimeDB.getRecentDayOfWeek();
         return result;
       }
-      if (type === 'lasyWeekAvg') {
+      if (type === 'lastWeekAvg') {
         const result = await JobTimeDB.getAvgTimeofLastWeek();
         return result;
       }
@@ -66,6 +66,10 @@ const subJobTimeHandler = () => {
       }
       if (type === 'weekly') {
         const result = await SubJobTimeDB.getRecentWeek(application);
+        return result;
+      }
+      if (type === 'entire') {
+        const result = await SubJobTimeDB.getDevelopAmount();
         return result;
       }
       return [];

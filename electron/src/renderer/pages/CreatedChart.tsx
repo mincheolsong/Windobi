@@ -4,6 +4,7 @@ import { toPng } from 'html-to-image';
 import BarChart from '../components/jobtime/BarChart';
 import { ipcRenderer } from 'electron';
 import { ResponsiveBar } from '@nivo/bar';
+import { ResponsiveTimeRange } from '@nivo/calendar';
 import * as S from '../components/report/Report.style';
 import RecentApplication from '../components/jobtime/RecentApplication';
 import PieChart from '../components/jobtime/PieChart';
@@ -12,6 +13,16 @@ type Data = {
   day: number;
   time: number;
 };
+
+type DataOfDev = {
+  day: number;
+  active_time: number;
+};
+
+interface ModifiedData {
+  day: string;
+  value: number;
+}
 
 function CreatedChart() {
   const { state } = useLocation();
@@ -29,6 +40,33 @@ function CreatedChart() {
 
   const result: Array<Data> = state.weeklyJobs;
   const lastWeek: Array<Data> = state.lastWeekAvg;
+  const entireDevAmt: Array<DataOfDev> = state.entireDevAmt;
+
+  const modifiedData: ModifiedData[] = entireDevAmt.map((item) => {
+    const dateString = item.day.toString();
+    const formattedDate = `${dateString.slice(0, 4)}-${dateString.slice(
+      4,
+      6,
+    )}-${dateString.slice(6, 8)}`;
+
+    return {
+      day: formattedDate,
+      value: Math.floor(item.active_time / 60),
+    };
+  });
+
+  let from = new Date();
+  let to = new Date();
+  from.setDate(from.getDate() - 90);
+
+  from = `${from.getFullYear()}-${(from.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${from.getDate().toString().padStart(2, '0')}`;
+
+  to = `${to.getFullYear()}-${(to.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${to.getDate().toString().padStart(2, '0')}`;
+
   const lastAvg = lastWeek[0].time / 7;
 
   // let { day: highestDay, time: highestTime } = result.reduce(
@@ -102,7 +140,7 @@ function CreatedChart() {
               data={result}
               keys={['time']}
               indexBy="day"
-              margin={{ top: 50, right: 50, bottom: 100, left: 50 }}
+              margin={{ top: 50, right: 40, bottom: 100, left: 40 }}
               padding={0.7}
               valueScale={{ type: 'linear' }}
               indexScale={{ type: 'band', round: true }}
@@ -149,6 +187,35 @@ function CreatedChart() {
           ></PieChart>
         </S.MostDetailContainer>
 
+        <S.GrassContainer>
+          <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>
+          <ResponsiveTimeRange
+            dayRadius={5}
+            data={modifiedData}
+            from={from}
+            to={to}
+            emptyColor="#eeeeee"
+            colors={['#b4d9fa', '#8ec8fa', '#51acfc', '#2694f5']}
+            margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+            dayBorderWidth={2}
+            dayBorderColor="#ffffff"
+            legends={[
+              {
+                anchor: 'bottom-right',
+                direction: 'row',
+                justify: false,
+                itemCount: 4,
+                itemWidth: 59,
+                itemHeight: 50,
+                itemsSpacing: 26,
+                itemDirection: 'right-to-left',
+                translateX: -70,
+                translateY: -70,
+                symbolSize: 23,
+              },
+            ]}
+          />
+        </S.GrassContainer>
         {/* <S.MostDetailContainer>
           <S.MostLangTitle>카톡</S.MostLangTitle>
           <PieChart
