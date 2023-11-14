@@ -99,7 +99,6 @@ function getMails(
         const match = received[0].array.filter((m) => m.seq === mails[i].seq); // 방금 받은 메일과 원래 있는 메일 겹침 여부 확인
         if (match.length === 0) {
           // 메일 받은 경우 !! 이벤트 발생
-          // mainWindow.webContents.send('mailReceiving', mails[i]); // 알림을 위해서
           subWindow.webContents.send('mailReceiving', mails[i]); // 갱신을 위해서
           if(received[0].array.length >= 3) {
             received[0].array.splice(0,1);
