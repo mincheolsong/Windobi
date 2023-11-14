@@ -6,6 +6,7 @@ type TJobTime = {
   application: string;
   icon: string;
   sum_of_active_time: number;
+  index: number;
 };
 
 function RecentApplication() {
@@ -33,10 +34,10 @@ function RecentApplication() {
 
   return (
     <S.Wrapper>
-      {jobTime.map(({ application, sum_of_active_time, icon }) => {
+      {jobTime.map(({ application, sum_of_active_time, icon, index }) => {
         return (
-          <S.ApplicationWrapper>
-            <img src={icon} alt={application} width={30} height={30} />
+          <S.ApplicationWrapper key={index}>
+            <S.Img src={icon} alt={application} />
             <div>{shortApplication(application)}</div>
             <div>{timeToString(sum_of_active_time)}</div>
           </S.ApplicationWrapper>
