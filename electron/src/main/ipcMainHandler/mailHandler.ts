@@ -37,11 +37,11 @@ const mailHandler = () => {
   deleteMailHandler();
   mailSendHandler();
   mailReceiveHandler();
-  // mailTestHandler();
   chartReceivingHadler();
   accountSaveHandler();
   accountRequestHandler();
   accountDeleteHandler();
+  reportTestHandler();
 };
 
 /**
@@ -60,7 +60,11 @@ const mailRequestHandler = () => {
 const deleteMailHandler = () => {
   ipcMain.on('deleteMail', (_event, mail) => {
     for (let i = 0; i < mails.length; ++i) {
-      if (mails[i].seq === mail.seq && mails[i].to === mail.to && mails[i].host === mail.host) {
+      if (
+        mails[i].seq === mail.seq &&
+        mails[i].to === mail.to &&
+        mails[i].host === mail.host
+      ) {
         // 해당 메일 삭제
         mails.splice(i, 1);
         return;
@@ -131,7 +135,9 @@ const mailReceiveHandler = async () => {
   const accounts = await dbInstance.getAll();
   console.log('accounts', accounts);
   for (let i = 0; i < accounts.length; ++i) {
-    let name = accounts[i].id + (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+    let name =
+      accounts[i].id +
+      (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
     const received = {};
     received['name'] = name;
     received['array'] = [];
@@ -153,7 +159,7 @@ const mailReceiveHandler = async () => {
     timer['timerId'] = timerId;
     mainVariables.mailListners.push(timer);
     console.log(mainVariables.mailListners);
-    await setTimeout(() => { }, 1000);
+    await setTimeout(() => {}, 1000);
   }
 };
 
@@ -179,16 +185,16 @@ const addMailListener = (id: string, password: string, host: string) => {
 };
 
 /**
- * 'test' : 메일 테스트
+ * 'test' : 보고서 테스트
  */
-const mailTestHandler = () => {
+const reportTestHandler = () => {
   setTimeout(async () => {
     const chartWindow = new BrowserWindow({
-      width: 300,
-      height: 300,
-      show: false,
-      transparent: true,
-      focusable: false,
+      width: 1400,
+      height: 800,
+      show: true,
+      transparent: false,
+      focusable: true,
       frame: false,
       webPreferences: {
         preload: app.isPackaged
@@ -198,6 +204,7 @@ const mailTestHandler = () => {
     });
     await chartWindow.loadURL(resolveHtmlPath('index.html'));
     chartWindow.webContents.send('sub', 'createchart');
+    chartWindow.webContents.toggleDevTools();
   }, 5000);
 };
 
