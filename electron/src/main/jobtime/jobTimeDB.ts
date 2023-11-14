@@ -169,7 +169,7 @@ const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
 };
 
 /**
- * 최근 지난주 평균 사용시간
+ * 지난주 평균 사용시간
  * @returns { Array<Job> }
  */
 const getAvgTimeofLastWeek = (): Promise<Array<TJob>> => {
@@ -180,7 +180,6 @@ const getAvgTimeofLastWeek = (): Promise<Array<TJob>> => {
   end.setDate(weekAgo.getDate() - 6);
   const targetStart = dateToNumber(start);
   const targetEnd = dateToNumber(end);
-  console.log(targetStart, ' ,', targetEnd);
   return new Promise((resolve, reject) => {
     return instance.all(
       // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'

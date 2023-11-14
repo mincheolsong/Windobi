@@ -167,7 +167,7 @@ const addMailListener = (id: string, password: string, host: string) => {
 const reportTestHandler = () => {
   setTimeout(async () => {
     const chartWindow = new BrowserWindow({
-      width: 1400,
+      width: 1500,
       height: 800,
       show: true,
       transparent: false,

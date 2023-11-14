@@ -6,6 +6,7 @@ import { app } from 'electron';
 import { TSubActiveMap, TSubJobTime } from './jobTime.d';
 
 type TSubJob = Pick<TSubJobTime, 'sub_application' | 'active_time'>;
+type TSubJobAmt = Pick<TSubJobTime, 'day' | 'active_time'>;
 
 const sqlite3 = sqlite.verbose();
 
@@ -20,7 +21,8 @@ if (!fs.existsSync(DB_FILE)) {
 
 const TABLE_NAME = 'sub_job_time';
 const dateToNumber = (date: Date) => {
-  const numberDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+  const numberDate =
+    date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
   return numberDate;
 };
 
@@ -135,4 +137,26 @@ const getRecentWeek = (application: string): Promise<Array<TSubJob>> => {
   });
 };
 
-export { insertAll, getByDay, getRecentWeek };
+/**
+ * 6개월 간 개발 시간 (Visual Studio Code, IntelliJ IDEA)
+ * @returns { Promise<Array<TSubJobAmt>> }
+ */
+const getDevelopAmount = (): Promise<Array<TSubJob>> => {
+  const halfAgo = new Date();
+  halfAgo.setDate(halfAgo.getDate() - 180);
+  const target = dateToNumber(halfAgo);
+
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      `SELECT day, sum(active_time) as active_time FROM ${TABLE_NAME} where day >= ${target} and (application = 'Visual Studio Code' or application = 'IntelliJ IDEA') group by day`,
+      (err, rows: Array<TSubJobAmt>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+export { insertAll, getByDay, getRecentWeek, getDevelopAmount };
