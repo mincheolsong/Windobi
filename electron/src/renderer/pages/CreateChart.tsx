@@ -9,7 +9,9 @@ function CreateChart() {
   useEffect(() => {
     (async () => {
       const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
-      navigate('/createdchart', { state: { weeklyJobs } });
+      const lastWeekAvg = await ipcRenderer.invoke('job-time', 'lasyWeekAvg');
+      console.log(lastWeekAvg);
+      navigate('/createdchart', { state: { weeklyJobs, lastWeekAvg } });
     })();
   }, []);
 

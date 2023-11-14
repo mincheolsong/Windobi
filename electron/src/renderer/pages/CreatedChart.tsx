@@ -28,18 +28,29 @@ function CreatedChart() {
   }, []);
 
   const result: Array<Data> = state.weeklyJobs;
-  console.log(result);
-  let { day: highestDay, time: highestTime } = result.reduce(
-    (max, current) => (current.time > max.time ? current : max),
-    result[0],
-  );
-  const highestHour = Math.floor(highestTime, 0);
-  const highestMin = Math.floor((highestTime % 1) * 60, 0);
+  const lastWeek: Array<Data> = state.lastWeekAvg;
+  const lastAvg = lastWeek[0].time / 7;
+
+  // let { day: highestDay, time: highestTime } = result.reduce(
+  //   (max, current) => (current.time > max.time ? current : max),
+  //   result[0],
+  // );
+  // const highestHour = Math.floor(highestTime, 0);
+  // const highestMin = Math.floor((highestTime % 1) * 60, 0);
 
   const timeSum: number = result.reduce((sum, data) => sum + data.time, 0);
   const timeAvg: number = timeSum / result.length;
   const timeAvgHour: number = Math.floor(timeAvg, 0);
   const timeAvgMin: number = Math.floor((timeAvg % 1) * 60, 0);
+
+  const lastAvgHour: number = Math.floor(lastAvg, 0);
+  const lastAvgMin: number = Math.floor((lastAvg % 1) * 60, 0);
+
+  const avgDiff = timeAvg - lastAvg; // 양수 : 더 많이 사용, 음수 : 덜 사용
+
+  const absAvgDiff = Math.abs(avgDiff);
+  const absAvgDiffHour: number = Math.floor(absAvgDiff, 0);
+  const absAvgDiffMin: number = Math.floor((absAvgDiff % 1) * 60, 0);
 
   return (
     <div
@@ -75,6 +86,19 @@ function CreatedChart() {
             <S.Lighter>하루 평균 사용시간</S.Lighter>
 
             <ResponsiveBar
+              markers={[
+                {
+                  axis: 'y',
+                  value: timeAvg,
+                  legend: '평균',
+                  lineStyle: {
+                    stroke: 'red',
+                  },
+                  textStyle: {
+                    fill: 'red',
+                  },
+                },
+              ]}
               data={result}
               keys={['time']}
               indexBy="day"
@@ -102,13 +126,22 @@ function CreatedChart() {
             />
           </S.BarContainer>
 
+          <S.LastWeekContainer>
+            지난주 보다&nbsp;
+            <S.LastWeekHeader>
+              <S.Bolder> {absAvgDiffHour}</S.Bolder>시간{' '}
+              <S.Bolder> {absAvgDiffMin} </S.Bolder>분&nbsp;
+            </S.LastWeekHeader>
+            {avgDiff < 0 ? <p> 덜 사용 했습니다</p> : <p> 더 사용 했습니다</p>}
+          </S.LastWeekContainer>
+
           <S.MostAppContainer>
             <S.MostTitle>많이 사용한 앱</S.MostTitle>
             <RecentApplication></RecentApplication>
           </S.MostAppContainer>
         </div>
         <S.MostDetailContainer>
-          <S.MostLangTitle>사용한 언어</S.MostLangTitle>
+          <S.MostLangTitle>사용 언어</S.MostLangTitle>
           <PieChart
             application="Visual Studio Code"
             day={new Date()}
@@ -116,14 +149,14 @@ function CreatedChart() {
           ></PieChart>
         </S.MostDetailContainer>
 
-        <S.MostDetailContainer>
+        {/* <S.MostDetailContainer>
           <S.MostLangTitle>카톡</S.MostLangTitle>
           <PieChart
             application="KakaoTalk"
             day={new Date()}
             type="weekly"
           ></PieChart>
-        </S.MostDetailContainer>
+        </S.MostDetailContainer> */}
       </S.Body>
     </div>
   );
