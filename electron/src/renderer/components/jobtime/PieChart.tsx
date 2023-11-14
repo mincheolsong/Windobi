@@ -112,6 +112,7 @@ function PieChart({ application, day, type }: TPiechart) {
     <S.Wrapper>
       <S.Application>{application}</S.Application>
       <ResponsivePie
+        margin={{ right: 5, left: 5 }}
         borderWidth={1}
         cornerRadius={5}
         data={filtered}
