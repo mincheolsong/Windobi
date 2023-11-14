@@ -7,10 +7,9 @@ const path = require('node:path');
 const fs = require('fs');
 const { app } = require('electron');
 
-const RESOURCES_PATH =
-  process.env.NODE_ENV === 'development'
-    ? path.join(__dirname, '../../../assets')
-    : path.join(process.resourcesPath, 'assets');
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '..', '..', '..', 'assets');
 
 const DB_FILE = path.join(RESOURCES_PATH, 'database.db');
 
