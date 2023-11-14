@@ -81,11 +81,12 @@ function PieChart({ application, day, type }: TPiechart) {
     });
     setTotalActiveTime(acc);
 
+    // 일정 비율이 넘어가지않는 것들에 대해서는 합쳐서 '기타'로 표시
     const result = data.filter((item) => {
-      return item.value / acc >= 0.1;
+      return item.value / acc >= 0.05;
     });
     const etcs = data.filter((item) => {
-      return item.value / acc < 0.1;
+      return item.value / acc < 0.05;
     });
 
     const sumOfEtc = etcs

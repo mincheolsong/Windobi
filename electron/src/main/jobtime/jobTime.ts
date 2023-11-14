@@ -2,6 +2,7 @@ import ActiveWindow, { WindowInfo } from '@paymoapp/active-window';
 import { SubActivemapValue, TActiveMap, TSubActiveMap } from './jobTime.d';
 import * as JobDB from './jobTimeDB';
 import * as SubJobDB from './subJobTimeDB';
+import { variables as chromeVariables } from '../socket/chromeSocket';
 
 const TICK_TIME = 10; // TIME_TICK당 한번씩 사용중인 프로그램을 수집
 const SAVE_TICK = 6;
@@ -58,7 +59,9 @@ const processSubJobTime = (activeWindow: WindowInfo) => {
         // application에 대해 정보가 없었으면 넣자
         subActiveMap.set(application, new Map());
       }
-      const subApplicationMap = subActiveMap.get(application) as SubActivemapValue;
+      const subApplicationMap = subActiveMap.get(
+        application,
+      ) as SubActivemapValue;
       if (!subApplicationMap.has(sub_application)) {
         subApplicationMap.set(sub_application, 0);
       }
@@ -147,8 +150,12 @@ function kakaoTalkHandler(activeWindow: WindowInfo): TRoom {
  * @param { WindowInfo } activeWindow
  * @returns {string} 탭 이름
  */
-type TTab = string;
+type TTab = string | null;
 function chromeHandler(activeWindow: WindowInfo): TTab {
+  if (chromeVariables.established) {
+    return chromeVariables.curretActiveTitle;
+  }
+
   const { title } = activeWindow;
   let index = title.lastIndexOf(' - ');
   if (index === -1) return title;
@@ -157,7 +164,10 @@ function chromeHandler(activeWindow: WindowInfo): TTab {
   index = sub_application.lastIndexOf(' - ');
   if (index === -1) return sub_application;
 
-  sub_application = sub_application.substring(index + 3, sub_application.length);
+  sub_application = sub_application.substring(
+    index + 3,
+    sub_application.length,
+  );
   return sub_application;
 }
 // #endregion
