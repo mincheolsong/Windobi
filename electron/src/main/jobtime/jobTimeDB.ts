@@ -20,7 +20,8 @@ type TJob = Omit<TJobTime, 'day'>;
 
 const TABLE_NAME = 'job_time';
 const dateToNumber = (date: Date) => {
-  const numberDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+  const numberDate =
+    date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
   return numberDate;
 };
 
@@ -120,10 +121,10 @@ const getByDay = (day: Date): Promise<Array<TJob>> => {
   });
 };
 
-//   /**
-//    * 최근 7일간의 활동 정보
-//    * @returns { Array<Job> }
-//    */
+/**
+ * 최근 7일간의 활동 정보
+ * @returns { Array<Job> }
+ */
 const getRecentWeek = (): Promise<Array<TJob>> => {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 6);
@@ -143,4 +144,93 @@ const getRecentWeek = (): Promise<Array<TJob>> => {
   });
 };
 
-export { insertAll, getAll, getByDay, getRecentWeek };
+/**
+ * 최근 7일간의 활동 정보 (요일별)
+ * @returns { Array<Job> }
+ */
+const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 6);
+
+  const target = dateToNumber(weekAgo);
+
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'
+      `SELECT substr(day,5,2) || '월' || substr(day,7,2) || '일' as day, round(sum(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${target} group by day`,
+      (err, rows: Array<TJobTime>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+/**
+ * 최근 지난주 평균 사용시간
+ * @returns { Array<Job> }
+ */
+const getAvgTimeofLastWeek = (): Promise<Array<TJob>> => {
+  const weekAgo = new Date();
+  const start = new Date();
+  const end = new Date();
+  start.setDate(weekAgo.getDate() - 13);
+  end.setDate(weekAgo.getDate() - 6);
+  const targetStart = dateToNumber(start);
+  const targetEnd = dateToNumber(end);
+  console.log(targetStart, ' ,', targetEnd);
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'
+      // `SELECT round(avg(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${start} and day < ${end}`
+      `SELECT round(sum(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${targetStart} and day < ${targetEnd}`,
+      (err, rows: Array<TJobTime>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+/**
+ * 최근 7일간의 활동 정보를 application별로 반환
+ */
+type TJobTimePerApplication = {
+  application: string;
+  active_time: number;
+  icon: string;
+};
+const getRecentWeekPerApplication = (): Promise<
+  Array<TJobTimePerApplication>
+> => {
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 6);
+
+  const target = dateToNumber(weekAgo);
+
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      `SELECT application, sum(active_time) as sum_of_active_time, icon FROM ${TABLE_NAME} where day >= ${target} group by application order by sum_of_active_time desc`,
+      (err, rows: Array<TJobTimePerApplication>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+export {
+  insertAll,
+  getAll,
+  getByDay,
+  getRecentWeek,
+  getRecentDayOfWeek,
+  getRecentWeekPerApplication,
+  getAvgTimeofLastWeek,
+};

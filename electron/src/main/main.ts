@@ -15,7 +15,8 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDebug =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
@@ -91,7 +92,9 @@ app
       windowsHandler();
       moveHandler();
 
-      const { default: globalShortcutHandler } = await import('./shortcut/globalShortcutHandler');
+      const { default: globalShortcutHandler } = await import(
+        './shortcut/globalShortcutHandler'
+      );
       globalShortcutHandler();
 
       // 사용시간 체크
