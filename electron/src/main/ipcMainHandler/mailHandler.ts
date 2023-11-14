@@ -16,6 +16,8 @@ const mails: Array<TMail> = []; // 이제껏 수신한 메일들을 보관하는
 let mailAddress: string | null = null;
 let mailPassword: string | null = null;
 let mailHost: string | null = null;
+let mailPort: number | null = null;
+let mailSecure: boolean | null = null;
 
 type TMail = {
   seq: number;
@@ -75,31 +77,48 @@ const mailSendHandler = async () => {
   if (accounts.length > 0) {
     mailAddress = accounts[0].id;
     mailPassword = accounts[0].password;
-    mailHost = accounts[0].host;
-    console.log(mailAddress, mailPassword, mailHost);
+
+    if (accounts[0].host === "imap.naver.com") {
+      mailHost = "smtp.naver.com";
+      mailPort = 587;
+      mailSecure = false;
+    } else if (accounts[0].host === "imap.daum.net") {
+      mailHost = "smtp.daum.net";
+      mailPort = 465;
+      mailSecure = true;
+    }
+
     const transporter = nodemailer.createTransport({
       host: mailHost,
-      secure: true, // 다른 포트를 사용해야 되면 false값을 주어야 합니다.
-      // port: 587,   //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
+      secure: mailSecure, // 다른 포트를 사용해야 되면 false값을 주어야 합니다.
+      port: mailPort,   //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
       auth: {
         user: mailAddress,
         pass: mailPassword,
       },
     });
+    const RESOURCES_PATH = app.isPackaged
+      ? path.join(process.resourcesPath, 'assets')
+      : path.join(__dirname, '../../../assets');
 
-    cron.schedule(`55 17 * * 1 `, () => {
-      const cur = new Date();
+
+    cron.schedule(`00 17 * * 5 `, async () => {
+      console.log(transporter);
+      const FILE = path.join(RESOURCES_PATH, 'a4.pdf'); // assets 폴더에 레포트 저장하고 맞춰주면 된다.
       let account = `${mailAddress}@` + (accounts[0].host === "imap.naver.com" ? 'naver.com' : 'daum.net');
-      console.log(account);
-      let info = transporter.sendMail({
-        from: account,
-        to: account,
-        subject: `${cur.toLocaleString()} 보고서 입니다.`,
-        text: "hi",
-        attachments: []
-      });
+      try {
+        transporter.sendMail({
+          from: account,
+          to: account,
+          subject: `${new Date().toLocaleString()} 보고서 입니다.`, // 제목
+          text: "hi", // 내용
+          attachments: [{ filename: "report.pdf", content: fs.createReadStream(FILE)}]
+        });
+      } catch (error) {
+        console.log(error);
+      }
 
-      console.log("seding!!");
+
       // 5시마다 보고서 보내기
     });
   }
@@ -261,7 +280,7 @@ const accountDeleteHandler = () => {
     // 이메일 계정 삭제
     dbInstance.deleteByIdAndHost(email.id, email.host);
     let name =
-    email.id + (email.host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+      email.id + (email.host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
     const timer = mainVariables.mailListners.filter((m) => m.key === name);
     // 기존에 실행중이던 이메일 리스너 끄기
     clearInterval(timer[0].timerId);
