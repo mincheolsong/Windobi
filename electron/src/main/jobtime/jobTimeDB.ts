@@ -174,15 +174,18 @@ const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
  */
 const getAvgTimeofLastWeek = (): Promise<Array<TJob>> => {
   const weekAgo = new Date();
-  const start = weekAgo.setDate(weekAgo.getDate() - 13);
-  const end = weekAgo.setDate(weekAgo.getDate() - 6);
-
-  const target = dateToNumber(weekAgo);
-
+  const start = new Date();
+  const end = new Date();
+  start.setDate(weekAgo.getDate() - 13);
+  end.setDate(weekAgo.getDate() - 6);
+  const targetStart = dateToNumber(start);
+  const targetEnd = dateToNumber(end);
+  console.log(targetStart, ' ,', targetEnd);
   return new Promise((resolve, reject) => {
     return instance.all(
       // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'
-      `SELECT round(avg(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${start} and day < ${end}`,
+      // `SELECT round(avg(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${start} and day < ${end}`
+      `SELECT round(sum(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${targetStart} and day < ${targetEnd}`,
       (err, rows: Array<TJobTime>) => {
         if (err) {
           return reject(err);

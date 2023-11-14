@@ -7,6 +7,23 @@ const BarHeader = styled.div`
   align-items: center;
 `;
 
+const LastWeekHeader = styled.div`
+  display: flex;
+  font-size: 22px;
+  align-items: center;
+`;
+
+const LastWeekContainer = styled.div`
+  display: flex;
+  align-items: center;
+  background: white;
+  // border-radius: 0px 0px 15px 15px;
+
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-left: 19px;
+`;
+
 const Title = styled.h2`
   padding-top: 29px;
   margin-bottom: 4px;
@@ -27,15 +44,16 @@ const Lighter = styled.div`
 const BarContainer = styled.div`
   height: 400px;
   background: white;
-  margin: 5px 20px;
-  border-radius: 15px;
+  margin: 5px 20px 0px 20px;
+  // border-radius: 15px 15px 0px 0px;
+
   padding: 10px;
 `;
 
 const MostAppContainer = styled.div`
   background: white;
   margin: 15px 20px 0px 20px;
-  border-radius: 15px;
+  // border-radius: 15px;
   padding: 10px;
 `;
 
@@ -51,10 +69,10 @@ const MostTitle = styled.h3`
 
 const MostDetailContainer = styled.div`
   width: 400px;
-  height: 558px;
+  height: 607px;
   margin-top: 5px;
   background: white;
-  border-radius: 15px;
+  // border-radius: 15px;
   padding-top: 15px;
   margin-right: 20px;
 `;
@@ -81,4 +99,6 @@ export {
   MostDetailContainer,
   Body,
   MostLangTitle,
+  LastWeekContainer,
+  LastWeekHeader,
 };
