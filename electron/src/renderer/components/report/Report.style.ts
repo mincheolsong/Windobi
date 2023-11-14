@@ -90,7 +90,7 @@ const MostLangTitle = styled.h3`
 
 const GrassContainer = styled.div`
   width: 520px;
-  height: 340px;
+  height: 324px;
   background: white;
   padding-top: 15px;
 `;
