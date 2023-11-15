@@ -105,7 +105,7 @@ const mailSendHandler = async () => {
       ? path.join(process.resourcesPath, 'assets')
       : path.join(__dirname, '../../../assets');
 
-    cron.schedule(`00 17 * * 5 `, async () => {
+    cron.schedule(`10 * * * * `, async () => {
       console.log(transporter);
       const FILE = path.join(RESOURCES_PATH, 'report.png'); // assets 폴더에 레포트 저장하고 맞춰주면 된다.
       let account =

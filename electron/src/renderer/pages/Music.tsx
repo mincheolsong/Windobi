@@ -9,7 +9,7 @@ import sam from '../../../assets/sam.json';
 const m = sam.moon;
 const { ipcRenderer } = window.electron;
 const playlist_prefix = 'https://music.youtube.com/browse/VL';
-let example_json = `
+const example_json = `
 [
   {"song": "Hurt", "artist": "Johnny Cash"},
   {"song": "Someone Like You", "artist": "Adele"},
@@ -62,11 +62,11 @@ function Music() {
   // };
 
   useEffect(() => {
+    ipcRenderer.sendMessage('windowOpened');
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
       height: 310,
     });
-    ipcRenderer.sendMessage('windowOpened');
     settingOpenAi();
   }, []);
 
@@ -78,14 +78,14 @@ function Music() {
       // openai에게 추천받기
       const openaiResponse = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
-        messages: messages,
+        messages,
       });
 
       const parsedOpenaiResponse = JSON.parse(
         openaiResponse.choices[0].message.content,
       ); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
 
-      console.log('1. openai : ' + JSON.stringify(parsedOpenaiResponse));
+      console.log(`1. openai : ${JSON.stringify(parsedOpenaiResponse)}`);
       // youtube에 playlist만들기
       const playListResponse = await axios.post(
         `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${m}`,
@@ -106,7 +106,7 @@ function Music() {
 
       playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디 (insertitem 할때 필요한 값)
 
-      console.log('2. playlistId : ' + playlistId);
+      console.log(`2. playlistId : ${playlistId}`);
 
       const playlistUrl = `${playlist_prefix}${playlistId}`;
       for (let i = 0; i < parsedOpenaiResponse.length; i++) {
@@ -117,7 +117,7 @@ function Music() {
 
         videoId = youtubeSearchResponse.data.items[0].id.videoId; // insertitem할때 필요한 값
 
-        console.log('3. videoId : ' + videoId);
+        console.log(`3. videoId : ${videoId}`);
         const playListItemsResponse = await axios.post(
           `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${m}`,
           {
@@ -136,7 +136,7 @@ function Music() {
           },
         );
 
-        console.log('4. playListItemsResponse : ' + playListItemsResponse);
+        console.log(`4. playListItemsResponse : ${playListItemsResponse}`);
         setLoading(false);
         setPlaylistUrl(playlistUrl);
         setPrompt('');
@@ -157,7 +157,7 @@ function Music() {
               setPrompt(e.target.value);
             }}
             placeholder="   코딩할 때 듣기 좋은 노래"
-          ></S.TitleInput>
+          />
           {/* <S.CountInput
             onChange={(e) => {
               setCount(e.target.valueAsNumber);
@@ -172,11 +172,7 @@ function Music() {
           onClick={handleSubmit}
           disabled={loading || prompt.length === 0}
         >
-          {loading === true ? (
-            <S.Loading></S.Loading>
-          ) : (
-            <S.playImg src={playBtn}></S.playImg>
-          )}
+          {loading === true ? <S.Loading /> : <S.playImg src={playBtn} />}
         </S.PlayButton>
       </S.Body>
 

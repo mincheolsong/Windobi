@@ -1,13 +1,18 @@
 /* eslint-disable react/self-closing-comp */
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as S from '../components/notification/MailContent.style';
-import TMail from '../components/notification/TMail';
 
 function MailContent() {
+  const { ipcRenderer } = window.electron;
   const location = useLocation();
   const { mail } = location.state;
 
-  window.electron.ipcRenderer.sendMessage('size', { width: 300, height: 400 });
+  useEffect(() => {
+    ipcRenderer.sendMessage('windowOpened');
+    ipcRenderer.sendMessage('size', { width: 300, height: 400 });
+  }, []);
+
   if (!mail) {
     return <h2>Not</h2>;
   }
@@ -27,7 +32,9 @@ function MailContent() {
           {mail.subject}
         </S.Text>
         <S.Time>
-          {mail.date === undefined || mail.date === null ? '' : mail.date.toLocaleString()}
+          {mail.date === undefined || mail.date === null
+            ? ''
+            : mail.date.toLocaleString()}
         </S.Time>
       </S.Subject>
       <S.Line />
