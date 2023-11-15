@@ -30,6 +30,7 @@ const Input = styled.div`
 
 const TitleInput = styled.input`
   border: none;
+  padding-left: 17px;
   border-radius: 10px;
   height: 100%;
   width: 200px;
