@@ -144,6 +144,7 @@ const onChangeSizeSub = ({
   subVariables.height = height;
 
   const { afterX, afterY } = nextPosition();
+
   subWindow.setBounds({
     x: afterX,
     y: afterY,
