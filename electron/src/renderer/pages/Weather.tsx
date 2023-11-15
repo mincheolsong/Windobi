@@ -1,3 +1,4 @@
+/* eslint-disable promise/valid-params */
 import { useEffect, useState, useRef } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import * as S from '../components/weather/Weather.style';
@@ -200,7 +201,6 @@ function Weather() {
           maxTemp = Math.max(maxTemp, Number.parseInt((object.main.temp - 273.15).toFixed(0), 10));
           minTemp = Math.min(minTemp, Number.parseInt((object.main.temp - 273.15).toFixed(0), 10));
         }
-        console.log(maxTemp, minTemp);
         const getDay = (dt: number): string => {
           return numberToDay[new Date(dt * 1000).getDay()];
         };
@@ -254,7 +254,7 @@ function Weather() {
           };
         });
       })
-      .catch((error) => console.log(error));
+      .catch();
 
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,
