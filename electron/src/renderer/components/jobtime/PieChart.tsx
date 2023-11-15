@@ -1,8 +1,16 @@
+/* eslint-disable no-return-assign */
+/* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-// import { PieChart as Pie, PieValueType } from '@mui/x-charts';
+import {
+  ComputedDatum,
+  DatumId,
+  MayHaveLabel,
+  PieTooltipProps,
+  ResponsivePie,
+} from '@nivo/pie';
 import * as S from './PieChart.style';
+import { timeToString } from '../../util';
 
 type TPiechart = {
   application: string;
@@ -10,89 +18,133 @@ type TPiechart = {
   type: 'daily' | 'weekly';
 };
 
-function PieChart({ application, day, type }: TPiechart) {
-  return <div>파이차트 예정</div>;
-
-  // const [data, setData] = useState<Array<PieValueType>>([]);
-  // const [totalActiveTime, setTotalActiveTime] = useState<number>(1);
-  // const [filtered, setFiltered] = useState<Array<PieValueType>>([]);
-
-  // const { ipcRenderer } = window.electron;
-
-  // const getPercentage = (item: PieValueType) => {
-  //   const percent = item.value / totalActiveTime;
-  //   return percent * 100;
-  // };
-
-  // useEffect(() => {
-  //   if (!application) {
-  //     setData([]);
-  //     return;
-  //   }
-
-  //   (async () => {
-  //     const result = await ipcRenderer.invoke('sub-job-time', {
-  //       application,
-  //       date: day,
-  //       type,
-  //     });
-
-  //     const d = result.map((r: { sub_application: any; active_time: any }) => {
-  //       const { sub_application, active_time } = r;
-  //       return {
-  //         id: sub_application,
-  //         value: active_time,
-  //         label: sub_application,
-  //       };
-  //     });
-
-  //     setData(d);
-  //   })();
-  // }, [application, day]);
-
-  // useEffect(() => {
-  //   let acc = 0;
-  //   data.forEach((d) => {
-  //     acc += d.value;
-  //   });
-  //   setTotalActiveTime(acc);
-
-  //   const result = data.filter((item) => {
-  //     return item.value / acc >= 0.1;
-  //   });
-  //   const etcs = data.filter((item) => {
-  //     return item.value / acc < 0.1;
-  //   });
-
-  //   const sumOfEtc = etcs.map((e) => e.value).reduce((accu, curr) => accu + curr, 0);
-
-  //   if (sumOfEtc !== 0) result.push({ id: '기타', value: sumOfEtc, label: '기타' });
-
-  //   setFiltered(result);
-  // }, [data]);
-
-  // return (
-  //   <>
-  //     <S.Application>{application}</S.Application>
-  //     <S.Centerize>
-  //       {/* <Pie
-  //         series={[
-  //           {
-  //             data: filtered,
-  //             arcLabel: (i) => `${getPercentage(i).toFixed(0)}%`,
-  //             sortingValues: 'desc',
-  //           },
-  //         ]}
-  //         width={220}
-  //         height={220}
-  //         margin={{ top: 10, bottom: 10, left: 10, right: 10 }}
-  //         slotProps={{
-  //           legend: { hidden: true },
-  //         }}
-  //       /> */}
-  //     </S.Centerize>
-  //   </>
-  // );
+interface TData extends MayHaveLabel {
+  id: DatumId;
+  value: number;
 }
+
+interface IFilteredData extends MayHaveLabel {
+  id: DatumId;
+  color: string;
+  value: number;
+}
+
+function PieChart({ application, day, type }: TPiechart) {
+  const { ipcRenderer } = window.electron;
+
+  const [data, setData] = useState<Array<TData>>([]);
+  const [totalActiveTime, setTotalActiveTime] = useState<number>(1);
+  const [filtered, setFiltered] = useState<Array<IFilteredData>>([]);
+
+  const getPercentage = (value: number) => {
+    const percent = value / totalActiveTime;
+    return `${Math.floor(percent * 100)}%`;
+  };
+
+  useEffect(() => {
+    if (!application) {
+      setData([]);
+      return;
+    }
+
+    (async () => {
+      const result = await ipcRenderer.invoke('sub-job-time', {
+        application,
+        date: day,
+        type,
+      });
+
+      const fetchData = result.map(
+        ({
+          sub_application,
+          active_time,
+        }: {
+          sub_application: string;
+          active_time: number;
+        }) => {
+          return {
+            id: sub_application,
+            value: active_time,
+            label: sub_application,
+          };
+        },
+      );
+
+      setData(fetchData);
+    })();
+  }, [application, day]);
+
+  useEffect(() => {
+    let acc = 0;
+    data.forEach((d) => {
+      acc += d.value;
+    });
+    setTotalActiveTime(acc);
+
+    // 일정 비율이 넘어가지않는 것들에 대해서는 합쳐서 '기타'로 표시
+    const result = data.filter((item) => {
+      return item.value / acc >= 0.05;
+    });
+    const etcs = data.filter((item) => {
+      return item.value / acc < 0.05;
+    });
+
+    const sumOfEtc = etcs
+      .map((e) => e.value)
+      .reduce((accu, curr) => accu + curr, 0);
+
+    if (sumOfEtc !== 0)
+      result.push({ id: '기타', value: sumOfEtc, label: '기타' });
+
+    result.sort((a, b) => {
+      return b.value - a.value;
+    });
+
+    const coloredData = result.map((d) => {
+      const h = Math.floor((d.value / acc) * 180);
+
+      return { ...d, color: `hsl(${h}, 60%, 80%)` };
+    });
+
+    setFiltered(coloredData);
+  }, [data]);
+
+  return (
+    <S.Wrapper>
+      <S.Application>{application}</S.Application>
+      <ResponsivePie
+        margin={{ right: 5, left: 5 }}
+        borderWidth={1}
+        cornerRadius={5}
+        data={filtered}
+        colors={{ scheme: 'nivo' }}
+        tooltip={createToolTip}
+        arcLabel={createArcLabel}
+        valueFormat={getPercentage}
+        enableArcLinkLabels={false}
+        innerRadius={0.4}
+      />
+    </S.Wrapper>
+  );
+}
+
+const createArcLabel = (item: ComputedDatum<IFilteredData>) => {
+  const labelString = item.label.toString();
+  let shortLabel = '';
+  if (labelString.length > 10) {
+    shortLabel = `${labelString.substring(0, 10)}...`;
+  } else {
+    shortLabel = labelString;
+  }
+
+  return `${shortLabel}(${item.formattedValue})`;
+};
+
+const createToolTip = (e: PieTooltipProps<IFilteredData>) => {
+  const { datum } = e;
+  const time = timeToString(datum.value);
+
+  return <S.Tooltip>{`${datum.id} - ${time}`}</S.Tooltip>;
+};
 
 export default PieChart;

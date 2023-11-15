@@ -1,5 +1,12 @@
 import { styled } from 'styled-components';
 
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+  padding-top: 5px;
+`;
+
 const Application = styled.div`
   width: 100%;
   height: 30px;
@@ -14,4 +21,10 @@ const Centerize = styled.div`
   justify-content: center;
 `;
 
-export { Application, Centerize };
+const Tooltip = styled.div`
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 5px;
+`;
+
+export { Wrapper, Application, Centerize, Tooltip };

@@ -1,19 +1,28 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function CreateChart() {
   const { ipcRenderer } = window.electron;
   const navigate = useNavigate();
+  const [_dummy, setDummy] = useState<string>('');
 
   useEffect(() => {
     (async () => {
-      const weeklyJobs = await ipcRenderer.invoke('job-time', 'week');
-      console.log(weeklyJobs);
-      navigate('/createdchart', { state: { weeklyJobs } });
+      const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
+      const lastWeekAvg = await ipcRenderer.invoke('job-time', 'lastWeekSum');
+      const entireDevAmt = await ipcRenderer.invoke('sub-job-time', {
+        application: null,
+        type: 'entire',
+        date: null,
+      });
+
+      navigate('/createdchart', {
+        state: { weeklyJobs, lastWeekAvg, entireDevAmt },
+      });
     })();
   }, []);
 
-  return <div />;
+  return <div></div>;
 }
 
 export default CreateChart;

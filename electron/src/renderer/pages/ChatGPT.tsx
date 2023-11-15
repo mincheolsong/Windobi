@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import OpenAI from 'openai';
 import '../components/chatGPT/chatGPT.scss';
+import sam from '../../../assets/sam.json';
 
 function ChatGPT() {
   const { ipcRenderer } = window.electron;
@@ -8,14 +9,11 @@ function ChatGPT() {
   const [openai, setOpenai] = useState();
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const settingOpenAi = async () => {
-    const key = await window.electron.ipcRenderer.invoke(
-      'env',
-      'OPENAI_API_KEY',
-    );
-    // console.log(key);
+    const m = sam.sun;
+
     setOpenai(
       new OpenAI({
-        apiKey: key,
+        apiKey: m,
         dangerouslyAllowBrowser: true,
       }),
     );
@@ -49,6 +47,7 @@ function ChatGPT() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     setChat((chat) => [...chat, { type: 1, content: prompt }]);
 
@@ -75,6 +74,11 @@ function ChatGPT() {
     setPrompt('');
   };
 
+  const enterKey = (e) => {
+    if (e.keyCode === 13) {
+      handleSubmit(e);
+    }
+  };
   // chat이 변경될 때 마다 scroll을 항상 아래로 내리기 위함
   useEffect(() => {
     messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -110,6 +114,7 @@ function ChatGPT() {
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
+          onKeyUp={(e) => enterKey(e)}
           style={{
             height: '100%',
             border: 'none',

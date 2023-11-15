@@ -14,13 +14,15 @@ function JobTime() {
   const [prevDay, setPrevDay] = useState<number>(0);
   const [day, setDay] = useState<Date>(new Date());
   const [type, setType] = useState<boolean>(true);
-  const [stringType, setStringType] = useState<TType>(type ? 'daily' : 'weekly');
+  const [stringType, setStringType] = useState<TType>(
+    type ? 'daily' : 'weekly',
+  );
 
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
     ipcRenderer.sendMessage('windowOpened');
-    ipcRenderer.sendMessage('size', { width: 600, height: 350 });
+    ipcRenderer.sendMessage('size', { width: 700, height: 450 });
 
     ipcRenderer.on('job-time', ({ type: returnType, result }) => {
       if (returnType === 'day') {
@@ -56,7 +58,7 @@ function JobTime() {
 
   return (
     <S.Wrapper>
-      <S.Half>
+      <S.LeftWrapper>
         <S.Header>
           <ReactSwitch
             checked={type}
@@ -76,10 +78,14 @@ function JobTime() {
           type={stringType}
           setApplication={setSelectedApplication}
         />
-      </S.Half>
-      <S.Half>
-        <PieChart application={selectedApplication} day={day} type={stringType} />
-      </S.Half>
+      </S.LeftWrapper>
+      <S.RightWrapper>
+        <PieChart
+          application={selectedApplication}
+          day={day}
+          type={stringType}
+        />
+      </S.RightWrapper>
     </S.Wrapper>
   );
 }
