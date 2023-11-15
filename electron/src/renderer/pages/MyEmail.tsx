@@ -4,9 +4,24 @@ import naverImage from '../../../assets/naver.png';
 import daumImage from '../../../assets/daum.png';
 import * as S from '../components/myEmail/MailBox.style';
 
+type THost = 'imap.naver.com' | 'imap.daum.net';
+
+type TEmail = {
+  id: string;
+  host: THost;
+  img: string;
+};
+
+type TResponse = Pick<TEmail, 'id' | 'host'>;
+
 function MyEmail() {
   const { ipcRenderer } = window.electron;
-  const [emails, setEmails] = useState([]);
+  const [emails, setEmails] = useState<Array<TEmail>>([]);
+
+  const hostToImage = {
+    'imap.daum.net': daumImage,
+    'imap.naver.com': naverImage,
+  };
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -14,9 +29,17 @@ function MyEmail() {
     ipcRenderer.sendMessage('size', { width: 500, height: 400 });
 
     const getEmails = async () => {
-      const temp = await ipcRenderer.invoke('accountRequest');
+      const registedMails: Array<TResponse> =
+        await ipcRenderer.invoke('accountRequest');
 
-      setEmails(temp);
+      const containImage = registedMails.map((mail) => {
+        return {
+          ...mail,
+          img: hostToImage[mail.host],
+        };
+      });
+
+      setEmails(containImage);
     };
 
     getEmails();

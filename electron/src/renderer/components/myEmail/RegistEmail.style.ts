@@ -4,8 +4,6 @@ const Container = styled.div`
   display: felx;
   flex-direction: column;
   aligh-items: center;
-  background-color: black;
-  color: white;
 `;
 
 const InputContainer = styled.div`
@@ -17,10 +15,15 @@ const InputContainer = styled.div`
 `;
 
 const InputSelect = styled.select`
-  width: 80px;
+  width: 100px;
+  height: 25px;
   border-radius: 4px;
   margin-left: 5px;
-  outline: 0.5px solid;
+  outline: none;
+  font-size: 15px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Message = styled.div`
@@ -31,14 +34,13 @@ const Message = styled.div`
 `;
 
 const InputField = styled.input`
-  border-radius: 5px;
+  width: 150px;
+  height: 22px;
+  background: rgb(235, 235, 235);
   margin: 0px 5px 0 5px;
   border: none;
-  border-bottom: 1px solid white;
-  outline: none;
-  background: transparent;
-  color: white;
-  width: 150px;
+  font-size: 15px;
+  padding-left: 5px;
 `;
 
 const ButtonContainer = styled.div`
@@ -50,18 +52,26 @@ const ButtonContainer = styled.div`
 
 const Button = styled.button`
   border-radius: 5px;
-  background-color: blue;
+  background-color: rgba(50, 150, 255, 0.8);
   color: white;
-  margin-top: 10px;
-  padding: 5px 10px;
   font-family: Jalnan;
   width: 100px;
   height: 60px;
-  cursor: pointer;
+  border: 0px;
   &:hover {
+    color: gray;
     background-color: white;
-    color: blue;
+    cursor: pointer;
+    transition: 0.2s all;
   }
 `;
 
-export { Container, InputContainer, InputField, Button, ButtonContainer, Message, InputSelect };
+export {
+  Container,
+  InputContainer,
+  InputField,
+  Button,
+  ButtonContainer,
+  Message,
+  InputSelect,
+};
