@@ -118,7 +118,7 @@ const detectDisactive = () => {
         detectActive(); // 움직이는 상태로 바뀌는지 체크하자
         ipcMain.emit('stopMoving');
         variables.active = false;
-        variables.character.direction = 'up';
+        variables.character.direction = 'rest';
       }
     } else {
       notActiveCount = 0;

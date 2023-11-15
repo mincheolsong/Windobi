@@ -175,7 +175,7 @@ function Music() {
               setPrompt(e.target.value);
             }}
             placeholder="코딩할 때 듣기 좋은 노래"
-          ></S.TitleInput>
+          />
           {/* <S.CountInput
             onChange={(e) => {
               setCount(e.target.valueAsNumber);
