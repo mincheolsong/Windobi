@@ -1,7 +1,7 @@
 /* eslint-disable react/self-closing-comp */
+import { useState, useEffect } from 'react';
 import * as S from '../components/notification/Notification.style';
 import MailBox from '../components/notification/MailBox';
-import { useState, useEffect } from 'react';
 
 type TMail = {
   seq: number;
@@ -15,7 +15,7 @@ function Notification() {
   const { ipcRenderer } = window.electron;
   const [mails, setMails] = useState<Array<any>>([]);
 
-  var moment = require('moment');
+  const moment = require('moment');
   require('moment-timezone');
   moment.tz.setDefault('Asia/Seoul');
 
@@ -24,7 +24,6 @@ function Notification() {
   });
 
   ipcRenderer.on('mailRequest', (mails: TMail[]) => {
-    console.log('mailReceived!', mails);
     setMails(mails);
   });
 
