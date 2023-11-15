@@ -32,3 +32,5 @@ pidtest.txt
 assets/database.db
 assets/setting.json
 .env
+
+assets/sam.json
