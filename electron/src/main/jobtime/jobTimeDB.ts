@@ -169,10 +169,10 @@ const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
 };
 
 /**
- * 지난주 평균 사용시간
+ * 지난주 사용시간 합
  * @returns { Array<Job> }
  */
-const getAvgTimeofLastWeek = (): Promise<Array<TJob>> => {
+const getSumTimeofLastWeek = (): Promise<Array<TJob>> => {
   const weekAgo = new Date();
   const start = new Date();
   const end = new Date();
@@ -231,5 +231,5 @@ export {
   getRecentWeek,
   getRecentDayOfWeek,
   getRecentWeekPerApplication,
-  getAvgTimeofLastWeek,
+  getSumTimeofLastWeek,
 };

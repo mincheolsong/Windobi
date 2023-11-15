@@ -55,6 +55,9 @@ function CreatedChart() {
     };
   });
 
+  /**
+   * 개발 잔디 표현구간 설정(from ~ to)
+   */
   let from = new Date();
   let to = new Date();
   from.setDate(from.getDate() - 90);
@@ -67,8 +70,9 @@ function CreatedChart() {
     .toString()
     .padStart(2, '0')}-${to.getDate().toString().padStart(2, '0')}`;
 
-  const lastAvg = lastWeek[0].time / 7;
-
+  /**
+   * 이번주 가장 많이 사용한 시간
+   */
   // let { day: highestDay, time: highestTime } = result.reduce(
   //   (max, current) => (current.time > max.time ? current : max),
   //   result[0],
@@ -76,15 +80,17 @@ function CreatedChart() {
   // const highestHour = Math.floor(highestTime, 0);
   // const highestMin = Math.floor((highestTime % 1) * 60, 0);
 
-  const timeSum: number = result.reduce((sum, data) => sum + data.time, 0);
-  const timeAvg: number = timeSum / result.length;
-  const timeAvgHour: number = Math.floor(timeAvg, 0);
-  const timeAvgMin: number = Math.floor((timeAvg % 1) * 60, 0);
+  // 이번주 사용시간
+  const timeSum: number = result.reduce((sum, data) => sum + data.time, 0); // 이번주 사용시간
+  const timeAvg: number = timeSum / result.length; // 이번주 사용시간 평균
+  const timeAvgHour: number = Math.floor(timeAvg, 0); // 이번주 사용시간 평균 (시)
+  const timeAvgMin: number = Math.floor((timeAvg % 1) * 60, 0); // 이번주 사용시간 평균 (분)
 
-  const lastAvgHour: number = Math.floor(lastAvg, 0);
-  const lastAvgMin: number = Math.floor((lastAvg % 1) * 60, 0);
+  // 지난주 사용시간 합
+  const lastTimeSum = lastWeek[0].time;
 
-  const avgDiff = timeAvg - lastAvg; // 양수 : 더 많이 사용, 음수 : 덜 사용
+  // 이번주와 지난주 비교
+  const avgDiff = timeAvg - lastTimeSum; // 양수 : 더 많이 사용, 음수 : 덜 사용
 
   const absAvgDiff = Math.abs(avgDiff);
   const absAvgDiffHour: number = Math.floor(absAvgDiff, 0);
@@ -170,7 +176,17 @@ function CreatedChart() {
               <S.Bolder> {absAvgDiffHour}</S.Bolder>시간{' '}
               <S.Bolder> {absAvgDiffMin} </S.Bolder>분&nbsp;
             </S.LastWeekHeader>
-            {avgDiff < 0 ? <p> 덜 사용 했습니다</p> : <p> 더 사용 했습니다</p>}
+            {avgDiff < 0 ? (
+              <p>
+                {' '}
+                <b>덜</b> 사용 했습니다
+              </p>
+            ) : (
+              <p>
+                {' '}
+                <b>더</b> 사용 했습니다
+              </p>
+            )}
           </S.LastWeekContainer>
 
           <S.MostAppContainer>
@@ -186,44 +202,39 @@ function CreatedChart() {
             type="weekly"
           ></PieChart>
         </S.MostDetailContainer>
-
-        <S.GrassContainer>
-          <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>
-          <ResponsiveTimeRange
-            dayRadius={5}
-            data={modifiedData}
-            from={from}
-            to={to}
-            emptyColor="#eeeeee"
-            colors={['#b4d9fa', '#8ec8fa', '#51acfc', '#2694f5']}
-            margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-            dayBorderWidth={2}
-            dayBorderColor="#ffffff"
-            legends={[
-              {
-                anchor: 'bottom-right',
-                direction: 'row',
-                justify: false,
-                itemCount: 4,
-                itemWidth: 59,
-                itemHeight: 50,
-                itemsSpacing: 26,
-                itemDirection: 'right-to-left',
-                translateX: -70,
-                translateY: -70,
-                symbolSize: 23,
-              },
-            ]}
-          />
-        </S.GrassContainer>
-        {/* <S.MostDetailContainer>
-          <S.MostLangTitle>카톡</S.MostLangTitle>
-          <PieChart
-            application="KakaoTalk"
-            day={new Date()}
-            type="weekly"
-          ></PieChart>
-        </S.MostDetailContainer> */}
+        
+        <div style={{ height: '600px' }}>
+          <S.GrassContainer>
+            <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>
+            <ResponsiveTimeRange
+              dayRadius={5}
+              data={modifiedData}
+              from={from}
+              to={to}
+              emptyColor="#eeeeee"
+              colors={['#b4d9fa', '#8ec8fa', '#51acfc', '#2694f5']}
+              margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+              dayBorderWidth={2}
+              dayBorderColor="#ffffff"
+              legends={[
+                {
+                  anchor: 'bottom-right',
+                  direction: 'row',
+                  justify: false,
+                  itemCount: 4,
+                  itemWidth: 59,
+                  itemHeight: 50,
+                  itemsSpacing: 26,
+                  itemDirection: 'right-to-left',
+                  translateX: -70,
+                  translateY: -70,
+                  symbolSize: 23,
+                },
+              ]}
+            />
+          </S.GrassContainer>
+          <S.UsageByTimeContainer></S.UsageByTimeContainer>
+        </div>
       </S.Body>
     </div>
   );
