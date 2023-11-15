@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
-const weatherUrl = 'https://images.unsplash.com/photo-1601352209555-489a72668fda?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fCVFQSVCNSVBQyVFQiVBNiU4NHxlbnwwfHwwfHx8MA%3D%3D';
 
+const weatherUrl =
+  'https://images.unsplash.com/photo-1601352209555-489a72668fda?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fCVFQSVCNSVBQyVFQiVBNiU4NHxlbnwwfHwwfHx8MA%3D%3D';
 
 const WarpperVideo = styled.video`
   width: 100%;
@@ -31,7 +32,7 @@ const SpaceAround = styled.div`
 `;
 const LeftAround = styled.div`
   margin-left: 20px;
-  span{
+  span {
     font-size: 70px;
     font-family: GmarketSansTTFBold;
   }
@@ -69,10 +70,10 @@ const WeatherInfo = styled.div`
     font-size: 0.9em;
     margin-bottom: 10px;
   }
-  div{
+  div {
     z-index: 2;
   }
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     display: none;
   }
 `;
@@ -169,12 +170,10 @@ const LocalBar = styled.div<BarType>`
   background: ${(props) => {
     const { totalMin, totalMax } = props;
     const percentage = parseFloat(totalMin) + parseFloat(totalMax);
-    console.log('percentage: ', percentage);
     if (percentage > 90) {
       return `linear-gradient(to right, #72bff5 ${40}%, #8bd2c9 ${70}%, #a4d2b3 ${20}%, #bed199)`;
-    } else {
-      return `linear-gradient(to right, #72bff5 ${40}%, #77c5f5 ${70}%, #7fcddc ${20}%, #7fcddc)`
     }
+    return `linear-gradient(to right, #72bff5 ${40}%, #77c5f5 ${70}%, #7fcddc ${20}%, #7fcddc)`;
   }};
 `;
 export {

@@ -13,7 +13,7 @@ function AddCharacter() {
   const [moveImages, setMoveImages] = useState<Array<string>>([]);
   const [clickImages, setClickImages] = useState<Array<string>>([]);
   const [downImages, setDownImages] = useState<Array<string>>([]);
-  const [upImages, setUpImages] = useState<Array<string>>([]);
+  const [restImages, setRestImages] = useState<Array<string>>([]);
 
   const [name, setName] = useState<string>('');
   const [message, setMessage] = useState<string>('');
@@ -31,7 +31,7 @@ function AddCharacter() {
       moveImages.length !== 0 &&
       clickImages.length !== 0 &&
       downImages.length !== 0 &&
-      upImages.length !== 0 &&
+      restImages.length !== 0 &&
       name
     ) {
       setAble(true);
@@ -43,7 +43,7 @@ function AddCharacter() {
     moveImages.length,
     clickImages.length,
     downImages.length,
-    upImages.length,
+    restImages.length,
     name,
   ]);
 
@@ -56,7 +56,7 @@ function AddCharacter() {
         move: moveImages,
         click: clickImages,
         down: downImages,
-        up: upImages,
+        rest: restImages,
       },
     );
 
@@ -88,8 +88,8 @@ function AddCharacter() {
         <ImageManager images={downImages} setImages={setDownImages} />
       </S.Details>
       <S.Details>
-        <S.Summary>up</S.Summary>
-        <ImageManager images={upImages} setImages={setUpImages} />
+        <S.Summary>rest</S.Summary>
+        <ImageManager images={restImages} setImages={setRestImages} />
       </S.Details>
       <S.Input
         placeholder="캐릭터 이름"
