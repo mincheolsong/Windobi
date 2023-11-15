@@ -134,7 +134,7 @@
   }
 }
 
-$numOfElems: 9;
+$numOfElems: 8;
 
 @for $i from 1 through $numOfElems {
   $deg: calc(360deg / $numOfElems);
