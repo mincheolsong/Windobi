@@ -20,7 +20,7 @@ function ChatGPT() {
   };
 
   useEffect(() => {
-    ipcRenderer.sendMessage('stopMoving');
+    ipcRenderer.sendMessage('windowOpened');
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
       height: 500,

@@ -1,29 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import '../components/menu/MenuModal.scss';
+import { LuMailPlus, LuMailSearch } from 'react-icons/lu';
+import { IconType } from 'react-icons';
 import jobtime from '../../../assets/icons/jobtime.svg';
-import alarm from '../../../assets/icons/alarm.svg';
 import chatGPT from '../../../assets/icons/chatGPT.svg';
 import setting from '../../../assets/icons/setting.svg';
-import login from '../../../assets/icons/login.svg';
 import close from '../../../assets/icons/close.svg';
 import weather from '../../../assets/icons/weather.svg';
 import music from '../../../assets/icons/music.svg';
 import report from '../../../assets/icons/report.svg';
+
+type TItem = {
+  path: string;
+  icon: IconType | string;
+};
 
 function MenuModal() {
   const [active, setActive] = useState(false);
   const { ipcRenderer } = window.electron;
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const menuItems = [
-    { path: 'notification', icon: alarm },
+  const menuItems: Array<TItem> = [
     { path: 'googleOAuth', icon: music },
     { path: 'jobtime', icon: jobtime },
     { path: 'chatGPT', icon: chatGPT },
     { path: 'setting', icon: setting },
     { path: 'close', icon: close },
     { path: 'weather', icon: weather },
-    { path: 'email', icon: login },
+    { path: 'notification', icon: LuMailSearch },
+    { path: 'email', icon: LuMailPlus },
     { path: 'createchart', icon: report },
   ];
 
@@ -67,18 +72,24 @@ function MenuModal() {
       style={{ WebkitUserSelect: 'none' }}
     >
       <div className="icons">
-        {reorderedItems.map(({ path, icon }) => {
+        {reorderedItems.map(({ path, icon: Icon }) => {
           return (
             <div className="rotater" key={path}>
               <div
                 className={`btn btn-icon ${path === 'close' && 'close-btn'}`}
               >
-                <img
-                  className="fa"
-                  src={icon}
-                  onClick={() => navigate(path)}
-                  alt={path}
-                />
+                {typeof Icon === 'string' ? (
+                  <img
+                    className="fa"
+                    src={Icon}
+                    onClick={() => navigate(path)}
+                    alt={path}
+                  />
+                ) : (
+                  <div>
+                    <Icon className="fa" onClick={() => navigate(path)} />
+                  </div>
+                )}
               </div>
             </div>
           );

@@ -18,6 +18,10 @@ wsServer.on('connection', (ws) => {
       variables.curretActiveTitle = received.value;
     }
   });
+
+  ws.on('close', () => {
+    variables.established = false;
+  });
 });
 
 export { variables };
