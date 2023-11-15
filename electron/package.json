@@ -97,12 +97,14 @@
     }
   },
   "dependencies": {
+    "@nivo/bar": "^0.83.0",
     "@paymoapp/active-window": "^2.0.6",
     "@types/sqlite3": "^3.1.11",
     "axios": "^1.6.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
+    "force": "^0.0.3",
     "html-to-image": "^1.11.11",
     "imap": "^0.8.17",
     "lodash": "^4.17.21",

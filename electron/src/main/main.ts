@@ -76,7 +76,6 @@ app
         jobTimeHandler,
         mailHandler,
         processHandler,
-        weatherHandler,
         windowsHandler,
         oauthHandelr,
       } = await import('./ipcMainHandler');
@@ -87,7 +86,6 @@ app
       oauthHandelr();
       mailHandler();
       processHandler();
-      weatherHandler();
       windowsHandler();
       moveHandler();
 
