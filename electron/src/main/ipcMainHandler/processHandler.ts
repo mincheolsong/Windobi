@@ -18,11 +18,11 @@ const envHandler = () => {
  * 'application' : 실행파일 path를 이용하여 application을 실행
  */
 const applicationHandler = () => {
-  ipcMain.on('application', (event, applicationPath) => {
+  ipcMain.on('application', (_event, applicationPath) => {
     try {
       shell.openExternal(applicationPath);
     } catch (e) {
-      console.log(e);
+      /* empty */
     }
   });
 };

@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 
 function YoutubeMusic() {
   const { ipcRenderer } = window.electron;
-  let [url, setUrl] = useState('');
+  const [url, setUrl] = useState('');
 
   ipcRenderer.on('url', (playlisturl) => {
-    console.log(playlisturl);
     setUrl(playlisturl);
   });
   useEffect(() => {
@@ -20,7 +19,7 @@ function YoutubeMusic() {
       id="foo"
       src={url}
       style={{ display: 'inline-flex', width: '100%', height: '100%' }}
-    ></webview>
+    />
   );
 }
 
