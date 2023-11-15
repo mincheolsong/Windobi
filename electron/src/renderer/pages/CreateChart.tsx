@@ -10,14 +10,14 @@ function CreateChart() {
     (async () => {
       const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
       const lastWeekAvg = await ipcRenderer.invoke('job-time', 'lastWeekSum');
+      const lastWeekTime = await ipcRenderer.invoke('job-time', 'lastWeekTime');
       const entireDevAmt = await ipcRenderer.invoke('sub-job-time', {
         application: null,
         type: 'entire',
         date: null,
       });
-
       navigate('/createdchart', {
-        state: { weeklyJobs, lastWeekAvg, entireDevAmt },
+        state: { weeklyJobs, lastWeekAvg, entireDevAmt, lastWeekTime },
       });
     })();
   }, []);

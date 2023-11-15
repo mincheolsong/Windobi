@@ -8,6 +8,7 @@ import { ResponsiveTimeRange } from '@nivo/calendar';
 import * as S from '../components/report/Report.style';
 import RecentApplication from '../components/jobtime/RecentApplication';
 import PieChart from '../components/jobtime/PieChart';
+import RunningTime from '../components/report/RunningTime';
 
 type Data = {
   day: number;
@@ -40,7 +41,56 @@ function CreatedChart() {
 
   const result: Array<Data> = state.weeklyJobs;
   const lastWeek: Array<Data> = state.lastWeekAvg;
+  const lastWeekTime: Array<Data> = state.lastWeekTime;
   const entireDevAmt: Array<DataOfDev> = state.entireDevAmt;
+
+  // 이번주의 사용 시간대를 알기 위해
+  const weekTime = lastWeekTime.reduce((acc, entry) => {
+    const day = entry.day;
+    if (!acc[day]) {
+      acc[day] = [];
+    }
+    acc[day].push(entry);
+    return acc;
+  }, {});
+
+  const formattedDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 1을 더하고, 두 자리로 패딩
+    const day = date.getDate().toString().padStart(2, '0'); // 날짜를 두 자리로 패딩
+    return parseInt(`${year}${month}${day}`);
+  };
+
+  const now = new Date();
+  const start = new Date(now);
+  start.setDate(now.getDate() - 6);
+
+  let startDate = formattedDate(start);
+
+  for (let i = startDate; i < startDate + 7; ++i) {
+    if (!weekTime[i]) {
+      let list = [];
+      for (let j = 0; j < 24; ++j) {
+        list.push({ day: i, hour: j, activeTime: 0 });
+      }
+      weekTime[i] = list;
+      weekTime[i].sort((a, b) => a.hour - b.hour);
+    } else {
+      for (let j = 0; j < 24; ++j) {
+        let result = weekTime[i].filter((item) => item.hour === j);
+        if (result.length == 0) {
+          // 없는 경우
+          weekTime[i].push({ day: i, hour: j, activeTime: 0 });
+        }
+      }
+      weekTime[i].sort((a, b) => a.hour - b.hour);
+    }
+  }
+
+  const days = Object.keys(weekTime);
+
+  // 끝
+
 
   const modifiedData: ModifiedData[] = entireDevAmt.map((item) => {
     const dateString = item.day.toString();
@@ -86,6 +136,9 @@ function CreatedChart() {
   const timeAvgHour: number = Math.floor(timeAvg, 0); // 이번주 사용시간 평균 (시)
   const timeAvgMin: number = Math.floor((timeAvg % 1) * 60, 0); // 이번주 사용시간 평균 (분)
 
+  const timeSumHour: number = Math.floor(timeSum, 0); // 이번주 총 사용시간 (시)
+  const timeSumMin: number = Math.floor((timeSum % 1) * 60, 0); // 이번주 총 사용시간 (분)
+
   // 지난주 사용시간 합
   const lastTimeSum = lastWeek[0].time;
 
@@ -95,6 +148,8 @@ function CreatedChart() {
   const absAvgDiff = Math.abs(avgDiff);
   const absAvgDiffHour: number = Math.floor(absAvgDiff, 0);
   const absAvgDiffMin: number = Math.floor((absAvgDiff % 1) * 60, 0);
+
+
 
   return (
     <div
@@ -202,7 +257,7 @@ function CreatedChart() {
             type="weekly"
           ></PieChart>
         </S.MostDetailContainer>
-        
+
         <div style={{ height: '600px' }}>
           <S.GrassContainer>
             <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>
@@ -233,7 +288,19 @@ function CreatedChart() {
               ]}
             />
           </S.GrassContainer>
-          <S.UsageByTimeContainer></S.UsageByTimeContainer>
+          <S.UsageByTimeContainer>
+            <S.MostLangTitle>시간대 별 사용량</S.MostLangTitle>
+            <S.WeekUsageContainer>
+              <S.TotalTime>{timeSumHour}<S.Text>시간</S.Text>{timeSumMin}<S.Text>분</S.Text></S.TotalTime>
+              <S.TimeText>총 실제 실행 시간</S.TimeText>
+            </S.WeekUsageContainer>
+            <S.UsageContainer>
+              {days.map((d) => (
+                <RunningTime day={weekTime[d]} key={d} />
+              ))}
+            </S.UsageContainer>
+            <S.TimeTable></S.TimeTable>
+          </S.UsageByTimeContainer>
         </div>
       </S.Body>
     </div>
