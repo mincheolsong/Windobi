@@ -189,7 +189,7 @@ const reportTestHandler = () => {
     const chartWindow = new BrowserWindow({
       width: 1500,
       height: 800,
-      show: false,
+      show: true,
       transparent: false,
       focusable: true,
       frame: false,
@@ -201,7 +201,7 @@ const reportTestHandler = () => {
     });
     await chartWindow.loadURL(resolveHtmlPath('index.html'));
     chartWindow.webContents.send('sub', 'createchart');
-    chartWindow.webContents.closeDevTools();
+    // chartWindow.webContents.closeDevTools();
   }, 5000);
 };
 
