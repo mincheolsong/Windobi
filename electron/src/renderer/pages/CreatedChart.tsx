@@ -88,9 +88,8 @@ function CreatedChart() {
   }
 
   const days = Object.keys(weekTime);
-
+  const hours = [0, 6, 12, 18, 24];
   // 끝
-
 
   const modifiedData: ModifiedData[] = entireDevAmt.map((item) => {
     const dateString = item.day.toString();
@@ -149,8 +148,6 @@ function CreatedChart() {
   const absAvgDiffHour: number = Math.floor(absAvgDiff, 0);
   const absAvgDiffMin: number = Math.floor((absAvgDiff % 1) * 60, 0);
 
-
-
   return (
     <div
       ref={ref}
@@ -176,11 +173,13 @@ function CreatedChart() {
         {result[0].day} - {result[result.length - 1].day}
       </S.Date>
       <S.Body>
-        <div>
+        <div style={{ height: '680px' }}>
           <S.BarContainer>
             <S.BarHeader>
-              <S.Bolder>{timeAvgHour}</S.Bolder>시간{' '}
-              <S.Bolder>{timeAvgMin}</S.Bolder>분
+              <S.Bolder>{timeAvgHour}</S.Bolder>
+              <S.Text style={{ marginRight: '8px' }}>시간</S.Text>{' '}
+              <S.Bolder>{timeAvgMin}</S.Bolder>
+              <S.Text>분</S.Text>
             </S.BarHeader>
             <S.Lighter>하루 평균 사용시간</S.Lighter>
 
@@ -226,20 +225,26 @@ function CreatedChart() {
           </S.BarContainer>
 
           <S.LastWeekContainer>
-            지난주 보다&nbsp;
+            <S.Context>지난주 보다</S.Context>&nbsp;
             <S.LastWeekHeader>
-              <S.Bolder> {absAvgDiffHour}</S.Bolder>시간{' '}
-              <S.Bolder> {absAvgDiffMin} </S.Bolder>분&nbsp;
+              <S.Bolder> {absAvgDiffHour}</S.Bolder>
+              <S.Text style={{ marginRight: '8px' }}>시간</S.Text>{' '}
+              <S.Bolder> {absAvgDiffMin} </S.Bolder>
+              <S.Text>분</S.Text>&nbsp;
             </S.LastWeekHeader>
             {avgDiff < 0 ? (
               <p>
                 {' '}
-                <b>덜</b> 사용 했습니다
+                <S.Context>
+                  <b>덜</b> 사용 했습니다
+                </S.Context>{' '}
               </p>
             ) : (
               <p>
                 {' '}
-                <b>더</b> 사용 했습니다
+                <S.Context>
+                  <b>더</b> 사용 했습니다
+                </S.Context>
               </p>
             )}
           </S.LastWeekContainer>
@@ -258,7 +263,7 @@ function CreatedChart() {
           ></PieChart>
         </S.MostDetailContainer>
 
-        <div style={{ height: '600px' }}>
+        <div style={{ height: '680px' }}>
           <S.GrassContainer>
             <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>
             <ResponsiveTimeRange
@@ -291,7 +296,12 @@ function CreatedChart() {
           <S.UsageByTimeContainer>
             <S.MostLangTitle>시간대 별 사용량</S.MostLangTitle>
             <S.WeekUsageContainer>
-              <S.TotalTime>{timeSumHour}<S.Text>시간</S.Text>{timeSumMin}<S.Text>분</S.Text></S.TotalTime>
+              <S.TotalTime>
+                {timeSumHour}
+                <S.Text style={{ marginRight: '5px' }}>시간</S.Text>
+                {timeSumMin}
+                <S.Text>분</S.Text>
+              </S.TotalTime>
               <S.TimeText>총 실제 실행 시간</S.TimeText>
             </S.WeekUsageContainer>
             <S.UsageContainer>
@@ -299,7 +309,11 @@ function CreatedChart() {
                 <RunningTime day={weekTime[d]} key={d} />
               ))}
             </S.UsageContainer>
-            <S.TimeTable></S.TimeTable>
+            <S.TimeTable>
+              {hours.map((t) => (
+                <S.Time key={t}>{t === 24 ? `${t} 시간` : t}</S.Time>
+              ))}
+            </S.TimeTable>
           </S.UsageByTimeContainer>
         </div>
       </S.Body>
