@@ -49,7 +49,6 @@ const mailHandler = () => {
  */
 const mailRequestHandler = () => {
   ipcMain.on('mailRequest', () => {
-    // console.log('mails', mails);
     subWindow.webContents.send('mailRequest', mails);
   });
 };
@@ -95,7 +94,7 @@ const mailSendHandler = async () => {
     const transporter = nodemailer.createTransport({
       host: mailHost,
       secure: mailSecure, // 다른 포트를 사용해야 되면 false값을 주어야 합니다.
-      port: mailPort, //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
+      port: mailPort, // 다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
       auth: {
         user: mailAddress,
         pass: mailPassword,
@@ -106,11 +105,10 @@ const mailSendHandler = async () => {
       : path.join(__dirname, '../../../assets');
 
     cron.schedule(`10 * * * * `, async () => {
-      console.log(transporter);
       const FILE = path.join(RESOURCES_PATH, 'report.png'); // assets 폴더에 레포트 저장하고 맞춰주면 된다.
-      let account =
-        `${mailAddress}@` +
-        (accounts[0].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+      const account = `${mailAddress}@${
+        accounts[0].host === 'imap.naver.com' ? 'naver.com' : 'daum.net'
+      }`;
       try {
         transporter.sendMail({
           from: account,
@@ -122,7 +120,7 @@ const mailSendHandler = async () => {
           ],
         });
       } catch (error) {
-        console.log(error);
+        /* empty */
       }
 
       // 5시마다 보고서 보내기
@@ -135,15 +133,13 @@ const mailSendHandler = async () => {
  */
 const mailReceiveHandler = async () => {
   const accounts = await dbInstance.getAll();
-  console.log('accounts', accounts);
   for (let i = 0; i < accounts.length; ++i) {
-    let name =
+    const name =
       accounts[i].id +
       (accounts[i].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
     const received = {};
-    received['name'] = name;
-    received['array'] = [];
-    console.log(received);
+    received.name = name;
+    received.array = [];
     receivedList.push(received);
     const timerId: IntervalId = setInterval(
       getMails,
@@ -157,10 +153,9 @@ const mailReceiveHandler = async () => {
       accounts[i].host,
     );
     const timer = {};
-    timer['key'] = name;
-    timer['timerId'] = timerId;
+    timer.key = name;
+    timer.timerId = timerId;
     mainVariables.mailListners.push(timer);
-    console.log(mainVariables.mailListners);
     await setTimeout(() => {}, 1000);
   }
 };
@@ -180,9 +175,9 @@ const addMailListener = (id: string, password: string, host: string) => {
     host,
   );
   const timer = {};
-  let name = id + (host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
-  timer['key'] = name;
-  timer['timerId'] = timerId;
+  const name = id + (host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+  timer.key = name;
+  timer.timerId = timerId;
   mainVariables.mailListners.push(timer);
 };
 
@@ -221,11 +216,12 @@ const chartReceivingHadler = () => {
       ? path.join(process.resourcesPath, 'assets')
       : path.join(__dirname, '../../../assets');
     const FILE = path.join(RESOURCES_PATH, 'report.png');
-    let dataUrl = chart.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    let buffer = Buffer.from(dataUrl[2], 'base64');
+    const dataUrl = chart.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    const buffer = Buffer.from(dataUrl[2], 'base64');
     fs.writeFile(FILE, buffer, (e: any) => {
       if (!e) {
-        console.log('file is created');
+        // File is Empty
+        /* empty */
       }
     });
   });
@@ -238,7 +234,7 @@ const accountSaveHandler = () => {
   ipcMain.on('accountSave', async (_event, email) => {
     // 이메일 계정 Sqlite3에서 불러오기
     // 중복체크
-    let res = await dbInstance.getAccountByIdAndHost(email.id, email.host);
+    const res = await dbInstance.getAccountByIdAndHost(email.id, email.host);
     if (res.length > 0) {
       _event.sender.send('accountSave', {
         code: '400',
@@ -253,7 +249,6 @@ const accountSaveHandler = () => {
       ipcMain.removeAllListeners('connectSuccess');
       dbInstance.insert(email);
       addMailListener(email.id, email.password, email.host);
-      return;
     });
     ipcMain.on('connectFail', () => {
       // 연결이 실패한 경우 인증오류!
@@ -262,11 +257,9 @@ const accountSaveHandler = () => {
         content: 'authentication error',
       });
       ipcMain.removeAllListeners('connectFail');
-      return;
     });
     // imap을 통해 접속확인
     checkMail(email.id, email.password, email.host);
-    // console.log(check);
   });
 };
 
@@ -279,7 +272,6 @@ const accountRequestHandler = () => {
     // 이메일 계정 Sqlite3에서 불러오기
     // 이메일만 보내주기
     const result = await dbInstance.getAll();
-    // console.log("Select query executed : ", result);
     return result;
   });
 };
@@ -292,7 +284,7 @@ const accountDeleteHandler = () => {
   ipcMain.on('accountDelete', (_event, email) => {
     // 이메일 계정 삭제
     dbInstance.deleteByIdAndHost(email.id, email.host);
-    let name =
+    const name =
       email.id + (email.host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
     const timer = mainVariables.mailListners.filter((m) => m.key === name);
     // 기존에 실행중이던 이메일 리스너 끄기

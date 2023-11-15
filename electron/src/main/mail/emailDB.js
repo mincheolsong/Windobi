@@ -41,20 +41,13 @@ class EmailDB {
    */
   insert(emailMap) {
     const sql = `INSERT INTO ${TABLE_NAME} (id, password, main_email, host) VALUES ('${emailMap.id}', '${emailMap.password}', '${emailMap.main_email}', "${emailMap.host}")`;
-    this.db.run(sql, (err) => {
-      console.log(err);
-    });
-
+    this.db.run(sql, (err) => {});
   }
-
 
   deleteByIdAndHost(emailId, host) {
     const sql = `DELETE FROM ${TABLE_NAME} WHERE id = '${emailId}' and host = '${host}'`;
-    this.db.run(sql, (err) => {
-      console.log(err);
-    });
+    this.db.run(sql, (err) => {});
   }
-
 
   /**
    * 모든 정보 받아오기
@@ -66,7 +59,6 @@ class EmailDB {
         `SELECT id, password, main_email, host FROM ${TABLE_NAME}`,
         (err, rows) => {
           if (err) {
-            console.log("err:", err);
             return reject(err);
           }
           return resolve(rows);
@@ -75,25 +67,23 @@ class EmailDB {
     });
   }
 
-    /**
+  /**
    * 중복 확인
    * @returns { Array<> }
    */
-    getAccountByIdAndHost(emailId, host) {
-      return new Promise((resolve, reject) => {
-        return this.db.all(
-          `SELECT id FROM ${TABLE_NAME} WHERE id = '${emailId}' And host = '${host}'`,
-          (err, rows) => {
-            if (err) {
-              console.log("err:", err);
-              return reject(err);
-            }
-            return resolve(rows);
-          },
-        );
-      });
-    }
-
+  getAccountByIdAndHost(emailId, host) {
+    return new Promise((resolve, reject) => {
+      return this.db.all(
+        `SELECT id FROM ${TABLE_NAME} WHERE id = '${emailId}' And host = '${host}'`,
+        (err, rows) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(rows);
+        },
+      );
+    });
+  }
 }
 const dbInstance = new EmailDB();
 

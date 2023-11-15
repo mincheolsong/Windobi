@@ -57,7 +57,9 @@ const hideMenuHandler = () => {
  */
 const characterListHandler = () => {
   ipcMain.handle('character-list', async () => {
-    const characterList = fs.readdirSync(path.join(RESOURCES_PATH, 'character'));
+    const characterList = fs.readdirSync(
+      path.join(RESOURCES_PATH, 'character'),
+    );
     const result = characterList.map((character) => {
       const image = fs.readFileSync(
         path.join(RESOURCES_PATH, 'character', character, 'stop', '1.png'),
@@ -96,13 +98,16 @@ const characterImagesHandler = () => {
       try {
         const imageList = fs.readdirSync(path.join(TARGET_DIRECTORY, motion));
         for (const image of imageList) {
-          const base64Image = fs.readFileSync(path.join(TARGET_DIRECTORY, motion, image), {
-            encoding: 'base64',
-          });
+          const base64Image = fs.readFileSync(
+            path.join(TARGET_DIRECTORY, motion, image),
+            {
+              encoding: 'base64',
+            },
+          );
           motionImages[motion].push(base64Image);
         }
       } catch (e) {
-        console.log(e);
+        /* empty */
       }
     });
 
@@ -139,7 +144,10 @@ const deleteCharacterHandler = () => {
     if (!fs.existsSync(path.join(RESOURCES_PATH, 'character', name))) {
       return false;
     }
-    fs.rmSync(path.join(RESOURCES_PATH, 'character', name), { recursive: true, force: true });
+    fs.rmSync(path.join(RESOURCES_PATH, 'character', name), {
+      recursive: true,
+      force: true,
+    });
     return true;
   });
 };
@@ -202,7 +210,13 @@ const addCharacterHandler = () => {
         fs.mkdirSync(path.join(RESOURCES_PATH, 'character', name, motion));
         images.forEach((image, index) => {
           fs.writeFileSync(
-            path.join(RESOURCES_PATH, 'character', name, motion, `${index + 1}.png`),
+            path.join(
+              RESOURCES_PATH,
+              'character',
+              name,
+              motion,
+              `${index + 1}.png`,
+            ),
             image,
             'base64',
           );
