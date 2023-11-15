@@ -82,12 +82,12 @@ const mailSendHandler = async () => {
     mailAddress = accounts[0].id;
     mailPassword = accounts[0].password;
 
-    if (accounts[0].host === "imap.naver.com") {
-      mailHost = "smtp.naver.com";
+    if (accounts[0].host === 'imap.naver.com') {
+      mailHost = 'smtp.naver.com';
       mailPort = 587;
       mailSecure = false;
-    } else if (accounts[0].host === "imap.daum.net") {
-      mailHost = "smtp.daum.net";
+    } else if (accounts[0].host === 'imap.daum.net') {
+      mailHost = 'smtp.daum.net';
       mailPort = 465;
       mailSecure = true;
     }
@@ -95,7 +95,7 @@ const mailSendHandler = async () => {
     const transporter = nodemailer.createTransport({
       host: mailHost,
       secure: mailSecure, // 다른 포트를 사용해야 되면 false값을 주어야 합니다.
-      port: mailPort,   //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
+      port: mailPort, //다른 포트를 사용시 여기에 해당 값을 주어야 합니다.
       auth: {
         user: mailAddress,
         pass: mailPassword,
@@ -105,23 +105,25 @@ const mailSendHandler = async () => {
       ? path.join(process.resourcesPath, 'assets')
       : path.join(__dirname, '../../../assets');
 
-
     cron.schedule(`00 17 * * 5 `, async () => {
       console.log(transporter);
-      const FILE = path.join(RESOURCES_PATH, 'a4.pdf'); // assets 폴더에 레포트 저장하고 맞춰주면 된다.
-      let account = `${mailAddress}@` + (accounts[0].host === "imap.naver.com" ? 'naver.com' : 'daum.net');
+      const FILE = path.join(RESOURCES_PATH, 'report.png'); // assets 폴더에 레포트 저장하고 맞춰주면 된다.
+      let account =
+        `${mailAddress}@` +
+        (accounts[0].host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
       try {
         transporter.sendMail({
           from: account,
           to: account,
           subject: `${new Date().toLocaleString()} 보고서 입니다.`, // 제목
-          text: "hi", // 내용
-          attachments: [{ filename: "report.pdf", content: fs.createReadStream(FILE)}]
+          text: '이번주 보고서 입니다(by windobi)', // 내용
+          attachments: [
+            { filename: 'report.png', content: fs.createReadStream(FILE) },
+          ],
         });
       } catch (error) {
         console.log(error);
       }
-
 
       // 5시마다 보고서 보내기
     });
@@ -215,9 +217,13 @@ const chartReceivingHadler = () => {
   ipcMain.on('chartChannel', (_event, chart) => {
     // 차트 이미지 수신
     // 이미지 저장하기
+    const RESOURCES_PATH = app.isPackaged
+      ? path.join(process.resourcesPath, 'assets')
+      : path.join(__dirname, '../../../assets');
+    const FILE = path.join(RESOURCES_PATH, 'report.png');
     let dataUrl = chart.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
     let buffer = Buffer.from(dataUrl[2], 'base64');
-    fs.writeFile('barChart.png', buffer, (e: any) => {
+    fs.writeFile(FILE, buffer, (e: any) => {
       if (!e) {
         console.log('file is created');
       }
