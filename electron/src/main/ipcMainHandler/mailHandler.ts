@@ -192,10 +192,13 @@ const reportTestHandler = () => {
     const chartWindow = new BrowserWindow({
       width: 1500,
       height: 800,
-      show: false,
-      transparent: false,
+      // show: false,
+      // focusable: false,
+      // frame: false,
+      show: true,
       focusable: true,
-      frame: false,
+      frame: true,
+      transparent: false,
       webPreferences: {
         preload: app.isPackaged
           ? path.join(__dirname, 'preload.js')
@@ -204,7 +207,7 @@ const reportTestHandler = () => {
     });
     await chartWindow.loadURL(resolveHtmlPath('index.html'));
     chartWindow.webContents.send('sub', 'createchart');
-    chartWindow.webContents.closeDevTools();
+    // chartWindow.webContents.closeDevTools();
   }, 5000);
 };
 
