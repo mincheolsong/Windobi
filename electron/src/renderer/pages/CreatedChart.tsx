@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { toPng } from 'html-to-image';
-import BarChart from '../components/jobtime/BarChart';
-import { ipcRenderer } from 'electron';
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveTimeRange } from '@nivo/calendar';
 import * as S from '../components/report/Report.style';
@@ -40,7 +38,7 @@ function CreatedChart() {
 
   const result: Array<Data> = state.weeklyJobs;
   const lastWeek: Array<Data> = state.lastWeekAvg;
-  const entireDevAmt: Array<DataOfDev> = state.entireDevAmt;
+  const { entireDevAmt } = state;
 
   const modifiedData: ModifiedData[] = entireDevAmt.map((item) => {
     const dateString = item.day.toString();
@@ -156,7 +154,7 @@ function CreatedChart() {
                 from: 'color',
                 modifiers: [['darker', 1.6]],
               }}
-              borderRadius={'10px'}
+              borderRadius="10px"
               axisTop={null}
               axisRight={null}
               labelSkipWidth={12}
@@ -191,7 +189,7 @@ function CreatedChart() {
 
           <S.MostAppContainer>
             <S.MostTitle>많이 사용한 앱</S.MostTitle>
-            <RecentApplication></RecentApplication>
+            <RecentApplication />
           </S.MostAppContainer>
         </div>
         <S.MostDetailContainer>
@@ -200,7 +198,7 @@ function CreatedChart() {
             application="Visual Studio Code"
             day={new Date()}
             type="weekly"
-          ></PieChart>
+          />
         </S.MostDetailContainer>
         
         <div style={{ height: '600px' }}>

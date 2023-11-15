@@ -274,57 +274,68 @@ function Weather() {
       {/* <S.WarpperVideo autoPlay muted loop>
         <source src={sky} type="video/mp4" />
       </S.WarpperVideo> */}
-        <S.SpaceAround>
-          <S.LeftAround>
-            <S.CityName>{weather.cityName}<Svg fill='white'/></S.CityName>
-            <span>{(weather.list[0].main.temp - 273.15).toFixed(0)}˚</span>
-          </S.LeftAround>
-          <S.RightAround>
-            <div>{weather.today_Day_Month}월 {weather.today_Day_Number}일({weather.today_Day_String})</div>
-            <S.WeatherIcon src={icon[weather.list[0].weather[0].icon]} alter = '아이콘'/>
-            <div>{description[weather.list[0].weather[0].description]}</div>
-            <div>
-              최고: {weather.today_Max_Temp}˚ 최저: {weather.today_Min_Temp}˚
-            </div>
-          </S.RightAround>
-        </S.SpaceAround>
-        <S.WeatherCard>
-          <S.WeatherInfo
-            className="weatherInfos"
-            onMouseDown={onDragStart}
-            onMouseMove={isDrag ? onThrottleDragMove : null}
-            onMouseUp={onDragEnd}
-            onMouseLeave={onDragEnd}
-            ref={scrollRef}
-          >
-            {weather.list.slice(0, 20).map((info, index) => (
-              <div key={index}>
-                <span>{new Date(info.dt * 1000).getHours()}시</span>
-                <S.WeatherIcon
-                  src={icon[info.weather[0].icon]}
-                  alt="weather icon"
-                />
-                <span>{(info.main.temp - 273.15).toFixed(0)}˚</span>
-              </div>
-            ))}
-          </S.WeatherInfo>
-        </S.WeatherCard>
-        <S.OtherDayWeather blur={true}>
-          {weather.otherDate.map((others) => (
-            <S.OtherWeaterDiv>
-              <div>{others.day}</div>
-              <div><S.OtherWeatherIcon src={icon[others.icon]}/></div>
-              <S.MinTemp>{others.min}˚</S.MinTemp>
-              <TempBar
-                minTemp={weather.total_Min_Temp}
-                maxTemp={weather.total_Max_Temp}
-                LocalMaxTemp={others.max}
-                LocalMinTemp={others.min}
+      <S.SpaceAround>
+        <S.LeftAround>
+          <S.CityName>
+            {weather.cityName}
+            <Svg fill="white" />
+          </S.CityName>
+          <span>{(weather.list[0].main.temp - 273.15).toFixed(0)}˚</span>
+        </S.LeftAround>
+        <S.RightAround>
+          <div>
+            {weather.today_Day_Month}월 {weather.today_Day_Number}일(
+            {weather.today_Day_String})
+          </div>
+          <S.WeatherIcon
+            src={icon[weather.list[0].weather[0].icon]}
+            alter="아이콘"
+          />
+          <div>{description[weather.list[0].weather[0].description]}</div>
+          <div>
+            최고: {weather.today_Max_Temp}˚ 최저: {weather.today_Min_Temp}˚
+          </div>
+        </S.RightAround>
+      </S.SpaceAround>
+      <S.WeatherCard>
+        <S.WeatherInfo
+          className="weatherInfos"
+          onMouseDown={onDragStart}
+          onMouseMove={isDrag ? onThrottleDragMove : null}
+          onMouseUp={onDragEnd}
+          onMouseLeave={onDragEnd}
+          ref={scrollRef}
+        >
+          {weather.list.slice(0, 20).map((info, index) => (
+            <div key={index}>
+              <span>{new Date(info.dt * 1000).getHours()}시</span>
+              <S.WeatherIcon
+                src={icon[info.weather[0].icon]}
+                alt="weather icon"
               />
-              <div>{others.max}˚</div>
-            </S.OtherWeaterDiv>
+              <span>{(info.main.temp - 273.15).toFixed(0)}˚</span>
+            </div>
           ))}
-        </S.OtherDayWeather>
+        </S.WeatherInfo>
+      </S.WeatherCard>
+      <S.OtherDayWeather blur={true}>
+        {weather.otherDate.map((others) => (
+          <S.OtherWeaterDiv>
+            <div>{others.day}</div>
+            <div>
+            <S.OtherWeatherIcon src={icon[others.icon]} />
+            </div>
+            <S.MinTemp>{others.min}˚</S.MinTemp>
+            <TempBar
+              minTemp={weather.total_Min_Temp}
+              maxTemp={weather.total_Max_Temp}
+              LocalMaxTemp={others.max}
+              LocalMinTemp={others.min}
+            />
+            <div>{others.max}˚</div>
+          </S.OtherWeaterDiv>
+        ))}
+      </S.OtherDayWeather>
     </S.Warpper>
   );
 }
@@ -340,9 +351,6 @@ type TTempBar = {
 function TempBar({ minTemp, maxTemp, LocalMinTemp, LocalMaxTemp }: TTempBar) {
   const length = maxTemp - minTemp;
   const LocalLength = LocalMaxTemp - LocalMinTemp;
-  console.log(`전체중 몇 퍼센트인지 : ${((LocalLength / length) * 100).toFixed(2)}%`);
-  console.log(`어디부터 시작하는지 : ${(((LocalMinTemp - minTemp) / maxTemp) * 100).toFixed(2)}%`);
-  console.log(length, LocalMinTemp, minTemp);
   return (
     <S.BarWrapper>
       <S.LocalBar
