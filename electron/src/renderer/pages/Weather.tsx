@@ -1,3 +1,4 @@
+/* eslint-disable promise/valid-params */
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import * as S from '../components/weather/Weather.style';
@@ -81,13 +82,11 @@ function Weather() {
     const apiKey = '2d7be5022ea1fcb5d5be566f85371efc';
     window.electron.ipcRenderer.invoke('weatherHandler').then((response) => {
       setIcon(response);
-      console.log(response);
     });
     const url = `https://api.openweathermap.org/data/2.5/forecast?lat=36.10&lon=128.41&appid=${apiKey}`;
     axios
       .get(url)
       .then((responseData) => {
-        console.log(responseData);
         const { data } = responseData;
         const nowDate = new Date();
         setWeather((w) => {
@@ -114,7 +113,6 @@ function Weather() {
             if (minTemp > temp.main.temp) {
               minTemp = temp.main.temp;
             }
-            console.log(tempDate.getDate(), nowDate.getDate());
             break;
           }
           if (maxTemp < temp.main.temp) {
@@ -137,7 +135,7 @@ function Weather() {
           };
         });
       })
-      .catch((error) => console.log(error));
+      .catch();
 
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,

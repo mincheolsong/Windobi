@@ -85,7 +85,6 @@ function Music() {
         openaiResponse.choices[0].message.content,
       ); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
 
-      console.log(`1. openai : ${JSON.stringify(parsedOpenaiResponse)}`);
       // youtube에 playlist만들기
       const playListResponse = await axios.post(
         `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${m}`,
@@ -106,8 +105,6 @@ function Music() {
 
       playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디 (insertitem 할때 필요한 값)
 
-      console.log(`2. playlistId : ${playlistId}`);
-
       const playlistUrl = `${playlist_prefix}${playlistId}`;
       for (let i = 0; i < parsedOpenaiResponse.length; i++) {
         // youtube에 노래 검색
@@ -117,7 +114,6 @@ function Music() {
 
         videoId = youtubeSearchResponse.data.items[0].id.videoId; // insertitem할때 필요한 값
 
-        console.log(`3. videoId : ${videoId}`);
         const playListItemsResponse = await axios.post(
           `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${m}`,
           {
@@ -136,13 +132,12 @@ function Music() {
           },
         );
 
-        console.log(`4. playListItemsResponse : ${playListItemsResponse}`);
         setLoading(false);
         setPlaylistUrl(playlistUrl);
         setPrompt('');
       }
     } catch (err) {
-      console.log(err);
+      /* empty */
     }
   };
 
