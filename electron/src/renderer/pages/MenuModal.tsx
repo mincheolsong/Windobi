@@ -86,9 +86,7 @@ function MenuModal() {
                     alt={path}
                   />
                 ) : (
-                  <div>
-                    <Icon className="fa" onClick={() => navigate(path)} />
-                  </div>
+                  <Icon className="fa" onClick={() => navigate(path)} />
                 )}
               </div>
             </div>
