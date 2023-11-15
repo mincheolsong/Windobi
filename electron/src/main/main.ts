@@ -1,4 +1,4 @@
-import { app, dialog, globalShortcut } from 'electron';
+import { app, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
@@ -15,7 +15,8 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDebug =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
   require('electron-debug')();
@@ -89,8 +90,13 @@ app
       windowsHandler();
       moveHandler();
 
-      const { default: globalShortcutHandler } = await import('./shortcut/globalShortcutHandler');
+      const { default: globalShortcutHandler } = await import(
+        './shortcut/globalShortcutHandler'
+      );
       globalShortcutHandler();
+
+      // 웹소켓
+      await import('./socket/chromeSocket');
 
       // 사용시간 체크
       await import('./jobtime/jobTime');

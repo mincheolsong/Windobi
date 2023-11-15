@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import * as S from './BarChart.style';
+import { timeToString } from '../../util';
 
 type TJob = {
   application: string;
@@ -33,19 +34,9 @@ function BarChart({ dailyJobs, weeklyJobs, type, setApplication }: TBarChart) {
   const [sortedDailyJobs, setSortedDailyJobs] = useState<Array<IJobTimed>>([]);
 
   const [weeklyMax, setWeeklyMax] = useState<number>(1);
-  const [sortedweeklyJobs, setSortedWeeklyJobs] = useState<Array<IJobTimed>>([]);
-
-  const timeToString = (time: number) => {
-    const hour = Math.floor(time / 3600);
-    const minute = Math.floor((time % 3600) / 60);
-
-    let result = '';
-    result = result.concat(hour > 0 ? `${hour}:` : '');
-    const minuteString = minute.toString().padStart(2, '0');
-    result = result.concat(hour > 0 ? minuteString : minute.toString());
-
-    return result;
-  };
+  const [sortedweeklyJobs, setSortedWeeklyJobs] = useState<Array<IJobTimed>>(
+    [],
+  );
 
   const preprocess = useCallback(
     (

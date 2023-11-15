@@ -1,6 +1,11 @@
 import { ipcMain } from 'electron';
-import path from 'path';
-import { mainWindow, mainVariables, subWindow, menuWindow, etcWindow } from '../windows';
+import {
+  mainWindow,
+  mainVariables,
+  subWindow,
+  menuWindow,
+  etcWindow,
+} from '../windows';
 
 import moving from '../character/moving';
 import moveScheduling from '../character/moveScheduling';
@@ -23,7 +28,7 @@ const windowsHandler = () => {
  * 'sub' : sub윈도우의 다른 창을 띄우기 위해 navigate가 필요할 때
  */
 const subHandler = () => {
-  ipcMain.on('sub', (_event, path) => {
+  ipcMain.on('sub', (_event, path: string) => {
     subWindow.webContents.send('sub', path);
     subWindow.show();
   });
