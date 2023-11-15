@@ -14,7 +14,11 @@ const moveHandler = () => {
   });
 
   // 이동 시작
-  mainVariables.characterMoveId = setInterval(moving, 30, mainVariables.character);
+  mainVariables.characterMoveId = setInterval(
+    moving,
+    30,
+    mainVariables.character,
+  );
   mainVariables.scheduleId = setInterval(moveScheduling, 2000); // 스케줄링 시작
 };
 

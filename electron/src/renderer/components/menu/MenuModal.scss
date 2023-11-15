@@ -134,12 +134,13 @@
   }
 }
 
-$numOfElems: 9;
+$numOfElems: 8;
 
 @for $i from 1 through $numOfElems {
   $deg: calc(360deg / $numOfElems);
   .rotater:nth-child(#{$i}) {
     transform: rotate(calc($deg/-2) + $deg * ($i - 1));
+    transition: all 0.25s;
   }
 
   .menu.active {

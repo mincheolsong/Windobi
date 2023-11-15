@@ -10,7 +10,6 @@ const BarHeader = styled.div`
 
 const LastWeekHeader = styled.div`
   display: flex;
-  font-size: 22px;
   align-items: center;
 `;
 
@@ -39,6 +38,7 @@ const Bolder = styled.div`
   font-family: GmarketSansTTFMedium;
   font-weight: bolder;
   font-size: 35px;
+  margin-right: 4px;
 `;
 
 const Context = styled.div`
@@ -50,7 +50,8 @@ const Lighter = styled.div`
   font-family: GmarketSansTTFLight;
   font-weight: lighter;
   margin-left: 19px;
-  color: #b1b1b1;
+  color: #aaaaaa;
+  font-weight: normal;
 `;
 
 const BarContainer = styled.div`

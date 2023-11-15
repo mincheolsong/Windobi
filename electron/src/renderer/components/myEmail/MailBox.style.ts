@@ -34,9 +34,9 @@ const Icon = styled.img`
   margin-right: 10px; /* 이미지와 텍스트 사이의 간격 */
 `;
 
-const button = styled.button`
+const Button = styled.button`
   border-radius: 8px;
-  background-color: #0B6CFF;
+  background-color: #0b6cff;
   color: white;
   font-weight: bold;
   border: none;
@@ -48,6 +48,11 @@ const button = styled.button`
   left: 0;
   width: 100%;
   height: 50px;
+  &:hover {
+    background-color: #0b6cffbb;
+    transition: 0.1s all;
+    color: black;
+  }
 `;
 
 const DeleteButton = styled.button`
@@ -61,9 +66,9 @@ const DeleteButton = styled.button`
 `;
 const Container = styled.div`
   padding-bottom: 60px; /* Button의 높이만큼 공간을 만들어 줍니다. */
-  min-height: 100vh;
+  height: 100%;
   box-sizing: border-box;
   position: relative;
 `;
 
-export { Wrapper, Icon, button, DeleteButton, Container };
+export { Wrapper, Icon, Button, DeleteButton, Container };

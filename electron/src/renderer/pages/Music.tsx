@@ -4,15 +4,14 @@ import OpenAI from 'openai';
 import axios from 'axios';
 import * as S from '../components/music/Music.style';
 import playBtn from '../../../assets/icons/playBtn.svg';
+import sam from '../../../assets/sam.json';
 
-/**
- * AIzaSyBqZxYFmowB7KkiTnbdn245IwTNGwkamJU (ㅇㅊ)
- * AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk (ㅁㅊ)
- */
-const GOOGLE_API_KEY = 'AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk';
+const m = sam.moon;
+const s = sam.sun;
+
 const { ipcRenderer } = window.electron;
 const playlist_prefix = 'https://music.youtube.com/browse/VL';
-let example_json = `
+const example_json = `
 [
   {"song": "Hurt", "artist": "Johnny Cash"},
   {"song": "Someone Like You", "artist": "Adele"},
@@ -28,6 +27,8 @@ function Music() {
   const [count, setCount] = useState(5);
   const [loading, setLoading] = useState(false);
   const [playlistUrl, setPlaylistUrl] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
   let playlistId;
   let videoId;
 
@@ -50,11 +51,9 @@ function Music() {
     },
   ];
   const settingOpenAi = async () => {
-    const key = await ipcRenderer.invoke('env', 'OPENAI_API_KEY');
-
     setOpenai(
       new OpenAI({
-        apiKey: key,
+        apiKey: s,
         dangerouslyAllowBrowser: true,
       }),
     );
@@ -65,11 +64,11 @@ function Music() {
   // };
 
   useEffect(() => {
+    ipcRenderer.sendMessage('windowOpened');
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
       height: 310,
     });
-    ipcRenderer.sendMessage('windowOpened');
     settingOpenAi();
   }, []);
 
@@ -81,17 +80,16 @@ function Music() {
       // openai에게 추천받기
       const openaiResponse = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
-        messages: messages,
+        messages,
       });
 
       const parsedOpenaiResponse = JSON.parse(
         openaiResponse.choices[0].message.content,
       ); // openai에서 받은 응답 [ {song : 'title', artist : 'artist'}, {song : 'title', artist : 'artist'}]
 
-      console.log('1. openai : ' + JSON.stringify(parsedOpenaiResponse));
       // youtube에 playlist만들기
       const playListResponse = await axios.post(
-        `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${GOOGLE_API_KEY}`,
+        `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${m}`,
         {
           snippet: {
             title: prompt.concat(' by windobi'), // 플레이 리스트 제목
@@ -107,22 +105,33 @@ function Music() {
         },
       );
 
-      playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디 (insertitem 할때 필요한 값)
+      // 에러 컨트롤
+      if (playListResponse.status !== 200) {
+        setLoading(false);
+        setPrompt('');
+        setErrorMsg('플레이 리스트 생성중 오류 발생');
+      }
 
-      console.log('2. playlistId : ' + playlistId);
+      playlistId = playListResponse.data.id; // 생성된 플레이리스트 아이디 (insertitem 할때 필요한 값)
 
       const playlistUrl = `${playlist_prefix}${playlistId}`;
       for (let i = 0; i < parsedOpenaiResponse.length; i++) {
         // youtube에 노래 검색
         const youtubeSearchResponse = await axios.get(
-          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${parsedOpenaiResponse[i].song}%7C${parsedOpenaiResponse[i].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
+          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${parsedOpenaiResponse[i].song}%7C${parsedOpenaiResponse[i].artist}&type=video&videoCategoryId=10&key=${m}`,
         );
+
+        // 에러 컨트롤
+        if (youtubeSearchResponse.status !== 200) {
+          setLoading(false);
+          setPrompt('');
+          setErrorMsg('유튜브 검색 중 오류 발생');
+        }
 
         videoId = youtubeSearchResponse.data.items[0].id.videoId; // insertitem할때 필요한 값
 
-        console.log('3. videoId : ' + videoId);
         const playListItemsResponse = await axios.post(
-          `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${GOOGLE_API_KEY}`,
+          `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${m}`,
           {
             snippet: {
               playlistId,
@@ -139,13 +148,19 @@ function Music() {
           },
         );
 
-        console.log('4. playListItemsResponse : ' + playListItemsResponse);
+        // 에러 컨트롤
+        if (playListItemsResponse.status !== 200) {
+          setLoading(false);
+          setPrompt('');
+          setErrorMsg('플레이리스트에 노래 추가 중 에러 발생');
+        }
+
         setLoading(false);
         setPlaylistUrl(playlistUrl);
         setPrompt('');
       }
     } catch (err) {
-      console.log(err);
+      /* empty */
     }
   };
 
@@ -159,8 +174,8 @@ function Music() {
             onChange={(e) => {
               setPrompt(e.target.value);
             }}
-            placeholder="   코딩할 때 듣기 좋은 노래"
-          ></S.TitleInput>
+            placeholder="코딩할 때 듣기 좋은 노래"
+          />
           {/* <S.CountInput
             onChange={(e) => {
               setCount(e.target.valueAsNumber);
@@ -175,11 +190,7 @@ function Music() {
           onClick={handleSubmit}
           disabled={loading || prompt.length === 0}
         >
-          {loading === true ? (
-            <S.Loading></S.Loading>
-          ) : (
-            <S.playImg src={playBtn}></S.playImg>
-          )}
+          {loading === true ? <S.Loading /> : <S.playImg src={playBtn} />}
         </S.PlayButton>
       </S.Body>
 
