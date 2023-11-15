@@ -99,7 +99,7 @@ const GrassContainer = styled.div`
 
 const UsageByTimeContainer = styled.div`
   width: 520px;
-  height: 263px;
+  height: 261px;
   background: white;
   padding-top: 15px;
   margin-top: 20px;
