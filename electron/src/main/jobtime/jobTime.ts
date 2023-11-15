@@ -3,6 +3,7 @@ import { SubActivemapValue, TActiveMap, TSubActiveMap } from './jobTime.d';
 import * as JobDB from './jobTimeDB';
 import * as SubJobDB from './subJobTimeDB';
 import { variables as chromeVariables } from '../socket/chromeSocket';
+import { mainVariables } from '../windows';
 
 const TICK_TIME = 10; // TIME_TICK당 한번씩 사용중인 프로그램을 수집
 const SAVE_TICK = 6;
@@ -17,6 +18,7 @@ setSubApplicationHandler();
 
 // // 짧은 주기마다 현재 활성화된 윈도우를 map에 저장하자`
 setInterval(() => {
+  if (!mainVariables.active) return;
   try {
     const activeWindow = ActiveWindow.getActiveWindow();
 
@@ -30,6 +32,7 @@ setInterval(() => {
 // // 긴 주기마다 현재까지 저장된 것들을 DB로 넣어주자
 setInterval(
   () => {
+    if (!mainVariables.active) return;
     JobDB.insertAll(activeMap, TICK_TIME);
     SubJobDB.insertAll(subActiveMap, TICK_TIME);
   },

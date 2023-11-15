@@ -140,6 +140,7 @@ $numOfElems: 9;
   $deg: calc(360deg / $numOfElems);
   .rotater:nth-child(#{$i}) {
     transform: rotate(calc($deg/-2) + $deg * ($i - 1));
+    transition: all 0.25s;
   }
 
   .menu.active {
