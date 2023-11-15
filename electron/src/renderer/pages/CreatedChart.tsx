@@ -202,7 +202,8 @@ function CreatedChart() {
             type="weekly"
           ></PieChart>
         </S.MostDetailContainer>
-        <div style={{ height: '612px' }}>
+        
+        <div style={{ height: '600px' }}>
           <S.GrassContainer>
             <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>
             <ResponsiveTimeRange
