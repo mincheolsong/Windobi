@@ -5,8 +5,8 @@ import { resolveHtmlPath } from '../util';
 import Character from '../character/Character';
 
 const primaryDisplay = screen.getPrimaryDisplay();
-const height = 110;
-const width = 100;
+const height = 130;
+const width = 130;
 
 // #region 유틸리티 정의
 const RESOURCES_PATH = app.isPackaged
