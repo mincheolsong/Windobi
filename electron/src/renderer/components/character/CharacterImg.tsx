@@ -144,7 +144,7 @@ function CharacterImg() {
 
   return (
     <Image
-      width="100"
+      width="120"
       alt="icon"
       src={
         images[motion]?.length > 0
