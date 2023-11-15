@@ -62,7 +62,7 @@ type TVariables = {
   width: number;
   height: number;
   cursor: Cursor;
-  active: boolean;
+  active: boolean; // true일 경우 현재 사용자가 사용하고 있는상태, false일 경우 사용자의 움직임이 없는 상태
 };
 const variables: TVariables = {
   character: new Character(
@@ -117,8 +117,10 @@ const detectDisactive = () => {
         clearInterval(detectActiveId!);
         detectActive(); // 움직이는 상태로 바뀌는지 체크하자
         ipcMain.emit('stopMoving');
-        variables.active = false;
-        variables.character.direction = 'rest';
+        setTimeout(() => {
+          variables.active = false;
+          variables.character.direction = 'rest';
+        }, 1000);
       }
     } else {
       notActiveCount = 0;
@@ -140,8 +142,10 @@ const detectActive = () => {
       clearInterval(detectActiveId!);
       detectDisactive();
       ipcMain.emit('restartMoving');
-      variables.active = true;
-      variables.character.direction = 'stop';
+      setTimeout(() => {
+        variables.active = true;
+        variables.character.direction = 'stop';
+      }, 1000);
     }
   }, 2000);
 };
