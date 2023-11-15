@@ -24,7 +24,8 @@ const MAX_TICK = REFRESH_TIME / INTER_SECOND;
 
 // 메인윈도우가 어느 사분면에 있는지 확인
 const getArea = (): Area => {
-  const { x, y, width, height } = mainWindow.getBounds();
+  const { width, height } = mainVariables;
+  const { x, y } = mainWindow.getBounds();
 
   const windowCenter = {
     x: x + width / 2,
