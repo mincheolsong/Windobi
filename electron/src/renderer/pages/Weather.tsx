@@ -77,6 +77,7 @@ function Weather() {
     'clear sky': '청명함',
   });
   useEffect(() => {
+    window.electron.ipcRenderer.sendMessage('windowOpened');
     const apiKey = '2d7be5022ea1fcb5d5be566f85371efc';
     window.electron.ipcRenderer.invoke('weatherHandler').then((response) => {
       setIcon(response);
@@ -87,21 +88,25 @@ function Weather() {
       .get(url)
       .then((responseData) => {
         console.log(responseData);
-        const data = responseData.data;
-        let nowDate = new Date();
-        setWeather(w => {
+        const { data } = responseData;
+        const nowDate = new Date();
+        setWeather((w) => {
           return {
             ...w,
             cityName: data.city.name,
-            today_Sunrise: new Date(data.city.sunrise * 1000).toTimeString().substring(0, 8),
-            today_Sunset: new Date(data.city.sunset * 1000).toTimeString().substring(0, 8),
+            today_Sunrise: new Date(data.city.sunrise * 1000)
+              .toTimeString()
+              .substring(0, 8),
+            today_Sunset: new Date(data.city.sunset * 1000)
+              .toTimeString()
+              .substring(0, 8),
             list: data.list,
           };
         });
         let maxTemp = 0;
         let minTemp = 999;
-        for( let temp of data.list){
-          let tempDate = new Date(temp.dt * 1000);
+        for (const temp of data.list) {
+          const tempDate = new Date(temp.dt * 1000);
           if (tempDate.getDay() != nowDate.getDay()) {
             if (maxTemp < temp.main.temp) {
               maxTemp = temp.main.temp;
@@ -119,7 +124,7 @@ function Weather() {
             minTemp = temp.main.temp;
           }
         }
-        setWeather(w => {
+        setWeather((w) => {
           return {
             ...w,
             today_Day_String: nowDate.toString().substring(0, 3),
@@ -146,15 +151,27 @@ function Weather() {
     <S.Warpper>
       <S.SpaceAround>
         <S.LeftAround>
-          <S.CityName>{weather.cityName}<Svg fill='white'/></S.CityName>
+          <S.CityName>
+            {weather.cityName}
+            <Svg fill="white" />
+          </S.CityName>
           <span>{(weather.list[0].main.temp - 273.15).toFixed(0)}˚</span>
         </S.LeftAround>
         <S.RightAround>
-          <div>{weather.today_Day_Month}월 {weather.today_Day_Number}일({weather.today_Day_String})</div>
-          <S.WeatherIcon src={`data:image/png;base64,${icon[weather.list[0].weather[0].icon]}`} alter = '아이콘'/>
+          <div>
+            {weather.today_Day_Month}월 {weather.today_Day_Number}일(
+            {weather.today_Day_String})
+          </div>
+          <S.WeatherIcon
+            src={`data:image/png;base64,${
+              icon[weather.list[0].weather[0].icon]
+            }`}
+            alter="아이콘"
+          />
           <div>{description[weather.list[0].weather[0].description]}</div>
           <div>
-            최고: {(weather.today_Max_Temp - 273.15).toFixed(0)}˚ 최저: {(weather.today_Min_Temp - 273.15).toFixed(0)}˚
+            최고: {(weather.today_Max_Temp - 273.15).toFixed(0)}˚ 최저:{' '}
+            {(weather.today_Min_Temp - 273.15).toFixed(0)}˚
           </div>
         </S.RightAround>
       </S.SpaceAround>
@@ -171,8 +188,11 @@ function Weather() {
             <div key={index}>
               {/* <span>{index}</span> */}
               <span>{new Date(info.dt * 1000).getHours()}시</span>
-              <S.WeatherIcon src={`data:image/png;base64,${icon[info.weather[0].icon]}`} alt="weather icon" />
-              <span>{(info.main.temp-273.15).toFixed(0)}˚</span>
+              <S.WeatherIcon
+                src={`data:image/png;base64,${icon[info.weather[0].icon]}`}
+                alt="weather icon"
+              />
+              <span>{(info.main.temp - 273.15).toFixed(0)}˚</span>
             </div>
           ))}
         </S.WeatherInfo>
