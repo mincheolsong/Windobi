@@ -4,12 +4,9 @@ import OpenAI from 'openai';
 import axios from 'axios';
 import * as S from '../components/music/Music.style';
 import playBtn from '../../../assets/icons/playBtn.svg';
+import sam from '../../../assets/sam.json';
 
-/**
- * AIzaSyBqZxYFmowB7KkiTnbdn245IwTNGwkamJU (ㅇㅊ)
- * AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk (ㅁㅊ)
- */
-const GOOGLE_API_KEY = 'AIzaSyADgPDYY5VgeSQgOFuXdU7GaWQeWapbgKk';
+const m = sam.moon;
 const { ipcRenderer } = window.electron;
 const playlist_prefix = 'https://music.youtube.com/browse/VL';
 let example_json = `
@@ -91,7 +88,7 @@ function Music() {
       console.log('1. openai : ' + JSON.stringify(parsedOpenaiResponse));
       // youtube에 playlist만들기
       const playListResponse = await axios.post(
-        `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${GOOGLE_API_KEY}`,
+        `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=status&key=${m}`,
         {
           snippet: {
             title: prompt.concat(' by windobi'), // 플레이 리스트 제목
@@ -115,14 +112,14 @@ function Music() {
       for (let i = 0; i < parsedOpenaiResponse.length; i++) {
         // youtube에 노래 검색
         const youtubeSearchResponse = await axios.get(
-          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${parsedOpenaiResponse[i].song}%7C${parsedOpenaiResponse[i].artist}&type=video&videoCategoryId=10&key=${GOOGLE_API_KEY}`,
+          `https://youtube.googleapis.com/youtube/v3/search?part=snippet&part=id&maxResults=1&q=${parsedOpenaiResponse[i].song}%7C${parsedOpenaiResponse[i].artist}&type=video&videoCategoryId=10&key=${m}`,
         );
 
         videoId = youtubeSearchResponse.data.items[0].id.videoId; // insertitem할때 필요한 값
 
         console.log('3. videoId : ' + videoId);
         const playListItemsResponse = await axios.post(
-          `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${GOOGLE_API_KEY}`,
+          `https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${m}`,
           {
             snippet: {
               playlistId,

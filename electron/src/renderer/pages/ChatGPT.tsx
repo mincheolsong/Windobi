@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import OpenAI from 'openai';
 import '../components/chatGPT/chatGPT.scss';
+import sam from '../../../assets/sam.json';
 
 function ChatGPT() {
   const { ipcRenderer } = window.electron;
@@ -8,14 +9,11 @@ function ChatGPT() {
   const [openai, setOpenai] = useState();
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const settingOpenAi = async () => {
-    const key = await window.electron.ipcRenderer.invoke(
-      'env',
-      'OPENAI_API_KEY',
-    );
-    // console.log(key);
+    const m = sam.sun;
+
     setOpenai(
       new OpenAI({
-        apiKey: key,
+        apiKey: m,
         dangerouslyAllowBrowser: true,
       }),
     );
