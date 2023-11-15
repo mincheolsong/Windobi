@@ -15,16 +15,6 @@ function MyEmail() {
 
     const getEmails = async () => {
       const temp = await ipcRenderer.invoke('accountRequest');
-      const arr = temp.map((email) => {
-        switch (email.host) {
-          case 'imap.naver.com':
-            email.img = naverImage;
-            break;
-          case 'imap.daum.net':
-            email.img = daumImage;
-            break;
-        }
-      });
 
       setEmails(temp);
     };
@@ -51,13 +41,13 @@ function MyEmail() {
             </S.DeleteButton>
           </S.Wrapper>
         ))}
-      <S.button
+      <S.Button
         onClick={() => {
           navigate('/registemail');
         }}
       >
         이메일 등록하기
-      </S.button>
+      </S.Button>
     </S.Container>
   );
 }
