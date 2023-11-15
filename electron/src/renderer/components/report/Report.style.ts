@@ -15,6 +15,7 @@ const LastWeekHeader = styled.div`
 `;
 
 const LastWeekContainer = styled.div`
+  border-radius: 0 0 10px 10px;
   display: flex;
   align-items: center;
   background: white;
@@ -53,6 +54,7 @@ const Lighter = styled.div`
 `;
 
 const BarContainer = styled.div`
+  border-radius: 10px 10px 0 0;
   height: 458px;
   background: white;
   margin: 0px 20px 0px 20px;
@@ -64,7 +66,7 @@ const BarContainer = styled.div`
 const MostAppContainer = styled.div`
   background: white;
   margin: 15px 20px 0px 20px;
-  // border-radius: 15px;
+  border-radius: 10px;
   padding: 10px;
   height: 157px;
 `;
@@ -83,6 +85,7 @@ const MostTitle = styled.h3`
 `;
 
 const MostDetailContainer = styled.div`
+  border-radius: 10px;
   width: 400px;
   height: 680px;
   // margin-top: 5px;
@@ -105,6 +108,7 @@ const MostLangTitle = styled.h3`
 `;
 
 const GrassContainer = styled.div`
+  border-radius: 10px;
   width: 570px;
   height: 365px;
   background: white;
@@ -112,6 +116,7 @@ const GrassContainer = styled.div`
 `;
 
 const UsageByTimeContainer = styled.div`
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   padding: 10px;
