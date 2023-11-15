@@ -9,7 +9,7 @@ function CreateChart() {
   useEffect(() => {
     (async () => {
       const weeklyJobs = await ipcRenderer.invoke('job-time', 'dayOfWeek');
-      const lastWeekAvg = await ipcRenderer.invoke('job-time', 'lastWeekAvg');
+      const lastWeekAvg = await ipcRenderer.invoke('job-time', 'lastWeekSum');
       const entireDevAmt = await ipcRenderer.invoke('sub-job-time', {
         application: null,
         type: 'entire',

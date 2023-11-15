@@ -22,6 +22,7 @@ const LastWeekContainer = styled.div`
   margin-left: 20px;
   margin-right: 20px;
   padding-left: 19px;
+  padding-bottom: 10px;
 `;
 
 const Title = styled.h2`
@@ -55,6 +56,7 @@ const MostAppContainer = styled.div`
   margin: 15px 20px 0px 20px;
   // border-radius: 15px;
   padding: 10px;
+  height: 135px;
 `;
 
 const Date = styled.div`
@@ -90,9 +92,17 @@ const MostLangTitle = styled.h3`
 
 const GrassContainer = styled.div`
   width: 520px;
-  height: 340px;
+  height: 324px;
   background: white;
   padding-top: 15px;
+`;
+
+const UsageByTimeContainer = styled.div`
+  width: 520px;
+  height: 261px;
+  background: white;
+  padding-top: 15px;
+  margin-top: 20px;
 `;
 export {
   BarHeader,
@@ -109,4 +119,5 @@ export {
   LastWeekContainer,
   LastWeekHeader,
   GrassContainer,
+  UsageByTimeContainer,
 };
