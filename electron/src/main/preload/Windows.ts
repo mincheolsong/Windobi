@@ -9,7 +9,6 @@ export type WindowsChannel =
   | 'sizeUpMenuWindow'
   | 'start-move'
   | 'stop-move'
-  | 'weatherHandler'
   | 'start-drag'
   | 'stop-drag'
   | 'windowOpened'

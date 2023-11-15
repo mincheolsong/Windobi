@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import OpenAI from 'openai';
 import '../components/chatGPT/chatGPT.scss';
+import sam from '../../../assets/sam.json';
 
 function ChatGPT() {
   const { ipcRenderer } = window.electron;
@@ -8,21 +9,18 @@ function ChatGPT() {
   const [openai, setOpenai] = useState();
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const settingOpenAi = async () => {
-    const key = await window.electron.ipcRenderer.invoke(
-      'env',
-      'OPENAI_API_KEY',
-    );
-    // console.log(key);
+    const m = sam.sun;
+
     setOpenai(
       new OpenAI({
-        apiKey: key,
+        apiKey: m,
         dangerouslyAllowBrowser: true,
       }),
     );
   };
 
   useEffect(() => {
-    ipcRenderer.sendMessage('stopMoving');
+    ipcRenderer.sendMessage('windowOpened');
     window.electron.ipcRenderer.sendMessage('size', {
       width: 300,
       height: 500,
@@ -33,18 +31,7 @@ function ChatGPT() {
   const [prompt, setPrompt] = useState(''); // 입력창에 사용되는 state
   const [apiResponse, setApiResponse] = useState('');
   const [loading, setLoading] = useState(false);
-  const [chat, setChat] = useState([
-    {
-      type: 1,
-      content:
-        'this is test message. this is test message.this is test message.this is test message.this is test message.',
-    },
-    {
-      type: 0,
-      content:
-        'this is test message.this is test message.this is test message.this is test message.',
-    },
-  ]); // 채팅 말풍선을 보여주기 위한 state
+  const [chat, setChat] = useState([]); // 채팅 말풍선을 보여주기 위한 state
   const [message, setMessage] = useState([]); // 챗봇을 위한 message
 
   const handleSubmit = async (e) => {

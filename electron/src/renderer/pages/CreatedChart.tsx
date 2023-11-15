@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { toPng } from 'html-to-image';
-import BarChart from '../components/jobtime/BarChart';
-import { ipcRenderer } from 'electron';
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsiveTimeRange } from '@nivo/calendar';
 import * as S from '../components/report/Report.style';
@@ -130,8 +128,8 @@ function CreatedChart() {
   // const highestMin = Math.floor((highestTime % 1) * 60, 0);
 
   // 이번주 사용시간
-  const timeSum: number = result.reduce((sum, data) => sum + data.time, 0); // 이번주 사용시간
-  const timeAvg: number = timeSum / result.length; // 이번주 사용시간 평균
+  const timeSum: number = result.reduce((sum, data) => sum + data.time, 0); // 이번주 사용시간 (시간단위 2.3 혹은 3.4 )
+  const timeAvg: number = timeSum / 7; // 이번주 사용시간 평균
   const timeAvgHour: number = Math.floor(timeAvg, 0); // 이번주 사용시간 평균 (시)
   const timeAvgMin: number = Math.floor((timeAvg % 1) * 60, 0); // 이번주 사용시간 평균 (분)
 
@@ -139,14 +137,14 @@ function CreatedChart() {
   const timeSumMin: number = Math.floor((timeSum % 1) * 60, 0); // 이번주 총 사용시간 (분)
 
   // 지난주 사용시간 합
-  const lastTimeSum = lastWeek[0].time;
+  const lastTimeSum = lastWeek[0].time; // 시간단위 2.3 혹은 3.4
 
   // 이번주와 지난주 비교
-  const avgDiff = timeAvg - lastTimeSum; // 양수 : 더 많이 사용, 음수 : 덜 사용
+  const sumDiff = timeSum - lastTimeSum; // 양수 : 더 많이 사용, 음수 : 덜 사용
 
-  const absAvgDiff = Math.abs(avgDiff);
-  const absAvgDiffHour: number = Math.floor(absAvgDiff, 0);
-  const absAvgDiffMin: number = Math.floor((absAvgDiff % 1) * 60, 0);
+  const sumAbsDiff = Math.abs(sumDiff);
+  const sumAbsDiffHour: number = Math.floor(sumAbsDiff, 0);
+  const sumAbsDiffMin: number = Math.floor((sumAbsDiff % 1) * 60, 0);
 
   return (
     <div
@@ -210,7 +208,7 @@ function CreatedChart() {
                 from: 'color',
                 modifiers: [['darker', 1.6]],
               }}
-              borderRadius={'10px'}
+              borderRadius="10px"
               axisTop={null}
               axisRight={null}
               labelSkipWidth={12}
@@ -227,12 +225,12 @@ function CreatedChart() {
           <S.LastWeekContainer>
             <S.Context>지난주 보다</S.Context>&nbsp;
             <S.LastWeekHeader>
-              <S.Bolder> {absAvgDiffHour}</S.Bolder>
+              <S.Bolder> {sumAbsDiffHour}</S.Bolder>
               <S.Text style={{ marginRight: '8px' }}>시간</S.Text>{' '}
-              <S.Bolder> {absAvgDiffMin} </S.Bolder>
+              <S.Bolder> {sumAbsDiffMin} </S.Bolder>
               <S.Text>분</S.Text>&nbsp;
             </S.LastWeekHeader>
-            {avgDiff < 0 ? (
+            {sumDiff < 0 ? (
               <p>
                 {' '}
                 <S.Context>
@@ -251,7 +249,7 @@ function CreatedChart() {
 
           <S.MostAppContainer>
             <S.MostTitle>많이 사용한 앱</S.MostTitle>
-            <RecentApplication></RecentApplication>
+            <RecentApplication />
           </S.MostAppContainer>
         </div>
         <S.MostDetailContainer>
@@ -260,7 +258,7 @@ function CreatedChart() {
             application="Visual Studio Code"
             day={new Date()}
             type="weekly"
-          ></PieChart>
+          />
         </S.MostDetailContainer>
 
         <div style={{ height: '680px' }}>

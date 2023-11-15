@@ -20,8 +20,6 @@ const windowsHandler = () => {
   windowOpenedHandler();
   windowClosedHandler();
   showYouTubeMusicWindow();
-  // hideYouTubeMusicWindow();
-  // sizeUpMenuWindowHandler();
 };
 
 /**
@@ -113,13 +111,5 @@ const windowClosedHandler = () => {
     mainVariables.character.isMove = true;
   });
 };
-/**
- * 'hideYouTubeMusicWindow : 유튜브 뮤직윈도우 숨기기
- */
-// const hideYouTubeMusicWindow = () => {
-//   ipcMain.on('hideYouTubeMusicWindow', () => {
-//     etcWindow.hide();
-//   });
-// };
 
 export default windowsHandler;

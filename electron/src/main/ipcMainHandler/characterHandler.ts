@@ -57,7 +57,9 @@ const hideMenuHandler = () => {
  */
 const characterListHandler = () => {
   ipcMain.handle('character-list', async () => {
-    const characterList = fs.readdirSync(path.join(RESOURCES_PATH, 'character'));
+    const characterList = fs.readdirSync(
+      path.join(RESOURCES_PATH, 'character'),
+    );
     const result = characterList.map((character) => {
       const image = fs.readFileSync(
         path.join(RESOURCES_PATH, 'character', character, 'stop', '1.png'),
@@ -74,35 +76,38 @@ const characterListHandler = () => {
  * 'character-images' : 해당 캐릭터의 이미지들을 불러온다
  */
 const characterImagesHandler = () => {
-  type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
+  type TMotion = 'click' | 'down' | 'move' | 'stop' | 'rest';
   type TMotionImage = {
     click: Array<string>;
     down: Array<string>;
     move: Array<string>;
     stop: Array<string>;
-    up: Array<string>;
+    rest: Array<string>;
   };
   ipcMain.handle('character-images', async (_event, character: string) => {
     const TARGET_DIRECTORY = path.join(RESOURCES_PATH, 'character', character);
-    const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'up'];
+    const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'rest'];
     const motionImages: TMotionImage = {
       click: [],
       down: [],
       move: [],
       stop: [],
-      up: [],
+      rest: [],
     };
     motions.forEach((motion) => {
       try {
         const imageList = fs.readdirSync(path.join(TARGET_DIRECTORY, motion));
         for (const image of imageList) {
-          const base64Image = fs.readFileSync(path.join(TARGET_DIRECTORY, motion, image), {
-            encoding: 'base64',
-          });
+          const base64Image = fs.readFileSync(
+            path.join(TARGET_DIRECTORY, motion, image),
+            {
+              encoding: 'base64',
+            },
+          );
           motionImages[motion].push(base64Image);
         }
       } catch (e) {
-        console.log(e);
+        /* empty */
       }
     });
 
@@ -139,7 +144,10 @@ const deleteCharacterHandler = () => {
     if (!fs.existsSync(path.join(RESOURCES_PATH, 'character', name))) {
       return false;
     }
-    fs.rmSync(path.join(RESOURCES_PATH, 'character', name), { recursive: true, force: true });
+    fs.rmSync(path.join(RESOURCES_PATH, 'character', name), {
+      recursive: true,
+      force: true,
+    });
     return true;
   });
 };
@@ -154,11 +162,11 @@ const addCharacterHandler = () => {
     move: Array<string>;
     click: Array<string>;
     down: Array<string>;
-    up: Array<string>;
+    rest: Array<string>;
   };
   ipcMain.handle(
     'add-character',
-    (_event, { name, stop, move, click, down, up }: TAddCharacter) => {
+    (_event, { name, stop, move, click, down, rest }: TAddCharacter) => {
       const result = {
         success: false,
         message: '',
@@ -175,7 +183,7 @@ const addCharacterHandler = () => {
         move.length === 0 ||
         click.length === 0 ||
         down.length === 0 ||
-        up.length === 0
+        rest.length === 0
       ) {
         result.success = false;
         result.message = '각 모션마다 최소 1장의 이미지가 필요합니다';
@@ -195,14 +203,20 @@ const addCharacterHandler = () => {
         { motion: 'move', images: move },
         { motion: 'click', images: click },
         { motion: 'down', images: down },
-        { motion: 'up', images: up },
+        { motion: 'rest', images: rest },
       ];
 
       imageList.forEach(({ motion, images }) => {
         fs.mkdirSync(path.join(RESOURCES_PATH, 'character', name, motion));
         images.forEach((image, index) => {
           fs.writeFileSync(
-            path.join(RESOURCES_PATH, 'character', name, motion, `${index + 1}.png`),
+            path.join(
+              RESOURCES_PATH,
+              'character',
+              name,
+              motion,
+              `${index + 1}.png`,
+            ),
             image,
             'base64',
           );

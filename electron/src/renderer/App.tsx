@@ -1,6 +1,9 @@
-import { useState } from 'react';
-
-import { MemoryRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import {
+  MemoryRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from 'react-router-dom';
 import './App.css';
 import {
   AddCharacter,
@@ -35,12 +38,8 @@ import EtcWindow from './layout/EtcWindow';
 
 function MyApp() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { ipcRenderer } = window.electron;
-  const [accessToken, setAccessToken] = useState('');
   ipcRenderer.on('mailReceiving', (mail: TMail) => {
-    // console.log("mainRenderer Mail 수신", mail);
-    // 메일 수신 알림 주기
     ipcRenderer.sendMessage('sub', 'alarm');
   });
 

@@ -4,7 +4,14 @@
 import { ipcMain } from 'electron';
 import { mainVariables, mainWindow } from '../windows';
 
-type TDirection = 'left' | 'right' | 'stop' | 'up' | 'down' | 'downsleep' | 'click';
+type TDirection =
+  | 'left'
+  | 'right'
+  | 'stop'
+  | 'rest'
+  | 'down'
+  | 'downsleep'
+  | 'click';
 
 class Character {
   #curX: number;
@@ -27,7 +34,12 @@ class Character {
 
   #isMove: boolean; // 움직일 수 있는 상태인지
 
-  constructor(maxWidth: number, maxHeight: number, winWidth: number, winHeight: number) {
+  constructor(
+    maxWidth: number,
+    maxHeight: number,
+    winWidth: number,
+    winHeight: number,
+  ) {
     this.winWidth = winWidth;
     this.winHeight = winHeight;
     this.#curX = maxWidth - winWidth;

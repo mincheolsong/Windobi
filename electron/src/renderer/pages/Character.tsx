@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import * as S from '../components/character/Character.style';
 import CharacterImg from '../components/character/CharacterImg';
 
