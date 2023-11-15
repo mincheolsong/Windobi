@@ -45,9 +45,9 @@ function MyEmail() {
     getEmails();
   }, []);
 
-  const handleDeleteEmail = (email: String) => {
+  const handleDeleteEmail = (email: TEmail) => {
     // 이메일 삭제 로직 구현
-    window.electron.ipcRenderer.sendMessage('accountDelete', email);
+    ipcRenderer.sendMessage('accountDelete', email);
     setEmails((prevMails) =>
       prevMails.filter((m) => m.id !== email.id || m.host !== email.host),
     );
@@ -56,7 +56,7 @@ function MyEmail() {
     <S.Container>
       {emails.length > 0 &&
         emails.map((email) => (
-          <S.Wrapper key={email}>
+          <S.Wrapper key={email.id}>
             <S.Icon src={email.img} alt="email logo" />
             <span>{email.id}</span>
             <S.DeleteButton onClick={() => handleDeleteEmail(email)}>
