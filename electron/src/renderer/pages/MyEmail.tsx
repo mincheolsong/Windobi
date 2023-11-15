@@ -46,7 +46,7 @@ function MyEmail() {
           navigate('/registemail');
         }}
       >
-        이메일 등록하기
+        이메일 등록
       </S.Button>
     </S.Container>
   );
