@@ -44,7 +44,6 @@ function MyApp() {
   });
 
   ipcRenderer.on('sub', (path) => {
-    console.log(`Received : ${path}`);
     navigate(`/${path}`);
   });
 
