@@ -185,8 +185,12 @@ function Weather() {
           return {
             ...w,
             cityName: data.city.name,
-            today_Sunrise: new Date(data.city.sunrise * 1000).toTimeString().substring(0, 8),
-            today_Sunset: new Date(data.city.sunset * 1000).toTimeString().substring(0, 8),
+            today_Sunrise: new Date(data.city.sunrise * 1000)
+              .toTimeString()
+              .substring(0, 8),
+            today_Sunset: new Date(data.city.sunset * 1000)
+              .toTimeString()
+              .substring(0, 8),
             list: data.list,
           };
         });
