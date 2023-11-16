@@ -24,6 +24,10 @@ function DeleteCharacter() {
   }, []);
 
   const onClickDelete = async (name: string) => {
+    if (name === 'default') {
+      alert('기본 캐릭터는 삭제할 수 없습니다.');
+      return;
+    }
     const check = window.confirm(`${name}을 삭제할까요?`);
     if (!check) return;
     const success = await ipcRenderer.invoke('delete-character', name);

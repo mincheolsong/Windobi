@@ -1,7 +1,6 @@
 import * as S from './Report.style';
 
 function RunningTime(props: { day: Array<any> }) {
-  console.log("day:", props.day);
   const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
   const dateString = props.day[0].day.toString();
   const year = parseInt(dateString.substr(0, 4));
