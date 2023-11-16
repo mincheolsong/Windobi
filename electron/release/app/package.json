@@ -1,12 +1,12 @@
 {
-  "name": "electron-react-boilerplate",
+  "name": "windobi",
   "version": "4.6.0",
   "description": "A foundation for scalable desktop apps",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Honeycomb",
+    "email": "honeycomb201@naver.com",
+    "url": "https://naver.com"
   },
   "main": "./dist/main/main.js",
   "scripts": {
@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@paymoapp/active-window": "^2.0.6",
+    "@types/sqlite3": "^3.1.11",
+    "sharp": "^0.32.6",
     "sqlite3": "^5.1.6"
   }
 }

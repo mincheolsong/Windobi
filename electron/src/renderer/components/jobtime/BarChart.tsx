@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-use-before-define */
-/* eslint-disable jsx-a11y/alt-text */
 import React, { useState, useEffect, useCallback } from 'react';
 import * as S from './BarChart.style';
+import { timeToString } from '../../util';
 
 type TJob = {
   application: string;
@@ -40,17 +37,6 @@ function BarChart({ dailyJobs, weeklyJobs, type, setApplication }: TBarChart) {
   const [sortedweeklyJobs, setSortedWeeklyJobs] = useState<Array<IJobTimed>>(
     [],
   );
-
-  const timeToString = (time: number) => {
-    const hour = Math.floor(time / 3600);
-    const minute = Math.floor((time % 3600) / 60);
-
-    let result = '';
-    result = result.concat(hour > 0 ? `${hour}시` : '');
-    result = result.concat(minute > 0 ? `${minute}분` : '');
-
-    return result;
-  };
 
   const preprocess = useCallback(
     (
