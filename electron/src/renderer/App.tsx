@@ -5,6 +5,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
+import { useEffect } from 'react';
 import {
   AddCharacter,
   Alarm,
@@ -191,6 +192,7 @@ function MyApp() {
         />
         <Route path="/createchart" element={<CreateChart />} />
         <Route path="/createdchart" element={<CreatedChart />} />
+        <Route path="/report" element={<CreateChart />} />
       </Routes>
     </>
   );
