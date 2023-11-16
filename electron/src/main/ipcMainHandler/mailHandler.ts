@@ -189,10 +189,13 @@ const reportTestHandler = () => {
     const chartWindow = new BrowserWindow({
       width: 1500,
       height: 800,
+      // show: false,
+      // focusable: false,
+      // frame: false,
       show: true,
-      transparent: false,
       focusable: true,
-      frame: false,
+      frame: true,
+      transparent: false,
       webPreferences: {
         preload: app.isPackaged
           ? path.join(__dirname, 'preload.js')

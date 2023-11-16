@@ -48,6 +48,10 @@ const registJobTimeHandler = () => {
         const result = await JobTimeDB.getSumTimeofLastWeek();
         return result;
       }
+      if (type === 'lastWeekTime') {
+        const result = await JobTimeDB.getRunTimeofLastWeek();
+        return result;
+      }
       return [];
     },
   );

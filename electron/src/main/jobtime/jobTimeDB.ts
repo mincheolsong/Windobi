@@ -25,6 +25,12 @@ const dateToNumber = (date: Date) => {
   return numberDate;
 };
 
+const dateToTime = (date : Date) => { // 시간 변환
+  const numberTime = date.getHours()*100 + date.getMinutes();
+  // console.log('nowTime', numberTime);
+  return numberTime;
+}
+
 const instance = new sqlite3.Database(DB_FILE, () => {
   createTable();
 });
@@ -37,13 +43,15 @@ const createTable = () => {
       active_time INTEGER,
       icon TEXT,
       path TEXT,
-      day INTEGER
+      day INTEGER,
+      time INTEGER
     )`,
   );
 };
 
 const insertAll = (activeMap: TActiveMap, tickTime: number) => {
   const now = dateToNumber(new Date());
+  const nowTime = dateToTime(new Date());
   const activeArray: Array<TJobTime> = [];
   activeMap.forEach((value, key) => {
     activeArray.push({
@@ -52,12 +60,14 @@ const insertAll = (activeMap: TActiveMap, tickTime: number) => {
       icon: value.icon,
       path: value.path,
       day: now,
+      time: nowTime
     });
   });
-  const sql = `INSERT INTO ${TABLE_NAME} (application, active_time, icon, path, day) VALUES ${activeArray
+
+  const sql = `INSERT INTO ${TABLE_NAME} (application, active_time, icon, path, day, time) VALUES ${activeArray
     .map(
       (active) =>
-        `('${active.application}', ${active.active_time}, '${active.icon}', '${active.path}', ${active.day})`,
+        `('${active.application}', ${active.active_time}, '${active.icon}', '${active.path}', ${active.day}, ${active.time})`,
     )
     .join(',')}`;
   instance.run(sql, () => {
@@ -196,6 +206,36 @@ const getSumTimeofLastWeek = (): Promise<Array<TJob>> => {
 };
 
 /**
+ * 지난주 사용시간 합
+ * @returns { Array<Job> }
+ */
+const getRunTimeofLastWeek = (): Promise<Array<TJob>> => {
+  const weekAgo = new Date();
+  const start = new Date();
+  const end = new Date();
+
+  start.setDate(weekAgo.getDate()-6);
+  end.setDate(weekAgo.getDate());
+
+  const targetStart = dateToNumber(start);
+  const targetEnd = dateToNumber(end);
+  // 수정수정수정!!!!!
+  // const sql = `SELECT day, time FROM ${TABLE_NAME} where day >= ${targetStart} and day < ${targetEnd} and time is not null`;
+  const sql = `SELECT day, time/100 as hour, sum(active_time) as activeTime FROM ${TABLE_NAME} where day >= ${targetStart} and day <= ${targetEnd} and time is not null group by day, time/100`;
+  return new Promise((resolve, reject) => {
+    return instance.all(
+      sql,
+      (err, rows: Array<TJobTime>) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(rows);
+      },
+    );
+  });
+};
+
+/**
  * 최근 7일간의 활동 정보를 application별로 반환
  */
 type TJobTimePerApplication = {
@@ -232,4 +272,5 @@ export {
   getRecentDayOfWeek,
   getRecentWeekPerApplication,
   getSumTimeofLastWeek,
+  getRunTimeofLastWeek,
 };
