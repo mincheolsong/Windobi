@@ -199,6 +199,13 @@ const UsageContainer = styled.div`
   padding-top: 5px;
 `;
 
+const UseLanguage = styled.h3`
+  position: absolute;
+  top: 221px;
+  font-family: GmarketSansTTFMedium;
+  margin-left: 19px;
+`;
+
 const getRadius = (hour: any) => {
   if (hour === 0) {
     return '40% 0 0 40%';
@@ -249,4 +256,5 @@ export {
   TimeTable,
   Time,
   Context,
+  UseLanguage,
 };
