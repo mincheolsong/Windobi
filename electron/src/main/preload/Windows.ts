@@ -14,4 +14,5 @@ export type WindowsChannel =
   | 'windowOpened'
   | 'windowClosed'
   | 'showYouTubeMusicWindow'
-  | 'hideYouTubeMusicWindow';
+  | 'hideYouTubeMusicWindow'
+  | 'show-report';
