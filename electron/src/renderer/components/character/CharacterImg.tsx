@@ -2,12 +2,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { styled } from 'styled-components';
 
-type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
+type TMotion = 'click' | 'down' | 'move' | 'stop' | 'rest';
 type TDirection =
   | 'left'
   | 'right'
   | 'stop'
-  | 'up'
+  | 'rest'
   | 'down'
   | 'downsleep'
   | 'click';
@@ -16,13 +16,13 @@ type TMotionImage = {
   down: Array<string>;
   move: Array<string>;
   stop: Array<string>;
-  up: Array<string>;
+  rest: Array<string>;
 };
 type TMotionHandler = {
   left: () => ReturnType<typeof setInterval> | null;
   right: () => ReturnType<typeof setInterval> | null;
   stop: () => ReturnType<typeof setInterval> | null;
-  up: () => ReturnType<typeof setInterval> | null;
+  rest: () => ReturnType<typeof setInterval> | null;
   down: () => ReturnType<typeof setInterval> | null;
   downsleep: () => ReturnType<typeof setInterval> | null;
   click: () => ReturnType<typeof setInterval> | null;
@@ -38,7 +38,7 @@ function CharacterImg() {
     down: [],
     move: [],
     stop: [],
-    up: [],
+    rest: [],
   });
 
   const [reverse, setReverse] = useState<boolean>(false);
@@ -47,7 +47,7 @@ function CharacterImg() {
     left: () => null,
     right: () => null,
     stop: () => null,
-    up: () => null,
+    rest: () => null,
     down: () => null,
     downsleep: () => null,
     click: () => null,
@@ -99,10 +99,10 @@ function CharacterImg() {
       if (images.stop.length <= 1) return null;
       return setInterval(indexHandler, TICK, images.stop.length);
     };
-    motionHandler.up = () => {
-      setMotion('up');
-      if (images.up.length <= 1) return null;
-      return setInterval(indexHandler, TICK, images.up.length);
+    motionHandler.rest = () => {
+      setMotion('rest');
+      if (images.rest.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.rest.length);
     };
     motionHandler.down = () => {
       setMotion('down');
@@ -144,7 +144,7 @@ function CharacterImg() {
 
   return (
     <Image
-      width="100"
+      width="120"
       alt="icon"
       src={
         images[motion]?.length > 0

@@ -125,6 +125,7 @@
     "react-icons": "^4.11.0",
     "react-router-dom": "^6.16.0",
     "react-switch": "^7.0.0",
+    "sharp": "^0.32.6",
     "sqlite3": "^5.1.6",
     "styled-components": "^6.1.1"
   },
