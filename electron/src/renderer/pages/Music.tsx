@@ -9,7 +9,6 @@ import sam from '../../../assets/sam.json';
 const m = sam.moon;
 const s = sam.sun;
 
-const { ipcRenderer } = window.electron;
 const playlist_prefix = 'https://music.youtube.com/browse/VL';
 const example_json = `
 [
@@ -22,6 +21,7 @@ const example_json = `
 `;
 
 function Music() {
+  const { ipcRenderer } = window.electron;
   const [openai, setOpenai] = useState();
   const [prompt, setPrompt] = useState('');
   const [count, setCount] = useState(5);

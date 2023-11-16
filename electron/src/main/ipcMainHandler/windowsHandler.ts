@@ -1,4 +1,5 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, app, ipcMain } from 'electron';
+import path from 'path';
 import {
   mainWindow,
   mainVariables,
@@ -9,7 +10,11 @@ import {
 
 import moving from '../character/moving';
 import moveScheduling from '../character/moveScheduling';
-import { sleep } from '../util';
+import { resolveHtmlPath, sleep } from '../util';
+
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../../assets');
 
 const windowsHandler = () => {
   subHandler();
@@ -20,6 +25,7 @@ const windowsHandler = () => {
   windowOpenedHandler();
   windowClosedHandler();
   showYouTubeMusicWindow();
+  showReportHandler();
 };
 
 /**
@@ -109,6 +115,47 @@ const windowOpenedHandler = () => {
 const windowClosedHandler = () => {
   ipcMain.on('windowClosed', () => {
     mainVariables.character.isMove = true;
+  });
+};
+
+let reportWindow: BrowserWindow | null = null;
+
+/**
+ * 'show-report' : 레포트 보여주기
+ */
+const showReportHandler = () => {
+  ipcMain.on('show-report', async () => {
+    if (reportWindow !== null) {
+      // 이미 켜져 있으면
+      reportWindow.maximize();
+      reportWindow.moveTop();
+      reportWindow.focus();
+      return;
+    }
+    reportWindow = new BrowserWindow({
+      x: 0,
+      y: 0,
+      title: '리포트',
+      width: mainVariables.primaryDisplay.bounds.width,
+      height: mainVariables.primaryDisplay.bounds.height,
+      webPreferences: {
+        preload: app.isPackaged
+          ? path.join(__dirname, 'preload.js')
+          : path.join(__dirname, '../../../.erb/dll/preload.js'),
+        nodeIntegration: true,
+        sandbox: false,
+      },
+      icon: path.join(RESOURCES_PATH, 'icon.png'),
+    });
+    reportWindow.setMenu(null);
+
+    await reportWindow?.loadURL(resolveHtmlPath('index.html'));
+    reportWindow.webContents.closeDevTools();
+    reportWindow?.webContents.send('sub', 'report');
+
+    reportWindow.on('closed', () => {
+      reportWindow = null;
+    });
   });
 };
 
