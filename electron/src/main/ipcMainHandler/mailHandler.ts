@@ -185,24 +185,24 @@ const addMailListener = (id: string, password: string, host: string) => {
  * 'test' : 보고서 테스트
  */
 const reportTestHandler = () => {
-  setTimeout(async () => {
-    const chartWindow = new BrowserWindow({
-      width: 1500,
-      height: 800,
-      show: true,
-      transparent: false,
-      focusable: true,
-      frame: false,
-      webPreferences: {
-        preload: app.isPackaged
-          ? path.join(__dirname, 'preload.js')
-          : path.join(__dirname, '../../../.erb/dll/preload.js'),
-      },
-    });
-    await chartWindow.loadURL(resolveHtmlPath('index.html'));
-    chartWindow.webContents.send('sub', 'createchart');
-    // chartWindow.webContents.closeDevTools();
-  }, 5000);
+  // setTimeout(async () => {
+  //   const chartWindow = new BrowserWindow({
+  //     width: 1500,
+  //     height: 800,
+  //     show: true,
+  //     transparent: false,
+  //     focusable: true,
+  //     frame: false,
+  //     webPreferences: {
+  //       preload: app.isPackaged
+  //         ? path.join(__dirname, 'preload.js')
+  //         : path.join(__dirname, '../../../.erb/dll/preload.js'),
+  //     },
+  //   });
+  //   await chartWindow.loadURL(resolveHtmlPath('index.html'));
+  //   chartWindow.webContents.send('sub', 'createchart');
+  //   // chartWindow.webContents.closeDevTools();
+  // }, 5000);
 };
 
 /**

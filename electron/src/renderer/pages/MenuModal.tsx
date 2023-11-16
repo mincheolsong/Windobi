@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import '../components/menu/MenuModal.scss';
 import { LuMailPlus, LuMailSearch } from 'react-icons/lu';
 import { IconType } from 'react-icons';
+import { TbReport } from 'react-icons/tb';
 import jobtime from '../../../assets/icons/jobtime.svg';
 import chatGPT from '../../../assets/icons/chatGPT.svg';
 import setting from '../../../assets/icons/setting.svg';
 import close from '../../../assets/icons/close.svg';
 import weather from '../../../assets/icons/weather.svg';
 import music from '../../../assets/icons/music.svg';
-import report from '../../../assets/icons/report.svg';
 
 type TItem = {
   path: string;
@@ -22,6 +22,7 @@ function MenuModal() {
 
   const menuItems: Array<TItem> = [
     { path: 'googleOAuth', icon: music },
+    { path: 'report', icon: TbReport },
     { path: 'jobtime', icon: jobtime },
     { path: 'chatGPT', icon: chatGPT },
     { path: 'setting', icon: setting },
@@ -59,6 +60,9 @@ function MenuModal() {
     ipcRenderer.sendMessage('hideMenuWindow');
     if (path === 'close') {
       ipcRenderer.sendMessage('restartMoving');
+    } else if (path === 'report') {
+      // 리포트를 보여줘야 하면
+      ipcRenderer.sendMessage('show-report');
     } else {
       ipcRenderer.sendMessage('sub', path);
     }
