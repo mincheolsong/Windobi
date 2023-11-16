@@ -4,6 +4,7 @@ export type TJobTime = {
   icon: string;
   path: string;
   day: number;
+  time?: number;
 };
 
 export type TSubJobTime = {

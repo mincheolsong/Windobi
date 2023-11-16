@@ -1,8 +1,5 @@
 import styled, { css } from 'styled-components';
 
-const weatherUrl =
-  'https://images.unsplash.com/photo-1601352209555-489a72668fda?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fCVFQSVCNSVBQyVFQiVBNiU4NHxlbnwwfHwwfHx8MA%3D%3D';
-
 const WarpperVideo = styled.video`
   width: 100%;
   height: 100%;
@@ -13,12 +10,6 @@ const WarpperVideo = styled.video`
 `;
 
 const Warpper = styled.div`
-  // background-image: url(${weatherUrl});
-  // // background-color: #b7dbe1;
-  // background-position: center;
-  // background-repeat: no-repeat;
-  // background-size: cover;
-  // width: 100%;
   width: 100%;
 `;
 
@@ -66,6 +57,11 @@ const WeatherInfo = styled.div`
   gap: 15px;
   align-items: center;
   z-index: 1;
+  ${(props) =>
+    props.blur &&
+    css`
+      backdrop-filter: blur(2px);
+    `};
   span {
     font-size: 0.9em;
     margin-bottom: 10px;
@@ -107,7 +103,6 @@ const OtherDayWeather = styled.div`
   ${(props) =>
     props.blur &&
     css`
-      background-image: url('your-blur-image-url');
       backdrop-filter: blur(2px);
     `};
 `;
