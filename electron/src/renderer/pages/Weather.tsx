@@ -210,7 +210,6 @@ function Weather() {
           maxTemp = Math.max(maxTemp, Number.parseInt((object.main.temp - 273.15).toFixed(0), 10));
           minTemp = Math.min(minTemp, Number.parseInt((object.main.temp - 273.15).toFixed(0), 10));
         }
-        console.log(maxTemp, minTemp);
         const getDay = (dt: number): string => {
           return numberToDay[new Date(dt * 1000).getDay()];
         };
@@ -368,9 +367,6 @@ type TTempBar = {
 function TempBar({ minTemp, maxTemp, LocalMinTemp, LocalMaxTemp }: TTempBar) {
   const length = maxTemp - minTemp;
   const LocalLength = LocalMaxTemp - LocalMinTemp;
-  console.log(`전체중 몇 퍼센트인지 : ${((LocalLength / length) * 100).toFixed(2)}%`);
-  console.log(`어디부터 시작하는지 : ${(((LocalMinTemp - minTemp) / maxTemp) * 100).toFixed(2)}%`);
-  console.log(length, LocalMinTemp, minTemp);
   return (
     <S.BarWrapper>
       <S.LocalBar

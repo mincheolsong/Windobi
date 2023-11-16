@@ -142,6 +142,18 @@ function CharacterImg() {
     });
   }, []);
 
+  useEffect(() => {
+    //이전 핸들러 삭제
+    ipcRenderer.removeAllListener('delete-character');
+    // 삭제 이후 로직처리
+    ipcRenderer.on('delete-character', (deleteCharacter: string) => {
+      if (deleteCharacter === character) {
+        setCharacter(() => 'default');
+        ipcRenderer.sendMessage('set-setting', 'character', 'default');
+      }
+    });
+  }, [character]);
+
   return (
     <Image
       width="120"
