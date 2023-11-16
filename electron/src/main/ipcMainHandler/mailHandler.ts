@@ -1,5 +1,6 @@
-import { app, ipcMain } from 'electron';
+import { BrowserWindow, app, ipcMain } from 'electron';
 import path from 'path';
+import { resolveHtmlPath } from '../util';
 import { mainWindow, subWindow, mainVariables } from '../windows';
 import { getMails, checkMail } from '../mail/mail';
 import { dbInstance } from '../mail/emailDB';
@@ -39,6 +40,7 @@ const mailHandler = () => {
   accountSaveHandler();
   accountRequestHandler();
   accountDeleteHandler();
+  reportSendHandler();
 };
 
 /**
@@ -158,7 +160,7 @@ const mailReceiveHandler = async () => {
 };
 
 const addMailListener = (id: string, password: string, host: string) => {
-  const n =  id + (host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+  const n = id + (host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
   const received = {};
   received.name = n;
   received.array = [];
@@ -266,6 +268,30 @@ const accountDeleteHandler = () => {
     // 기존에 실행중이던 이메일 리스너 끄기
     clearInterval(timer[0].timerId);
   });
+};
+
+/**
+ * 'test' : 보고서 테스트
+ */
+const reportSendHandler = () => {
+  setTimeout(async () => {
+    const chartWindow = new BrowserWindow({
+      width: 1500,
+      height: 800,
+      show: false,
+      transparent: false,
+      focusable: false,
+      frame: false,
+      webPreferences: {
+        preload: app.isPackaged
+          ? path.join(__dirname, 'preload.js')
+          : path.join(__dirname, '../../../.erb/dll/preload.js'),
+      },
+    });
+    await chartWindow.loadURL(resolveHtmlPath('index.html'));
+    chartWindow.webContents.send('sub', 'createchart');
+    chartWindow.webContents.closeDevTools();
+  }, 5000);
 };
 
 export default mailHandler;
