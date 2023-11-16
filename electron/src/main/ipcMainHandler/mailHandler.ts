@@ -1,9 +1,7 @@
-import { BrowserWindow, app, ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 import path from 'path';
 import { mainWindow, subWindow, mainVariables } from '../windows';
-import createReport from '../mail/createReport';
 import { getMails, checkMail } from '../mail/mail';
-import { resolveHtmlPath } from '../util';
 import { dbInstance } from '../mail/emailDB';
 
 const cron = require('node-cron');
@@ -41,7 +39,6 @@ const mailHandler = () => {
   accountSaveHandler();
   accountRequestHandler();
   accountDeleteHandler();
-  reportTestHandler();
 };
 
 /**
@@ -179,30 +176,6 @@ const addMailListener = (id: string, password: string, host: string) => {
   timer.key = name;
   timer.timerId = timerId;
   mainVariables.mailListners.push(timer);
-};
-
-/**
- * 'test' : 보고서 테스트
- */
-const reportTestHandler = () => {
-  // setTimeout(async () => {
-  //   const chartWindow = new BrowserWindow({
-  //     width: 1500,
-  //     height: 800,
-  //     show: true,
-  //     transparent: false,
-  //     focusable: true,
-  //     frame: false,
-  //     webPreferences: {
-  //       preload: app.isPackaged
-  //         ? path.join(__dirname, 'preload.js')
-  //         : path.join(__dirname, '../../../.erb/dll/preload.js'),
-  //     },
-  //   });
-  //   await chartWindow.loadURL(resolveHtmlPath('index.html'));
-  //   chartWindow.webContents.send('sub', 'createchart');
-  //   // chartWindow.webContents.closeDevTools();
-  // }, 5000);
 };
 
 /**

@@ -8,6 +8,8 @@ const Wrapper = styled.div`
 `;
 
 const Application = styled.div`
+  margin-top: 10px;
+  font-family: GmarketSansTTFLight;
   width: 100%;
   height: 30px;
   display: flex;
