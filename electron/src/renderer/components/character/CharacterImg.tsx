@@ -1,51 +1,60 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable default-case */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { styled } from 'styled-components';
 
-type TMotion =
+type TMotion = 'click' | 'down' | 'move' | 'stop' | 'rest';
+type TDirection =
+  | 'left'
+  | 'right'
   | 'stop'
-  | 'left1'
-  | 'left2'
-  | 'up1'
-  | 'up2'
-  | 'down1'
-  | 'down2'
-  | 'down3';
-
-type TImages = {
-  stop: string;
-  left1: string;
-  left2: string;
-  up1: string;
-  up2: string;
-  down1: string;
-  down2: string;
-  down3: string;
+  | 'rest'
+  | 'down'
+  | 'downsleep'
+  | 'click';
+type TMotionImage = {
+  click: Array<string>;
+  down: Array<string>;
+  move: Array<string>;
+  stop: Array<string>;
+  rest: Array<string>;
 };
-
-type TDirection = 'left' | 'right' | 'stop' | 'up' | 'down' | 'downsleep';
+type TMotionHandler = {
+  left: () => ReturnType<typeof setInterval> | null;
+  right: () => ReturnType<typeof setInterval> | null;
+  stop: () => ReturnType<typeof setInterval> | null;
+  rest: () => ReturnType<typeof setInterval> | null;
+  down: () => ReturnType<typeof setInterval> | null;
+  downsleep: () => ReturnType<typeof setInterval> | null;
+  click: () => ReturnType<typeof setInterval> | null;
+};
 
 function CharacterImg() {
   const TICK = 250;
 
-  const [character, setCharacter] = useState<string>('hanbyul');
+  const [character, setCharacter] = useState<string>('');
   const [motion, setMotion] = useState<TMotion>('stop');
-  const [images, setImages] = useState<TImages>({
-    stop: '',
-    left1: '',
-    left2: '',
-    up1: '',
-    up2: '',
-    down1: '',
-    down2: '',
-    down3: '',
+  const [images, setImages] = useState<TMotionImage>({
+    click: [],
+    down: [],
+    move: [],
+    stop: [],
+    rest: [],
   });
+
   const [reverse, setReverse] = useState<boolean>(false);
+  const [imageIndex, setImageIndex] = useState<number>(0);
+  const motionHandler: TMotionHandler = {
+    left: () => null,
+    right: () => null,
+    stop: () => null,
+    rest: () => null,
+    down: () => null,
+    downsleep: () => null,
+    click: () => null,
+  };
 
   const { ipcRenderer } = window.electron;
-
-  let timerId: ReturnType<typeof setInterval> | null = null;
+  const timerId = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // 캐릭터가 변경(디렉터리 이름과 매치되어야 함)
   // 이에 따라 적절한 이미지를 불러오자
@@ -53,93 +62,119 @@ function CharacterImg() {
     if (!character) return;
 
     (async () => {
-      const [stop, left1, left2, up1, up2, down1, down2, down3] =
-        await Promise.all([
-          import(`../../../../assets/character/${character}/stop.png`),
-          import(`../../../../assets/character/${character}/left1.png`),
-          import(`../../../../assets/character/${character}/left2.png`),
-          import(`../../../../assets/character/${character}/up1.png`),
-          import(`../../../../assets/character/${character}/up2.png`),
-          import(`../../../../assets/character/${character}/down1.png`),
-          import(`../../../../assets/character/${character}/down2.png`),
-          import(`../../../../assets/character/${character}/down3.png`),
-        ]);
+      const characterImages: TMotionImage = await ipcRenderer.invoke(
+        'character-images',
+        character,
+      );
 
-      setImages({
-        stop: stop.default,
-        left1: left1.default,
-        left2: left2.default,
-        up1: up1.default,
-        up2: up2.default,
-        down1: down1.default,
-        down2: down2.default,
-        down3: down3.default,
-      });
+      ipcRenderer.removeAllListener('character-move');
+      if (timerId.current !== null) clearInterval(timerId.current);
+      setImages(() => characterImages);
     })();
+  }, [character, ipcRenderer]);
+
+  useEffect(() => {
+    if (images.stop.length === 0) return;
+    setMotion('stop');
+    setImageIndex(0);
+
+    const indexHandler = (length: number) => {
+      setImageIndex((prev) => (prev + 1) % length);
+    };
+
+    motionHandler.left = () => {
+      setReverse(false);
+      setMotion('move');
+      if (images.move.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.move.length);
+    };
+    motionHandler.right = () => {
+      setReverse(true);
+      setMotion('move');
+      if (images.move.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.move.length);
+    };
+    motionHandler.stop = () => {
+      setMotion('stop');
+      if (images.stop.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.stop.length);
+    };
+    motionHandler.rest = () => {
+      setMotion('rest');
+      if (images.rest.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.rest.length);
+    };
+    motionHandler.down = () => {
+      setMotion('down');
+      if (images.down.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.down.length);
+    };
+    motionHandler.downsleep = () => {
+      setMotion('down');
+      if (images.down.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.down.length);
+    };
+    motionHandler.click = () => {
+      setMotion('click');
+      if (images.click.length <= 1) return null;
+      return setInterval(indexHandler, TICK, images.click.length);
+    };
+
+    const handler = (direction: TDirection) => {
+      if (timerId.current !== null) clearInterval(timerId.current);
+      setImageIndex(() => 0);
+      timerId.current = motionHandler[direction]();
+    };
+    ipcRenderer.on('character-move', handler);
+  }, [images, ipcRenderer]);
+
+  // ipcRenderer 이벤트 등록
+  useEffect(() => {
+    (async () => {
+      const savedCharacter = await ipcRenderer.invoke(
+        'get-setting',
+        'character',
+      );
+      setCharacter(() => savedCharacter);
+    })();
+    ipcRenderer.on('change-character', (newCharacter: string) => {
+      setCharacter(() => newCharacter);
+    });
+  }, []);
+
+  useEffect(() => {
+    //이전 핸들러 삭제
+    ipcRenderer.removeAllListener('delete-character');
+    // 삭제 이후 로직처리
+    ipcRenderer.on('delete-character', (deleteCharacter: string) => {
+      if (deleteCharacter === character) {
+        setCharacter(() => 'default');
+        ipcRenderer.sendMessage('set-setting', 'character', 'default');
+      }
+    });
   }, [character]);
 
-  // 각 모션에 대해 어떠한 처리를 할지 설정
-  const motions = {
-    left: () => {
-      setReverse(false);
-      return setInterval(() => {
-        setMotion((prev) => (prev === 'left2' ? 'left1' : 'left2'));
-      }, TICK);
-    },
-    right: () => {
-      setReverse(true);
-      return setInterval(() => {
-        setMotion((prev) => (prev === 'left2' ? 'left1' : 'left2'));
-      }, TICK);
-    },
-    stop: () => {
-      setMotion(() => 'stop');
-      return null;
-    },
-    up: () => {
-      return null;
-    },
-    down: () => {
-      return setInterval(() => {
-        setMotion((prev) => (prev === 'down2' ? 'down1' : 'down2'));
-      }, TICK);
-    },
-    downsleep: () => {
-      setMotion(() => 'down3');
-      return null;
-    },
-  };
-
-  // 캐릭터 모션 변경 이벤트가 오면
-  useEffect(() => {
-    ipcRenderer.on('character-move', (direction: TDirection) => {
-      if (timerId !== null) {
-        // 그전에 있던 이벤트는 없애고
-        clearInterval(timerId);
-      }
-      const handler = motions[direction];
-      timerId = handler();
-    });
-  }, []);
-
-  // 캐릭터 변경 리스너 등록
-  useEffect(() => {
-    ipcRenderer.on('change-character', (character: string) => {
-      setCharacter(character);
-    });
-  }, []);
-
   return (
-    <img
-      width="100"
+    <Image
+      width="120"
       alt="icon"
-      src={images[motion]}
+      src={
+        images[motion]?.length > 0
+          ? images[motion][imageIndex]
+            ? `data:image/png;base64,${images[motion][imageIndex]}`
+            : `data:image/png;base64,${images[motion][0]}`
+          : ''
+      }
       style={{
-        WebkitUserDrag: 'none',
         transform: `scaleX(${reverse ? -1 : 1})`,
       }}
     />
   );
 }
+
+const Image = styled.img`
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+`;
 
 export default CharacterImg;

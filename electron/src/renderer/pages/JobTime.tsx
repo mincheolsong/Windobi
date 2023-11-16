@@ -1,7 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/alt-text */
 import React, { useState, useEffect } from 'react';
 import ReactSwitch from 'react-switch';
 import * as S from '../components/jobtime/JobTime.style';
@@ -25,27 +21,19 @@ function JobTime() {
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
-    ipcRenderer.sendMessage('size', { width: 600, height: 350 });
+    ipcRenderer.sendMessage('windowOpened');
+    ipcRenderer.sendMessage('size', { width: 700, height: 450 });
 
-    ipcRenderer.on('job-time', ({ type, result }) => {
-      if (type === 'day') {
+    ipcRenderer.on('job-time', ({ type: returnType, result }) => {
+      if (returnType === 'day') {
         setDailyJobs(result);
-      } else if (type === 'week') {
+      } else if (returnType === 'week') {
         setWeeklyJobs(result);
       }
     });
     ipcRenderer.sendMessage('job-time', 'day', new Date());
     ipcRenderer.sendMessage('job-time', 'week');
-
-    // 개발 편의를 위해 1분마다 갱신하자
-    const timerId = setInterval(() => {
-      ipcRenderer.sendMessage('job-time', 'day', day);
-    }, 1000 * 10);
-
-    return () => {
-      clearInterval(timerId);
-    };
-  }, []);
+  }, [ipcRenderer]);
 
   useEffect(() => {
     // 주간 또는 일간에 대한 boolean값을 변경해주면'
@@ -66,11 +54,11 @@ function JobTime() {
     // 보여줘야 할 날짜가 바뀌면 데이터를 갱신받자
     ipcRenderer.sendMessage('job-time', 'day', day);
     setSelectedApplication('');
-  }, [day]);
+  }, [day, ipcRenderer]);
 
   return (
     <S.Wrapper>
-      <S.Half>
+      <S.LeftWrapper>
         <S.Header>
           <ReactSwitch
             checked={type}
@@ -90,14 +78,14 @@ function JobTime() {
           type={stringType}
           setApplication={setSelectedApplication}
         />
-      </S.Half>
-      <S.Half>
+      </S.LeftWrapper>
+      <S.RightWrapper>
         <PieChart
           application={selectedApplication}
           day={day}
           type={stringType}
         />
-      </S.Half>
+      </S.RightWrapper>
     </S.Wrapper>
   );
 }
@@ -115,8 +103,8 @@ function Selector({ day, prevDay, setPrevDay }: TSelector) {
   const dayToString = (targetDay: Date) => {
     const month = targetDay.getMonth() + 1;
     const date = targetDay.getDate();
-    const day = dateToString[targetDay.getDay()];
-    return `${month}월 ${date}일 (${day})`;
+    const stringDay = dateToString[targetDay.getDay()];
+    return `${month}월 ${date}일 (${stringDay})`;
   };
 
   return (

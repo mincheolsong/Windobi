@@ -22,7 +22,7 @@ const Li = styled.li`
   border-radius: 10px;
   &:hover {
     cursor: pointer;
-    background-color: rgba(230, 230, 230, 1);
+    background-color: #cce4ff;
     transition: all 0.1s ease-in-out;
   }
 `;
