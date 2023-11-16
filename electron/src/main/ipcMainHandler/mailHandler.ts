@@ -161,14 +161,17 @@ const mailReceiveHandler = async () => {
 };
 
 const addMailListener = (id: string, password: string, host: string) => {
-  const received: Array<any> = [];
+  const n =  id + (host === 'imap.naver.com' ? 'naver.com' : 'daum.net');
+  const received = {};
+  received.name = n;
+  received.array = [];
   receivedList.push(received);
   const timerId: IntervalId = setInterval(
     getMails,
     10000,
     mainWindow,
     subWindow,
-    received,
+    receivedList,
     mails,
     id,
     password,
