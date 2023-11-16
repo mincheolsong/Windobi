@@ -14,7 +14,7 @@ type TSetting = {
 };
 
 const initSetting: TSetting = {
-  character: 'hanbyul',
+  character: 'default',
   hideOrShow: 'CommandOrControl+Alt+H',
 };
 
