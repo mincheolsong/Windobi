@@ -26,8 +26,7 @@ const dateToNumber = (date: Date) => {
 };
 
 const dateToTime = (date : Date) => { // 시간 변환
-  const numberTime = date.getHours()*100 + date.getMinutes();
-  // console.log('nowTime', numberTime);
+  const numberTime = date.getHours() * 100 + date.getMinutes();
   return numberTime;
 }
 
