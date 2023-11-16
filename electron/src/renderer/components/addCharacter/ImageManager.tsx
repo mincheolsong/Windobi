@@ -17,8 +17,12 @@ function ImageManager({ images, setImages }: TImageManager) {
   const { ipcRenderer } = window.electron;
 
   const upload = async (file: File) => {
-    const base64 = await ipcRenderer.invoke('get-image', file.path);
-    setImages((prev) => [...prev, base64]);
+    const { success, base64 } = await ipcRenderer.invoke(
+      'get-image',
+      file.path,
+    );
+    if (!success) alert('이미지 업로드에 실패하였습니다');
+    else setImages((prev) => [...prev, base64]);
   };
 
   const timerId = useRef<ReturnType<typeof setInterval> | null>(null);

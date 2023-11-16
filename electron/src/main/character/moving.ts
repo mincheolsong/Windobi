@@ -10,9 +10,14 @@ function move() {
   let nextY: number = 0;
   const { maxHeight, winHeight } = character;
 
-  if (curY < maxHeight - winHeight && curY > maxHeight - winHeight - 20 && character.fallTrigger) {
-    character.direction = 'downsleep';
-  }
+  const bottom = 120;
+  // if (
+  //   curY < maxHeight - winHeight &&
+  //   curY > maxHeight - winHeight - 10 &&
+  //   character.fallTrigger
+  // ) {
+  //   // character.direction = 'downsleep';
+  // }
 
   if (
     character.direction !== 'downsleep' &&
@@ -49,7 +54,7 @@ function move() {
     nextY = curY;
   }
 
-  if (character.direction === 'up') {
+  if (character.direction === 'rest') {
     nextX = curX;
     nextY = curY - DIFF;
     if (nextY > 0) {
@@ -59,9 +64,9 @@ function move() {
     }
   }
   if (character.direction === 'down') {
-    if (curY > character.maxHeight - 105) {
+    if (curY > character.maxHeight - bottom) {
       character.fallTrigger = false;
-      nextY = character.maxHeight - 105;
+      nextY = character.maxHeight - bottom;
       nextX = curX;
       character.direction = 'downsleep';
       character.position = { nextX, nextY };
@@ -72,9 +77,9 @@ function move() {
     }
   }
   if (character.direction === 'downsleep') {
-    if (curY > character.maxHeight - 105) {
+    if (curY > character.maxHeight - bottom) {
       character.fallTrigger = false;
-      nextY = character.maxHeight - 105;
+      nextY = character.maxHeight - bottom;
       nextX = curX;
       character.direction = 'stop';
       character.position = { nextX, nextY };

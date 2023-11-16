@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from '../components/myEmail/RegistEmail.style';
 
@@ -11,7 +11,7 @@ function RegistEmail() {
   const domains = ['naver.com', 'daum.net'];
 
   const navigate = useNavigate();
-  const handleDomainChange = (event) => {
+  const handleDomainChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setDomain(event.target.value);
   };
 
@@ -29,8 +29,8 @@ function RegistEmail() {
   useEffect(() => {
     ipcRenderer.sendMessage('windowOpened');
     ipcRenderer.sendMessage('size', {
-      width: 350,
-      height: 200,
+      width: 380,
+      height: 220,
     });
 
     ipcRenderer.on('accountSave', (result) => {
@@ -50,8 +50,14 @@ function RegistEmail() {
   return (
     <S.Container>
       <S.InputContainer>
-        아이디:{' '}
-        <S.InputField type="text" onChange={(e) => setId(e.target.value)} />@
+        아이디
+        <S.InputField
+          type="text"
+          onChange={(e) => setId(e.target.value)}
+          placeholder="email"
+          style={{ marginLeft: '21px' }}
+        />
+        @
         <S.InputSelect onChange={handleDomainChange} value={domain}>
           {domains.map((item) => (
             <option value={item} key={item}>
@@ -61,10 +67,11 @@ function RegistEmail() {
         </S.InputSelect>
       </S.InputContainer>
       <S.InputContainer>
-        비밀번호:{' '}
+        비밀번호
         <S.InputField
           type="password"
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="●●●●●●"
         />
       </S.InputContainer>
       {message && <S.Message>{message}</S.Message>}

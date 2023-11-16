@@ -79,20 +79,20 @@ function CreatedChart() {
   // const highestMin = Math.floor((highestTime % 1) * 60, 0);
 
   // 이번주 사용시간
-  const timeSum: number = result.reduce((sum, data) => sum + data.time, 0); // 이번주 사용시간
-  const timeAvg: number = timeSum / result.length; // 이번주 사용시간 평균
+  const timeSum: number = result.reduce((sum, data) => sum + data.time, 0); // 이번주 사용시간 (시간단위 2.3 혹은 3.4 )
+  const timeAvg: number = timeSum / 7; // 이번주 사용시간 평균
   const timeAvgHour: number = Math.floor(timeAvg, 0); // 이번주 사용시간 평균 (시)
   const timeAvgMin: number = Math.floor((timeAvg % 1) * 60, 0); // 이번주 사용시간 평균 (분)
 
   // 지난주 사용시간 합
-  const lastTimeSum = lastWeek[0].time;
+  const lastTimeSum = lastWeek[0].time; // 시간단위 2.3 혹은 3.4
 
   // 이번주와 지난주 비교
-  const avgDiff = timeAvg - lastTimeSum; // 양수 : 더 많이 사용, 음수 : 덜 사용
+  const sumDiff = timeSum - lastTimeSum; // 양수 : 더 많이 사용, 음수 : 덜 사용
 
-  const absAvgDiff = Math.abs(avgDiff);
-  const absAvgDiffHour: number = Math.floor(absAvgDiff, 0);
-  const absAvgDiffMin: number = Math.floor((absAvgDiff % 1) * 60, 0);
+  const sumAbsDiff = Math.abs(sumDiff);
+  const sumAbsDiffHour: number = Math.floor(sumAbsDiff, 0);
+  const sumAbsDiffMin: number = Math.floor((sumAbsDiff % 1) * 60, 0);
 
   return (
     <div
@@ -122,8 +122,9 @@ function CreatedChart() {
         <div>
           <S.BarContainer>
             <S.BarHeader>
-              <S.Bolder>{timeAvgHour}</S.Bolder>시간{' '}
-              <S.Bolder>{timeAvgMin}</S.Bolder>분
+              <S.Bolder>{timeAvgHour}</S.Bolder>
+              <p style={{ marginRight: '5px' }}>시간</p>{' '}
+              <S.Bolder> {timeAvgMin}</S.Bolder>분
             </S.BarHeader>
             <S.Lighter>하루 평균 사용시간</S.Lighter>
 
@@ -171,10 +172,10 @@ function CreatedChart() {
           <S.LastWeekContainer>
             지난주 보다&nbsp;
             <S.LastWeekHeader>
-              <S.Bolder> {absAvgDiffHour}</S.Bolder>시간{' '}
-              <S.Bolder> {absAvgDiffMin} </S.Bolder>분&nbsp;
+              <S.Bolder> {sumAbsDiffHour}</S.Bolder>시간{' '}
+              <S.Bolder> {sumAbsDiffMin} </S.Bolder>분&nbsp;
             </S.LastWeekHeader>
-            {avgDiff < 0 ? (
+            {sumDiff < 0 ? (
               <p>
                 {' '}
                 <b>덜</b> 사용 했습니다
@@ -200,7 +201,7 @@ function CreatedChart() {
             type="weekly"
           />
         </S.MostDetailContainer>
-        
+
         <div style={{ height: '600px' }}>
           <S.GrassContainer>
             <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>

@@ -1,6 +1,7 @@
 import { app, ipcMain, screen } from 'electron';
 import fs from 'fs';
 import path from 'path';
+import sharp from 'sharp';
 import { mainVariables, mainWindow, menuWindow } from '../windows';
 import tray, { variables as trayVariables } from '../tray/tray';
 import { sleep } from '../util';
@@ -76,23 +77,23 @@ const characterListHandler = () => {
  * 'character-images' : 해당 캐릭터의 이미지들을 불러온다
  */
 const characterImagesHandler = () => {
-  type TMotion = 'click' | 'down' | 'move' | 'stop' | 'up';
+  type TMotion = 'click' | 'down' | 'move' | 'stop' | 'rest';
   type TMotionImage = {
     click: Array<string>;
     down: Array<string>;
     move: Array<string>;
     stop: Array<string>;
-    up: Array<string>;
+    rest: Array<string>;
   };
   ipcMain.handle('character-images', async (_event, character: string) => {
     const TARGET_DIRECTORY = path.join(RESOURCES_PATH, 'character', character);
-    const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'up'];
+    const motions: Array<TMotion> = ['click', 'down', 'move', 'stop', 'rest'];
     const motionImages: TMotionImage = {
       click: [],
       down: [],
       move: [],
       stop: [],
-      up: [],
+      rest: [],
     };
     motions.forEach((motion) => {
       try {
@@ -130,10 +131,37 @@ const changeCharacterHandler = () => {
 /**
  * 'get-image' : path로부터 파일 이미지를 base64형식으로 불러오기
  */
+type TGetImageResult = {
+  success: boolean;
+  base64: string;
+};
 const getImageHandler = () => {
-  ipcMain.handle('get-image', (_event, filePath: string) => {
-    return fs.readFileSync(filePath, { encoding: 'base64' });
-  });
+  ipcMain.handle(
+    'get-image',
+    async (_event, filePath: string): Promise<TGetImageResult> => {
+      const image = await sharp(filePath);
+      const metadata = await image.metadata();
+      const { width, height } = metadata;
+      if (!width || !height) return { success: false, base64: '' };
+      const size = { width: 200, height: 200 };
+      if (width > height) {
+        size.width = width;
+        size.height = width;
+      } else {
+        size.width = height;
+        size.height = height;
+      }
+      const resized = await image
+        .resize({
+          ...size,
+          fit: 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        })
+        .toBuffer();
+      const base64Image = resized.toString('base64');
+      return { success: true, base64: base64Image };
+    },
+  );
 };
 
 /**
@@ -162,11 +190,11 @@ const addCharacterHandler = () => {
     move: Array<string>;
     click: Array<string>;
     down: Array<string>;
-    up: Array<string>;
+    rest: Array<string>;
   };
   ipcMain.handle(
     'add-character',
-    (_event, { name, stop, move, click, down, up }: TAddCharacter) => {
+    (_event, { name, stop, move, click, down, rest }: TAddCharacter) => {
       const result = {
         success: false,
         message: '',
@@ -183,7 +211,7 @@ const addCharacterHandler = () => {
         move.length === 0 ||
         click.length === 0 ||
         down.length === 0 ||
-        up.length === 0
+        rest.length === 0
       ) {
         result.success = false;
         result.message = '각 모션마다 최소 1장의 이미지가 필요합니다';
@@ -203,7 +231,7 @@ const addCharacterHandler = () => {
         { motion: 'move', images: move },
         { motion: 'click', images: click },
         { motion: 'down', images: down },
-        { motion: 'up', images: up },
+        { motion: 'rest', images: rest },
       ];
 
       imageList.forEach(({ motion, images }) => {
