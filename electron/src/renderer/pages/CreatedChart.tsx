@@ -31,7 +31,7 @@ function CreatedChart() {
   useEffect(() => {
     setTimeout(() => {
       if (ref.current === null) return;
-      toPng(ref.current, { cacheBust: true}).then((dataUrl) => {
+      toPng(ref.current, { cacheBust: true }).then((dataUrl) => {
         window.electron.ipcRenderer.sendMessage('chartChannel', dataUrl);
       });
     }, 6000);
@@ -178,10 +178,10 @@ function CreatedChart() {
                   value: timeAvg,
                   legend: '평균',
                   lineStyle: {
-                    stroke: 'red',
+                    stroke: '#FF528E',
                   },
                   textStyle: {
-                    fill: 'red',
+                    fill: '#FF528E',
                   },
                 },
               ]}
@@ -243,7 +243,7 @@ function CreatedChart() {
           </S.MostAppContainer>
         </div>
         <S.MostDetailContainer>
-          <S.MostLangTitle>사용 언어</S.MostLangTitle>
+          <S.UseLanguage>사용 언어</S.UseLanguage>
           <PieChart
             application="Visual Studio Code"
             day={new Date()}
