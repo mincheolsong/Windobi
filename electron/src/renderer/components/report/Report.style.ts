@@ -137,7 +137,7 @@ const DayComponent = styled.div`
   width: 19px;
   height: 19px;
   border-radius: ${(props) => getRadius(props.order)};
-  background-color: rgb(${(props) => getColor(props.hour)});
+  background-color: rgb(${(props) => getColor(props.hour, props.order)});
 `;
 const Week = styled.div`
   margin-top: 5px;
@@ -199,6 +199,13 @@ const UsageContainer = styled.div`
   padding-top: 5px;
 `;
 
+const UseLanguage = styled.h3`
+  position: absolute;
+  top: 221px;
+  font-family: GmarketSansTTFMedium;
+  margin-left: 19px;
+`;
+
 const getRadius = (hour: any) => {
   if (hour === 0) {
     return '40% 0 0 40%';
@@ -209,16 +216,28 @@ const getRadius = (hour: any) => {
   }
 };
 
-const getColor = (hours: any) => {
+const getColor = (hours: any, order: any) => {
   if (hours == 0) {
     return '242,242,242';
   } else if (hours < 900) {
+    if(order < 12){
+      return '166, 255, 137';
+    }
     return '180,217,250';
   } else if (hours < 1800) {
+    if(order < 12){
+      return '112,255,66';
+    }
     return '142,200,250';
   } else if (hours < 2700) {
+    if(order < 12){
+      return '61,249,00';
+    }
     return '81,172,252';
   } else {
+    if(order < 12){
+      return '35,142,00';
+    }
     return '38,148,245';
   }
 };
@@ -249,4 +268,5 @@ export {
   TimeTable,
   Time,
   Context,
+  UseLanguage,
 };
