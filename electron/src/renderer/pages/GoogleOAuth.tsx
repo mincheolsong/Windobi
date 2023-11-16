@@ -9,7 +9,6 @@ function GoogleOAuth() {
     const form = document.createElement('form');
     form.setAttribute('method', 'GET'); // Send as a GET request.
     form.setAttribute('action', oauth2Endpoint);
-
     // Parameters to pass to OAuth 2.0 endpoint.
     const params = {
       client_id:

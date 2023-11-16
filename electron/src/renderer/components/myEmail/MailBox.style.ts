@@ -66,7 +66,7 @@ const DeleteButton = styled.button`
 `;
 const Container = styled.div`
   padding-bottom: 60px; /* Button의 높이만큼 공간을 만들어 줍니다. */
-  min-height: 100vh;
+  height: 100%;
   box-sizing: border-box;
   position: relative;
 `;

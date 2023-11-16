@@ -29,7 +29,6 @@ function MenuModal() {
     { path: 'weather', icon: weather },
     { path: 'notification', icon: LuMailSearch },
     { path: 'email', icon: LuMailPlus },
-    { path: 'createchart', icon: report },
   ];
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
@@ -86,9 +85,7 @@ function MenuModal() {
                     alt={path}
                   />
                 ) : (
-                  <div>
-                    <Icon className="fa" onClick={() => navigate(path)} />
-                  </div>
+                  <Icon className="fa" onClick={() => navigate(path)} />
                 )}
               </div>
             </div>
