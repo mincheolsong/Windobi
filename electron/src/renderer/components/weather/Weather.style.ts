@@ -37,7 +37,7 @@ const WeatherCard = styled.div`
   text-align: center;
   margin: auto;
   color: white;
-  padding: 10px;
+  // padding: 4px;
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.1);
 `;
 
@@ -57,9 +57,13 @@ const WeatherInfo = styled.div`
   gap: 15px;
   align-items: center;
   z-index: 1;
+  border-radius: 10px;
+  padding-top: 20px;
+  padding-bottom: 10px;
   ${(props) =>
     props.blur &&
     css`
+      background-color: rgba(12, 123, 123, 0.3);
       backdrop-filter: blur(2px);
     `};
   span {
@@ -103,6 +107,7 @@ const OtherDayWeather = styled.div`
   ${(props) =>
     props.blur &&
     css`
+      background-color: rgba(12, 123, 123, 0.3);
       backdrop-filter: blur(2px);
     `};
 `;
@@ -112,7 +117,7 @@ const OtherWeatherIcon = styled.img`
   height: 20px;
 `;
 const MinTemp = styled.div`
-  color: #97b2e8;
+  color: white;
 `;
 const MaxTemp = styled.div`
   display: flex;
