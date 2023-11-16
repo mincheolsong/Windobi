@@ -31,10 +31,10 @@ function CreatedChart() {
   useEffect(() => {
     setTimeout(() => {
       if (ref.current === null) return;
-      toPng(ref.current, { cacheBust: true }).then((dataUrl) => {
+      toPng(ref.current, { cacheBust: true}).then((dataUrl) => {
         window.electron.ipcRenderer.sendMessage('chartChannel', dataUrl);
       });
-    }, 3000);
+    }, 6000);
   }, []);
 
   const result: Array<Data> = state.weeklyJobs;
@@ -156,22 +156,12 @@ function CreatedChart() {
         overflow: 'scroll',
       }}
     >
-      {/* <BarChart
-        dailyJobs={[]}
-        weeklyJobs={state.weeklyJobs}
-        setApplication={setDummy}
-        type="weekly"
-      /> */}
-      {/* {result.map((item, index) => (
-        <div key={index}>{JSON.stringify(item)}</div>
-      ))} */}
-
       <S.Title>주간 리포트</S.Title>
       <S.Date>
         {result[0].day} - {result[result.length - 1].day}
       </S.Date>
       <S.Body>
-        <div style={{ height: '680px' }}>
+        <div style={{ height: '630px' }}>
           <S.BarContainer>
             <S.BarHeader>
               <S.Bolder>{timeAvgHour}</S.Bolder>
@@ -261,7 +251,7 @@ function CreatedChart() {
           />
         </S.MostDetailContainer>
 
-        <div style={{ height: '680px' }}>
+        <div style={{ height: '630px' }}>
           <S.GrassContainer>
             <S.MostLangTitle>개발 잔디 (단위 : 분)</S.MostLangTitle>
             <ResponsiveTimeRange

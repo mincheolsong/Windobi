@@ -14,7 +14,7 @@ const LastWeekHeader = styled.div`
 `;
 
 const LastWeekContainer = styled.div`
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 8px 8px;
   display: flex;
   align-items: center;
   background: white;
@@ -23,13 +23,13 @@ const LastWeekContainer = styled.div`
   margin-left: 20px;
   margin-right: 20px;
   padding-left: 19px;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
 `;
 
 const Title = styled.h2`
   font-family: GmarketSansTTFBold;
   font-weight: bold;
-  padding-top: 29px;
+  padding-top: 15px;
   margin-bottom: 4px;
   display: flex;
   justify-content: center;
@@ -55,8 +55,8 @@ const Lighter = styled.div`
 `;
 
 const BarContainer = styled.div`
-  border-radius: 10px 10px 0 0;
-  height: 458px;
+  border-radius: 8px 8px 0 0;
+  height: 417px;
   background: white;
   margin: 0px 20px 0px 20px;
   // border-radius: 15px 15px 0px 0px;
@@ -67,14 +67,14 @@ const BarContainer = styled.div`
 const MostAppContainer = styled.div`
   background: white;
   margin: 15px 20px 0px 20px;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 10px;
-  height: 157px;
+  height: 153px;
 `;
 
 const Date = styled.div`
   font-family: GmarketSansTTFMedium;
-  margin-bottom: 20px;
+  margin-bottom: 9px;
   display: flex;
   justify-content: center;
 `;
@@ -86,12 +86,10 @@ const MostTitle = styled.h3`
 `;
 
 const MostDetailContainer = styled.div`
-  border-radius: 10px;
+  border-radius: 8px;
   width: 400px;
-  height: 680px;
-  // margin-top: 5px;
+  height: 630px;
   background: white;
-  // border-radius: 15px;
   padding-top: 15px;
   margin-right: 20px;
 `;
@@ -109,20 +107,20 @@ const MostLangTitle = styled.h3`
 `;
 
 const GrassContainer = styled.div`
-  border-radius: 10px;
+  border-radius: 8px;
   width: 570px;
-  height: 365px;
+  height: 341px;
   background: white;
   padding-top: 15px;
 `;
 
 const UsageByTimeContainer = styled.div`
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   padding: 10px;
   width: 570px;
-  height: 295px;
+  height: 269px;
   background: white;
   padding-top: 15px;
   margin-top: 20px;
@@ -198,7 +196,7 @@ const Text = styled.div`
 `;
 
 const UsageContainer = styled.div`
-  padding-top: 10px;
+  padding-top: 5px;
 `;
 
 const getRadius = (hour: any) => {
