@@ -189,11 +189,6 @@ function Weather() {
   });
 
   useEffect(() => {
-    (async() => {
-      const get_location =
-        await window.electron.ipcRenderer.invoke('getLocation');
-      console.log(get_location);
-    })();
     const apiKey = '2d7be5022ea1fcb5d5be566f85371efc';
     const url = `https://api.openweathermap.org/data/2.5/forecast?lat=36.10&lon=128.41&appid=${apiKey}`;
     axios

@@ -31,18 +31,7 @@ function ChatGPT() {
   const [prompt, setPrompt] = useState(''); // 입력창에 사용되는 state
   const [apiResponse, setApiResponse] = useState('');
   const [loading, setLoading] = useState(false);
-  const [chat, setChat] = useState([
-    {
-      type: 1,
-      content:
-        'this is test message. this is test message.this is test message.this is test message.this is test message.',
-    },
-    {
-      type: 0,
-      content:
-        'this is test message.this is test message.this is test message.this is test message.',
-    },
-  ]); // 채팅 말풍선을 보여주기 위한 state
+  const [chat, setChat] = useState([]); // 채팅 말풍선을 보여주기 위한 state
   const [message, setMessage] = useState([]); // 챗봇을 위한 message
 
   const handleSubmit = async (e) => {
