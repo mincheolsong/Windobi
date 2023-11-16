@@ -25,10 +25,11 @@ const dateToNumber = (date: Date) => {
   return numberDate;
 };
 
-const dateToTime = (date : Date) => { // 시간 변환
+const dateToTime = (date: Date) => {
+  // 시간 변환
   const numberTime = date.getHours() * 100 + date.getMinutes();
   return numberTime;
-}
+};
 
 const instance = new sqlite3.Database(DB_FILE, () => {
   createTable();
@@ -59,7 +60,7 @@ const insertAll = (activeMap: TActiveMap, tickTime: number) => {
       icon: value.icon,
       path: value.path,
       day: now,
-      time: nowTime
+      time: nowTime,
     });
   });
 
@@ -166,7 +167,7 @@ const getRecentDayOfWeek = (): Promise<Array<TJob>> => {
   return new Promise((resolve, reject) => {
     return instance.all(
       // substr('20231103', 5, 2) || '월' || substr('20231103', 7, 2) || '일'
-      `SELECT substr(day,5,2) || '월' || substr(day,7,2) || '일' as day, round(sum(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${target} group by day`,
+      `SELECT substr(day,7,2) || '일' as day, round(sum(active_time) / 3600.0 ,1) as time FROM ${TABLE_NAME} where day >= ${target} group by day`,
       (err, rows: Array<TJobTime>) => {
         if (err) {
           return reject(err);
@@ -213,7 +214,7 @@ const getRunTimeofLastWeek = (): Promise<Array<TJob>> => {
   const start = new Date();
   const end = new Date();
 
-  start.setDate(weekAgo.getDate()-6);
+  start.setDate(weekAgo.getDate() - 6);
   end.setDate(weekAgo.getDate());
 
   const targetStart = dateToNumber(start);
@@ -222,15 +223,12 @@ const getRunTimeofLastWeek = (): Promise<Array<TJob>> => {
   // const sql = `SELECT day, time FROM ${TABLE_NAME} where day >= ${targetStart} and day < ${targetEnd} and time is not null`;
   const sql = `SELECT day, time/100 as hour, sum(active_time) as activeTime FROM ${TABLE_NAME} where day >= ${targetStart} and day <= ${targetEnd} and time is not null group by day, time/100`;
   return new Promise((resolve, reject) => {
-    return instance.all(
-      sql,
-      (err, rows: Array<TJobTime>) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(rows);
-      },
-    );
+    return instance.all(sql, (err, rows: Array<TJobTime>) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(rows);
+    });
   });
 };
 
