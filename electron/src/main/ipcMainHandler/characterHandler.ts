@@ -176,6 +176,8 @@ const deleteCharacterHandler = () => {
       recursive: true,
       force: true,
     });
+    // 삭제 이후
+    mainWindow.webContents.send('delete-character', name);
     return true;
   });
 };
