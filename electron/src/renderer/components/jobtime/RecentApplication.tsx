@@ -38,8 +38,20 @@ function RecentApplication() {
         return (
           <S.ApplicationWrapper key={index}>
             <S.Img src={icon} alt={application} />
-            <div>{shortApplication(application)}</div>
-            <div>{timeToString(sum_of_active_time)}</div>
+            <div
+              style={{ fontFamily: 'GmarketSansTTFMedium', fontSize: '15px' }}
+            >
+              {shortApplication(application)}
+            </div>
+            <div
+              style={{
+                paddingTop: '3px',
+                fontFamily: 'GmarketSansTTFMedium',
+                fontSize: '15px',
+              }}
+            >
+              {timeToString(sum_of_active_time)}
+            </div>
           </S.ApplicationWrapper>
         );
       })}
