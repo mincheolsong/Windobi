@@ -28,6 +28,21 @@ const weather_day = [
   'https://cdn.pixabay.com/vimeo/857365376/177315.mp4?width=720&hash=c4f028cd7fee661268152336146a562342e41e19',
   'https://cdn.pixabay.com/vimeo/724697137/121375.mp4?width=360&hash=5eeaa27933e89a042d1e50e243f2fdeebb79f705',
   'https://cdn.pixabay.com/vimeo/718539594/119567.mp4?width=1280&hash=b0e5ed27d3158479f7cbddce41f09399a0e35271',
+  'https://cdn.pixabay.com/vimeo/166339063/3186.mp4?width=640&hash=7c0fa38cbd7e9cc193090a0e7d6196d950986b19',
+  'https://cdn.pixabay.com/vimeo/442642918/45214.mp4?width=960&hash=d37ed95239421c394daa79b70dbfb005e6b91312',
+  'https://cdn.pixabay.com/vimeo/639359118/93413.mp4?width=1280&hash=451fb90d0b675b2f6ae3f3d3e555d1a2d8b0aff1',
+  'https://cdn.pixabay.com/vimeo/472583449/53141.mp4?width=1280&hash=25cc99487897332686925c9a7c877e5657023455',
+  'https://cdn.pixabay.com/vimeo/238805529/12470.mp4?width=640&hash=949b51370373d02d069c06a5c6d21777d7d214d8',
+  'https://cdn.pixabay.com/vimeo/717347270/119353.mp4?width=640&hash=3138918758ce49e584764e023280210602b75924',
+  'https://cdn.pixabay.com/vimeo/271024165/16289.mp4?width=640&hash=97f90a1b68c4dd493b1054654a6005958f2a2d24',
+  'https://cdn.pixabay.com/vimeo/230268481/11465.mp4?width=640&hash=cb3fc788c967a4a13c4250aeddf2ed357f48f7cc',
+  'https://cdn.pixabay.com/vimeo/337232359/23670.mp4?width=1280&hash=87fa509b846ee2253823a8899dcf12df9f9b7303',
+  'https://cdn.pixabay.com/vimeo/486900433/58023.mp4?width=1280&hash=84a5682f69c6262879b870d21b6564413ad1f591',
+  'https://cdn.pixabay.com/vimeo/199224637/7266.mp4?width=640&hash=da21cbe960d37066391419895cb393786a2ae121',
+  'https://cdn.pixabay.com/vimeo/433896258/42825.mp4?width=1280&hash=f014cb86d6104c158d4eb0e05d483f9c5eefb281',
+  'https://cdn.pixabay.com/vimeo/271607343/16375.mp4?width=640&hash=8f889ac337a99513efec8fd583ea0bcb316c7669',
+  'https://cdn.pixabay.com/vimeo/390497872/32115.mp4?width=640&hash=de49e31452e67da1572c3498f1536d06ffc568d5',
+  // 출처 pixabay https://pixabay.com/
 ];
 const weather_night = [
   'https://cdn.pixabay.com/vimeo/197634410/6962.mp4?width=640&hash=8298bf1417914b880913a81d749041ce24617b02',
@@ -36,6 +51,21 @@ const weather_night = [
   'https://cdn.pixabay.com/vimeo/305283555/19799.mp4?width=640&hash=cc4c3080ea9d9527d907c9ccf318af5673c560eb',
   'https://cdn.pixabay.com/vimeo/380473720/30154.mp4?width=1280&hash=207d4b82c4035214ab2ae3e986e1dcd4059810cb',
   'https://cdn.pixabay.com/vimeo/796690941/149629.mp4?width=640&hash=56a616733be5a6b749ba80317339f5fec54d5489',
+  'https://cdn.pixabay.com/vimeo/782758320/143565.mp4?width=720&hash=51a94fa1173be4f20b9fd32a3a7fac377653cc38',
+  'https://cdn.pixabay.com/vimeo/304735769/19627.mp4?width=1280&hash=eaa5a7c596e1b22e3718c371ec95acb9797550bc',
+  'https://cdn.pixabay.com/vimeo/198992418/7215.mp4?width=640&hash=00873e5f1fa8f11a198a93a00086d16e9df95122',
+  'https://cdn.pixabay.com/vimeo/166335919/3138.mp4?width=640&hash=399b5a6833765b7d3a48721fadab09d962b3bcc3',
+  'https://cdn.pixabay.com/vimeo/506816182/63610.mp4?width=1280&hash=7bc36cd91dafa8d349c0917bfc5445eec74e144e',
+  'https://cdn.pixabay.com/vimeo/737187461/126928.mp4?width=1280&hash=5065160e3d921c59f3862f56c85e52ab41d6c25c',
+  'https://cdn.pixabay.com/vimeo/256955049/14385.mp4?width=1280&hash=33165a165dd37bcfe521bf49529ac0744cd14a33',
+  'https://cdn.pixabay.com/vimeo/380473724/30155.mp4?width=1280&hash=fc58e747a286e441bc85f4edc7baa2051ed8d06a',
+  'https://cdn.pixabay.com/vimeo/847185398/172350.mp4?width=1280&hash=f7cb17fce91a0e6739b512abd08984a1250f2327',
+  'https://cdn.pixabay.com/vimeo/851502080/174473.mp4?width=1280&hash=2ca5f7f3dc8225f235934a6581366e1cadb84c48',
+  'https://cdn.pixabay.com/vimeo/202716532/7667.mp4?width=640&hash=c1006d39e14ae7c9471d1704caee1c1a8260f8f2',
+  'https://cdn.pixabay.com/vimeo/855920743/176521.mp4?width=1280&hash=58073f8efdc587e695459a7a2cd1fc89d2d647cf',
+  'https://cdn.pixabay.com/vimeo/478688149/56076.mp4?width=1280&hash=303c5c51a788447af5f75e8b5ff8c963889d4386',
+  'https://cdn.pixabay.com/vimeo/357838984/26277.mp4?width=1280&hash=36656f7c2fb8a51a5ae6f1f8d37a0e5cf0b374b4',
+  // 출처 pixabay https://pixabay.com/
 ];
 
 const nowDate = new Date();
