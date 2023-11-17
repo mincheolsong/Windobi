@@ -46,13 +46,17 @@ function MenuModal() {
   ];
 
   useEffect(() => {
-    ipcRenderer.on('show-menu', () => {
+    const showRemover = ipcRenderer.on('show-menu', () => {
       setActive(() => true);
     });
 
-    ipcRenderer.on('hide-menu', () => {
+    const hideRemover = ipcRenderer.on('hide-menu', () => {
       setActive(() => false);
     });
+    return () => {
+      showRemover();
+      hideRemover();
+    };
   }, []);
 
   const navigate = (path: string) => {

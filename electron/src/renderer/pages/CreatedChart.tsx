@@ -39,12 +39,12 @@ function CreatedChart() {
 
   const result: Array<Data> = state.weeklyJobs;
   const lastWeek: Array<Data> = state.lastWeekAvg;
-  const lastWeekTime: Array<Data> = state.lastWeekTime;
-  const entireDevAmt: Array<DataOfDev> = state.entireDevAmt;
+  const { lastWeekTime } = state;
+  const { entireDevAmt } = state;
 
   // 이번주의 사용 시간대를 알기 위해
   const weekTime = lastWeekTime.reduce((acc, entry) => {
-    const day = entry.day;
+    const { day } = entry;
     if (!acc[day]) {
       acc[day] = [];
     }
@@ -63,11 +63,11 @@ function CreatedChart() {
   const start = new Date(now);
   start.setDate(now.getDate() - 6);
 
-  let startDate = formattedDate(start);
+  const startDate = formattedDate(start);
 
   for (let i = startDate; i < startDate + 7; ++i) {
     if (!weekTime[i]) {
-      let list = [];
+      const list = [];
       for (let j = 0; j < 24; ++j) {
         list.push({ day: i, hour: j, activeTime: 0 });
       }
@@ -75,7 +75,7 @@ function CreatedChart() {
       weekTime[i].sort((a, b) => a.hour - b.hour);
     } else {
       for (let j = 0; j < 24; ++j) {
-        let result = weekTime[i].filter((item) => item.hour === j);
+        const result = weekTime[i].filter((item) => item.hour === j);
         if (result.length == 0) {
           // 없는 경우
           weekTime[i].push({ day: i, hour: j, activeTime: 0 });

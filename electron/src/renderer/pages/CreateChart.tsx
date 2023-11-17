@@ -22,7 +22,7 @@ function CreateChart() {
     })();
   }, []);
 
-  return <div></div>;
+  return <div />;
 }
 
 export default CreateChart;
