@@ -44,7 +44,7 @@ subWindow.loadURL(resolveHtmlPath('index.html'));
 
 // #region 이벤트 정의
 subWindow.on('ready-to-show', () => {
-  subWindow.webContents.send('sub', 'closed');
+  // subWindow.webContents.send('sub', 'closed');
   subWindow.webContents.closeDevTools();
 });
 // #endregion

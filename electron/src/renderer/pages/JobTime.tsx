@@ -24,15 +24,21 @@ function JobTime() {
     ipcRenderer.sendMessage('windowOpened');
     ipcRenderer.sendMessage('size', { width: 700, height: 450 });
 
-    ipcRenderer.on('job-time', ({ type: returnType, result }) => {
-      if (returnType === 'day') {
-        setDailyJobs(result);
-      } else if (returnType === 'week') {
-        setWeeklyJobs(result);
-      }
-    });
+    const remover = ipcRenderer.on(
+      'job-time',
+      ({ type: returnType, result }) => {
+        if (returnType === 'day') {
+          setDailyJobs(result);
+        } else if (returnType === 'week') {
+          setWeeklyJobs(result);
+        }
+      },
+    );
     ipcRenderer.sendMessage('job-time', 'day', new Date());
     ipcRenderer.sendMessage('job-time', 'week');
+    return () => {
+      remover();
+    };
   }, [ipcRenderer]);
 
   useEffect(() => {

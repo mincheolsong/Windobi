@@ -33,20 +33,28 @@ import {
 
 import SubWindow from './layout/SubWindow';
 import GlobalFont from './global';
-import TMail from './components/notification/TMail';
 import SubWindowBack from './layout/SubWindowBack';
 import EtcWindow from './layout/EtcWindow';
 
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
-  ipcRenderer.on('mailReceiving', (mail: TMail) => {
-    ipcRenderer.sendMessage('sub', 'alarm');
-  });
 
-  ipcRenderer.on('sub', (path) => {
-    navigate(`/${path}`);
-  });
+  useEffect(() => {
+    ipcRenderer.sendMessage('ready-to-render');
+    const receiveRemover = ipcRenderer.on('mailReceiving', () => {
+      ipcRenderer.sendMessage('sub', 'alarm');
+    });
+
+    const subRemover = ipcRenderer.on('sub', (path) => {
+      navigate(`/${path}`);
+    });
+
+    return () => {
+      receiveRemover();
+      subRemover();
+    };
+  }, []);
 
   return (
     <>
