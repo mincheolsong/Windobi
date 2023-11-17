@@ -44,7 +44,7 @@ menuWindow.loadURL(resolveHtmlPath('index.html'));
 
 // #region 이벤트 정의
 menuWindow.on('ready-to-show', () => {
-  menuWindow.webContents.send('sub', 'menu');
+  // menuWindow.webContents.send('sub', 'menu');
   menuWindow.webContents.closeDevTools();
 });
 

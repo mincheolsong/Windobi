@@ -17,6 +17,7 @@ const RESOURCES_PATH = app.isPackaged
   : path.join(__dirname, '../../../assets');
 
 const windowsHandler = () => {
+  readyToRenderHandler();
   subHandler();
   stopMovingHandler();
   restartMovingHandler();
@@ -26,6 +27,16 @@ const windowsHandler = () => {
   windowClosedHandler();
   showYouTubeMusicWindow();
   showReportHandler();
+};
+
+/**
+ *
+ */
+const readyToRenderHandler = () => {
+  ipcMain.on('ready-to-render', () => {
+    subWindow.webContents.send('sub', 'closed');
+    menuWindow.webContents.send('sub', 'menu');
+  });
 };
 
 /**
