@@ -1,38 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unsafe-finally */
-/* eslint-disable import/no-cycle */
-/* eslint-disable consistent-return */
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable promise/always-return */
-/* eslint-disable global-require */
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron';
+import { app, globalShortcut } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { Worker } from 'worker_threads';
-import path from 'path';
-import fs from 'node:fs';
-import createMainWindow from './mainWindow';
-import createSubWindow from './subWindow';
-import createMenuWindow from './menuWindow';
-import {
-  interWindowCommunication,
-  interMenuWindowCommunication,
-} from './interWindow';
-
-const { dbInstance } = require('./jobtime/jobTimeDB');
-const { dbInstance: subDbInstance } = require('./jobtime/subJobTimeDB');
-
-export type TWindows = {
-  main: BrowserWindow | null;
-  sub: BrowserWindow | null;
-  menu: BrowserWindow | null;
-};
-
-const windows: TWindows = {
-  main: null,
-  sub: null,
-  menu: null,
-};
 
 class AppUpdater {
   constructor() {
@@ -41,70 +9,6 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
-
-let mainWindow: BrowserWindow | null = null;
-let subWindow: BrowserWindow | null = null;
-let menuWindow: BrowserWindow | null = null;
-
-dbInstance.init();
-subDbInstance.init();
-
-ipcMain.on('job-time', async (event, type, target) => {
-  if (type === 'day') {
-    const result = await dbInstance.getByDay(target);
-    event.reply('job-time', { type, result });
-  } else if (type === 'week') {
-    const result = await dbInstance.getRecentWeek();
-    event.reply('job-time', { type, result });
-  }
-});
-
-ipcMain.handle('sub-job-time', async (event, { application, type, date }) => {
-  if (type === 'daily') {
-    return subDbInstance.getByDay(application, date);
-  }
-  if (type === 'weekly') {
-    return subDbInstance.getRecentWeek(application);
-  }
-});
-
-ipcMain.on('application', (event, applicationPath) => {
-  try {
-    shell.openExternal(applicationPath);
-  } finally {
-    return;
-  }
-});
-
-ipcMain.on('sub', (event, path) => {
-  subWindow?.webContents.send('sub', path);
-});
-
-ipcMain.on('windowMoving', (event, arg) => {
-  mainWindow?.setBounds({
-    width: 100,
-    height: 100,
-    x: arg.mouseX - 50, // always changes in runtime
-    y: arg.mouseY - 50,
-  });
-});
-
-// 캐릭터 오른쪽 클릭 시 toggleMenuOn을 send함 (위치 : Character.tsx)
-ipcMain.on('toggleMenuOn', () => {
-  mainWindow?.show();
-  menuWindow?.show();
-  menuWindow?.webContents.send('toggleMenuOn'); // MenuModal.tsx에 메뉴 on/off 애니메이션 효과를 위해서 send
-});
-
-ipcMain.handle('character-list', async () => {
-  const RESOURCE_PATH = 'assets/character';
-  const characterList = fs.readdirSync(RESOURCE_PATH);
-  return characterList;
-});
-
-ipcMain.on('change-character', (event, character) => {
-  mainWindow?.webContents.send('change-character', character);
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -136,21 +40,12 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  mainWindow = createMainWindow(app, windows);
+  await import('./windows');
 
-  menuWindow = createMenuWindow(app, windows);
-  subWindow = createSubWindow(app, windows);
-
-  interWindowCommunication(mainWindow, subWindow);
-  interMenuWindowCommunication(mainWindow, menuWindow);
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
+
   new AppUpdater();
 };
-
-/**
- * Add event listeners...
- */
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -164,30 +59,54 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    createWindow();
-    app.on('activate', () => {
+    createWindow().then(async () => {
+      // 윈도우가 만들어지고난 후
+
+      const communication = await import('./windows/communication');
+      communication.default();
+
+      const SettingHandler = await import('./setting/setting');
+      SettingHandler.default();
+
+      await import('./tray/tray');
+
+      const { default: moveHandler } = await import('./character/moveHandler');
+
+      const {
+        characterHandler,
+        jobTimeHandler,
+        mailHandler,
+        processHandler,
+        windowsHandler,
+        oauthHandelr,
+      } = await import('./ipcMainHandler');
+
+      // ipc관련 핸들러들 등록
+      characterHandler();
+      jobTimeHandler();
+      oauthHandelr();
+      mailHandler();
+      processHandler();
+      windowsHandler();
+      moveHandler();
+
+      const { default: globalShortcutHandler } = await import(
+        './shortcut/globalShortcutHandler'
+      );
+      globalShortcutHandler();
+
+      // 웹소켓
+      await import('./socket/chromeSocket');
+
+      // 사용시간 체크
+      await import('./jobtime/jobTime');
+    });
+
+    app.on('activate', async () => {
+      const { mainWindow } = await import('./windows');
       if (mainWindow === null) createWindow();
     });
 
-    globalShortcut.register('CommandOrControl+Alt+I', () => {
-      mainWindow?.webContents.toggleDevTools();
-      subWindow?.webContents.toggleDevTools();
-      menuWindow?.webContents.toggleDevTools();
-    });
-    globalShortcut.register('CommandOrControl+Alt+M', () => {
-      mainWindow?.webContents.toggleDevTools();
-    });
-    globalShortcut.register('CommandOrControl+Alt+S', () => {
-      subWindow?.webContents.toggleDevTools();
-    });
-    globalShortcut.register('CommandOrControl+Alt+O', () => {
-      subWindow?.webContents.send('sub', 'jobtime');
-    });
-    globalShortcut.register('CommandOrControl+Alt+P', () => {
-      subWindow?.webContents.send('sub', 'notification');
-    });
+    return null;
   })
   .catch(console.log);
-
-// 프로그램 시간 계산하기
-const jobTimeThread = new Worker(path.join(__dirname, 'jobtime', 'jobTime.js'));

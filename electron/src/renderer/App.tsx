@@ -5,29 +5,72 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import './App.css';
-import Character from './pages/Character';
-import JobTime from './pages/JobTime';
+import { useEffect } from 'react';
+import {
+  AddCharacter,
+  Alarm,
+  ChangeCharacter,
+  Character,
+  ChatGPT,
+  Closed,
+  CreateChart,
+  CreatedChart,
+  DeleteCharacter,
+  GoogleOAuth,
+  JobTime,
+  MailContent,
+  MenuModal,
+  Music,
+  MyEmail,
+  Notification,
+  RegistEmail,
+  Setting,
+  Test,
+  Weather,
+  YoutubeClosed,
+  YoutubeMusic,
+} from './pages';
+
 import SubWindow from './layout/SubWindow';
-import Notification from './pages/Notification';
 import GlobalFont from './global';
-import MenuModal from './components/character/MenuModal';
-import Closed from './pages/Closed';
-import Setting from './pages/Setting';
-import ChangeCharacter from './pages/ChangeCharacter';
+import SubWindowBack from './layout/SubWindowBack';
+import EtcWindow from './layout/EtcWindow';
 
 function MyApp() {
   const navigate = useNavigate();
   const { ipcRenderer } = window.electron;
-  ipcRenderer.on('sub', (path) => {
-    navigate(`/${path}`);
-  });
+
+  useEffect(() => {
+    ipcRenderer.sendMessage('ready-to-render');
+    const receiveRemover = ipcRenderer.on('mailReceiving', () => {
+      ipcRenderer.sendMessage('sub', 'alarm');
+    });
+
+    const subRemover = ipcRenderer.on('sub', (path) => {
+      navigate(`/${path}`);
+    });
+
+    return () => {
+      receiveRemover();
+      subRemover();
+    };
+  }, []);
 
   return (
     <>
       <GlobalFont />
       <Routes>
+        <Route
+          path="/callback"
+          element={
+            <SubWindow title="리다이렉트">
+              <Test />
+            </SubWindow>
+          }
+        />
         <Route path="/" element={<Character />} />
         <Route path="/closed" element={<Closed />} />
+        <Route path="/youtubeClosed" element={<YoutubeClosed />} />
         <Route
           path="/jobtime"
           element={
@@ -52,20 +95,116 @@ function MyApp() {
             </SubWindow>
           }
         />
+
+        <Route
+          path="/mailContent"
+          element={
+            <SubWindowBack title="메일">
+              <MailContent />
+            </SubWindowBack>
+          }
+        />
         <Route
           path="/changecharacter"
           element={
-            <SubWindow title="캐릭터 변경">
+            <SubWindowBack title="캐릭터 변경">
               <ChangeCharacter />
+            </SubWindowBack>
+          }
+        />
+
+        <Route
+          path="/addcharacter"
+          element={
+            <SubWindowBack title="캐릭터 추가">
+              <AddCharacter />
+            </SubWindowBack>
+          }
+        />
+
+        <Route
+          path="/googleOAuth"
+          element={
+            <SubWindow title="Google OAuth">
+              <GoogleOAuth />
+            </SubWindow>
+          }
+        />
+
+        <Route
+          path="/music"
+          element={
+            <SubWindow title="음악 추천">
+              <Music />
+            </SubWindow>
+          }
+        />
+
+        <Route
+          path="/youtubeMusic"
+          element={
+            <EtcWindow title="재생목록">
+              <YoutubeMusic />
+            </EtcWindow>
+          }
+        />
+
+        <Route
+          path="/deletecharacter"
+          element={
+            <SubWindowBack title="캐릭터 삭제">
+              <DeleteCharacter />
+            </SubWindowBack>
+          }
+        />
+        <Route
+          path="/chatGPT"
+          element={
+            <SubWindow title="지피티">
+              <ChatGPT />
             </SubWindow>
           }
         />
         <Route path="/menu" element={<MenuModal />} />
+        <Route
+          path="/email"
+          element={
+            <SubWindow title="나의 이메일">
+              <MyEmail />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/registemail"
+          element={
+            <SubWindowBack title="이메일 등록">
+              <RegistEmail />
+            </SubWindowBack>
+          }
+        />
+        <Route
+          path="/alarm"
+          element={
+            <SubWindow title="알림">
+              <Alarm />
+            </SubWindow>
+          }
+        />
+        <Route
+          path="/weather"
+          element={
+            <SubWindow title="날씨">
+              <Weather />
+            </SubWindow>
+          }
+        />
+        <Route path="/createchart" element={<CreateChart />} />
+        <Route path="/createdchart" element={<CreatedChart />} />
+        <Route path="/report" element={<CreateChart />} />
       </Routes>
     </>
   );
 }
-
 export default function App() {
   return (
     <Router>

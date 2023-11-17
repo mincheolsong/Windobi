@@ -9,14 +9,16 @@ function Setting() {
   const { ipcRenderer } = window.electron;
 
   useEffect(() => {
-    ipcRenderer.sendMessage('size', { width: 300, height: 200 });
+    ipcRenderer.sendMessage('windowOpened');
+    ipcRenderer.sendMessage('size', { width: 300, height: 300 });
   }, []);
 
   return (
     <S.Wrapper>
       <S.Ul>
+        <S.Li onClick={() => navigate('/addcharacter')}>캐릭터 추가</S.Li>
         <S.Li onClick={() => navigate('/changecharacter')}>캐릭터 변경</S.Li>
-        <S.Li>2</S.Li>
+        <S.Li onClick={() => navigate('/deletecharacter')}>캐릭터 삭제</S.Li>
       </S.Ul>
     </S.Wrapper>
   );
