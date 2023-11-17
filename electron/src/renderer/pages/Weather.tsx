@@ -219,26 +219,37 @@ function Weather() {
   });
 
   useEffect(() => {
+    window.electron.ipcRenderer.sendMessage('windowOpened');
     const apiKey = '2d7be5022ea1fcb5d5be566f85371efc';
     const url = `https://api.openweathermap.org/data/2.5/forecast?lat=36.10&lon=128.41&appid=${apiKey}`;
     axios
       .get(url)
       .then((responseData: AxiosResponse<TData, any>) => {
-        const {data} = responseData;
-        setWeather(w => {
+        const { data } = responseData;
+        setWeather((w) => {
           return {
             ...w,
             cityName: data.city.name,
-            today_Sunrise: new Date(data.city.sunrise * 1000).toTimeString().substring(0, 8),
-            today_Sunset: new Date(data.city.sunset * 1000).toTimeString().substring(0, 8),
+            today_Sunrise: new Date(data.city.sunrise * 1000)
+              .toTimeString()
+              .substring(0, 8),
+            today_Sunset: new Date(data.city.sunset * 1000)
+              .toTimeString()
+              .substring(0, 8),
             list: data.list,
           };
         });
         let maxTemp = 0;
         let minTemp = 999;
         for (const object of data.list) {
-          maxTemp = Math.max(maxTemp, Number.parseInt((object.main.temp - 273.15).toFixed(0), 10));
-          minTemp = Math.min(minTemp, Number.parseInt((object.main.temp - 273.15).toFixed(0), 10));
+          maxTemp = Math.max(
+            maxTemp,
+            Number.parseInt((object.main.temp - 273.15).toFixed(0), 10),
+          );
+          minTemp = Math.min(
+            minTemp,
+            Number.parseInt((object.main.temp - 273.15).toFixed(0), 10),
+          );
         }
         const getDay = (dt: number): string => {
           return numberToDay[new Date(dt * 1000).getDay()];
@@ -257,15 +268,27 @@ function Weather() {
         let todayMinTemp = 999;
         for (const obj of data.list) {
           if (numberToDay[nowDate.getDay()] === getDay(obj.dt)) {
-             todayMaxTemp = Math.max(todayMaxTemp, (obj.main.temp - 273.15).toFixed(0));
-             todayMinTemp = Math.min(todayMinTemp, (obj.main.temp - 273.15).toFixed(0));
+            todayMaxTemp = Math.max(
+              todayMaxTemp,
+              (obj.main.temp - 273.15).toFixed(0),
+            );
+            todayMinTemp = Math.min(
+              todayMinTemp,
+              (obj.main.temp - 273.15).toFixed(0),
+            );
           }
           if (tempList[tempList.length - 1].day === getDay(obj.dt)) {
-              tempList[tempList.length - 1].max = Math.max(tempList[tempList.length - 1].max, (obj.main.temp-273.15).toFixed(0));
-              tempList[tempList.length - 1].min = Math.min(tempList[tempList.length - 1].min, (obj.main.temp - 273.15).toFixed(0));
-              if (getHour(obj.dt) == 12) {
-                tempList[tempList.length - 1].icon = obj.weather[0].icon;
-              }
+            tempList[tempList.length - 1].max = Math.max(
+              tempList[tempList.length - 1].max,
+              (obj.main.temp - 273.15).toFixed(0),
+            );
+            tempList[tempList.length - 1].min = Math.min(
+              tempList[tempList.length - 1].min,
+              (obj.main.temp - 273.15).toFixed(0),
+            );
+            if (getHour(obj.dt) == 12) {
+              tempList[tempList.length - 1].icon = obj.weather[0].icon;
+            }
           } else {
             tempList.push({
               day: getDay(obj.dt),
@@ -277,7 +300,7 @@ function Weather() {
           // 최고 최저
         }
         tempList[0].day = '오늘';
-        setWeather(w => {
+        setWeather((w) => {
           return {
             ...w,
             today_Day_String: nowDate.toString().substring(0, 3),
@@ -325,63 +348,74 @@ function Weather() {
       {/* <S.WarpperVideo autoPlay muted loop>
         <source src={sky} type="video/mp4" />
       </S.WarpperVideo> */}
-        <S.SpaceAround>
-          <S.LeftAround>
-            <S.CityName>{weather.cityName}<Svg fill='white'/></S.CityName>
-            <span>{(weather.list[0].main.temp - 273.15).toFixed(0)}˚</span>
-          </S.LeftAround>
-          <S.RightAround>
-            <div>{weather.today_Day_Month}월 {weather.today_Day_Number}일({weather.today_Day_String})</div>
-            <S.WeatherIcon src={icon[weather.list[0].weather[0].icon]} alter = '아이콘'/>
-            <div>{description[weather.list[0].weather[0].description]}</div>
-            <div>
-              최고: {weather.today_Max_Temp}˚ 최저: {weather.today_Min_Temp}˚
-            </div>
-          </S.RightAround>
-        </S.SpaceAround>
-        <S.WeatherCard>
-          <S.WeatherInfo
-            className="weatherInfos"
-            onMouseDown={onDragStart}
-            onMouseMove={isDrag ? onThrottleDragMove : null}
-            onMouseUp={onDragEnd}
-            onMouseLeave={onDragEnd}
-            ref={scrollRef}
-            blur={true}
-          >
-            {weather.list.slice(0, 20).map((info, index) => (
-              <div key={index} >
-                <span>{new Date(info.dt * 1000).getHours()}시</span>
-                <S.WeatherIcon
-                  src={icon[info.weather[0].icon]}
-                  alt="weather icon"
-                />
-                <span>{(info.main.temp - 273.15).toFixed(0)}˚</span>
-              </div>
-            ))}
-          </S.WeatherInfo>
-        </S.WeatherCard>
-        <S.OtherDayWeather blur={true}>
-          {weather.otherDate.map((others) => (
-            <S.OtherWeaterDiv>
-              <div>{others.day}</div>
-              <div><S.OtherWeatherIcon src={icon[others.icon]}/></div>
-              <S.MinTemp>{others.min}˚</S.MinTemp>
-              <TempBar
-                minTemp={weather.total_Min_Temp}
-                maxTemp={weather.total_Max_Temp}
-                LocalMaxTemp={others.max}
-                LocalMinTemp={others.min}
+      <S.SpaceAround>
+        <S.LeftAround>
+          <S.CityName>
+            {weather.cityName}
+            <Svg fill="white" />
+          </S.CityName>
+          <span>{(weather.list[0].main.temp - 273.15).toFixed(0)}˚</span>
+        </S.LeftAround>
+        <S.RightAround>
+          <div>
+            {weather.today_Day_Month}월 {weather.today_Day_Number}일(
+            {weather.today_Day_String})
+          </div>
+          <S.WeatherIcon
+            src={icon[weather.list[0].weather[0].icon]}
+            alter="아이콘"
+          />
+          <div>{description[weather.list[0].weather[0].description]}</div>
+          <div>
+            최고: {weather.today_Max_Temp}˚ 최저: {weather.today_Min_Temp}˚
+          </div>
+        </S.RightAround>
+      </S.SpaceAround>
+      <S.WeatherCard>
+        <S.WeatherInfo
+          className="weatherInfos"
+          onMouseDown={onDragStart}
+          onMouseMove={isDrag ? onThrottleDragMove : null}
+          onMouseUp={onDragEnd}
+          onMouseLeave={onDragEnd}
+          ref={scrollRef}
+          blur
+        >
+          {weather.list.slice(0, 20).map((info, index) => (
+            <div key={index}>
+              <span>{new Date(info.dt * 1000).getHours()}시</span>
+              <S.WeatherIcon
+                src={icon[info.weather[0].icon]}
+                alt="weather icon"
               />
-              <div>{others.max}˚</div>
-            </S.OtherWeaterDiv>
+              <span>{(info.main.temp - 273.15).toFixed(0)}˚</span>
+            </div>
           ))}
-        </S.OtherDayWeather>
-        <div>
+        </S.WeatherInfo>
+      </S.WeatherCard>
+      <S.OtherDayWeather blur>
+        {weather.otherDate.map((others) => (
+          <S.OtherWeaterDiv>
+            <div>{others.day}</div>
+            <div>
+              <S.OtherWeatherIcon src={icon[others.icon]} />
+            </div>
+            <S.MinTemp>{others.min}˚</S.MinTemp>
+            <TempBar
+              minTemp={weather.total_Min_Temp}
+              maxTemp={weather.total_Max_Temp}
+              LocalMaxTemp={others.max}
+              LocalMinTemp={others.min}
+            />
+            <div>{others.max}˚</div>
+          </S.OtherWeaterDiv>
+        ))}
+      </S.OtherDayWeather>
+      <div>
         {location.loaded
-        ? JSON.stringify(location)
-        : 'Location data not available yet.'}
-        </div>
+          ? JSON.stringify(location)
+          : 'Location data not available yet.'}
+      </div>
     </S.Warpper>
   );
 }

@@ -4,14 +4,18 @@ function YoutubeMusic() {
   const { ipcRenderer } = window.electron;
   const [url, setUrl] = useState('');
 
-  ipcRenderer.on('url', (playlisturl) => {
-    setUrl(playlisturl);
-  });
   useEffect(() => {
     ipcRenderer.sendMessage('etcSize', {
       width: 400,
       height: 700,
     });
+    const remover = ipcRenderer.on('url', (playlisturl) => {
+      setUrl(playlisturl);
+    });
+
+    return () => {
+      remover();
+    };
   }, []);
 
   return (

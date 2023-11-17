@@ -33,7 +33,7 @@ function RegistEmail() {
       height: 220,
     });
 
-    ipcRenderer.on('accountSave', (result) => {
+    const remover = ipcRenderer.on('accountSave', (result) => {
       if (result.code === '200') {
         navigate(-1);
         // 메일 리스너 돌아가기
@@ -45,6 +45,9 @@ function RegistEmail() {
         // alert("인증 오류입니다.");
       }
     });
+    return () => {
+      remover();
+    };
   }, []);
 
   return (
