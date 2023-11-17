@@ -21,9 +21,9 @@
   },
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Windobi",
+    "email": "honeycomb201@naver.com",
+    "url": "https://naver.com"
   },
   "contributors": [
     {
@@ -51,6 +51,7 @@
   "browserslist": [],
   "prettier": {
     "singleQuote": true,
+    "printWidth": 80,
     "overrides": [
       {
         "files": [
@@ -96,26 +97,37 @@
     }
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.15",
-    "@mui/styles": "^5.14.15",
-    "@mui/x-charts": "^6.0.0-alpha.17",
+    "@nivo/bar": "^0.83.1",
+    "@nivo/calendar": "^0.83.1",
+    "@nivo/pie": "^0.83.1",
     "@paymoapp/active-window": "^2.0.6",
+    "@types/sqlite3": "^3.1.11",
+    "axios": "^1.6.1",
+    "chartjs-to-image": "^1.2.1",
+    "dotenv": "^16.3.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
+    "force": "^0.0.3",
+    "html-to-image": "^1.11.11",
+    "imap": "^0.8.19",
+    "jspdf": "^2.5.1",
     "lodash": "^4.17.21",
+    "mailparser": "^3.6.5",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.7",
+    "openai": "^4.17.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-icons": "^4.11.0",
-    "react-moveable": "^0.54.2",
     "react-router-dom": "^6.16.0",
     "react-switch": "^7.0.0",
+    "sharp": "^0.32.6",
     "sqlite3": "^5.1.6",
-    "styled-components": "^6.1.0"
+    "styled-components": "^6.1.1"
   },
   "devDependencies": {
     "@electron/notarize": "^2.1.0",
@@ -126,7 +138,7 @@
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.5",
-    "@types/lodash": "^4.14.200",
+    "@types/lodash": "^4.14.201",
     "@types/node": "20.6.2",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
@@ -178,6 +190,7 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.2.2",
+    "url-loader": "^4.1.1",
     "webpack": "^5.88.2",
     "webpack-bundle-analyzer": "^4.9.1",
     "webpack-cli": "^5.1.4",
@@ -185,8 +198,9 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "icon": "./assets/icon.png",
+    "productName": "windobi",
+    "appId": "org.honeycomb.windobi",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -244,8 +258,8 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "windobi",
+      "repo": "windobi"
     }
   },
   "collective": {

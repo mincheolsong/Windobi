@@ -28,7 +28,12 @@ npm-debug.log.*
 *.sass.d.ts
 *.scss.d.ts
 
+pidtest.txt
 assets/database.db
-assets/job_time.db
-assets/sub_job_time.db
-log.txt
+assets/setting.json
+.env
+
+assets/sam.json
+assets/report.png
+
+package-lock.json
