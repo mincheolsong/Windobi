@@ -19,6 +19,11 @@ function Notification() {
   require('moment-timezone');
   moment.tz.setDefault('Asia/Seoul');
 
+<<<<<<< HEAD
+=======
+  // const [mails, setMails] = useState<TMail[]>([]);
+  // 메일들을 받아온 후 Mail의 props로 넘겨주기
+>>>>>>> bb8b706ee81ac23e751b9f6166f6ea98c6d64ff4
   useEffect(() => {
     window.electron.ipcRenderer.sendMessage('size', {
       width: 500,
@@ -34,11 +39,21 @@ function Notification() {
 
     // 메일들을 받아온 후 Mail의 props로 넘겨주기
     window.electron.ipcRenderer.sendMessage('mailRequest');
+<<<<<<< HEAD
 
     return () => {
       receiveRemover();
       requestRemover();
     };
+=======
+    ipcRenderer.once('mailReceiving', (mail: TMail) => {
+      setMails([...mails, mail]);
+    });
+
+    ipcRenderer.once('mailRequest', (mails: TMail[]) => {
+      setMails(mails);
+    });
+>>>>>>> bb8b706ee81ac23e751b9f6166f6ea98c6d64ff4
   }, []);
 
   return (
