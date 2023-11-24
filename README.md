@@ -8,6 +8,28 @@
 > 다운 링크 : https://drive.google.com/file/d/1ahEa0zZijW29Q4WNW0t11D4psnjLvgTB/view?usp=sharing  
 > UCC 링크 : https://www.youtube.com/watch?v=UjIa21FY2bo
 
+## 사용 기술 및 라이브러리
+
+- Electron
+- React
+- TypeScript
+- Styled Components
+- SQLite
+- nivo 차트
+- openai API
+- youtube data API
+
+## 기술 선정 이유
+
+- Electron  
+  JavaScript, HTML 및 CSS와 같은 웹 기술을 사용하여 데스크톱 애플리케이션을 만들기 위해 사용
+- sqlite  
+  서버 없이, 사용시간 데이터를 저장하기 위해 사용
+- openai API  
+  chatcompletion을 이용한 prompt를 작성하여 원하는 json 데이터를 얻기위해 사용
+- youtube data api  
+  실제 유튜브 뮤직 플레이리스트를 생성하기 위해 사용
+
 ## 프로젝트 개요
 
 <p align="center">
@@ -32,12 +54,18 @@
 ### 원하는 youtube music 플레이리스트 자동생성
 
 ### 메일 알림(다음, 네이버)
+- 메일 수신시 알림
+- 수신메일 내용보기 기능 제공
+
+### 실시간 날씨
+
+---
 
 ## 담당업무
 
 ### 원형메뉴
 
-<p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/000c264d-c86e-49b5-af47-4e5ac18cc4c7"/></p>  
+<p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/000c264d-c86e-49b5-af47-4e5ac18cc4c7"/></p>
 
 > Ipc를 사용한 캐릭터 우클릭 시 browse window 생성
 
@@ -45,8 +73,7 @@
 
 ### 주간보고서
 
-<p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/20e470e0-42f8-4701-800d-4255ba834806" height="250px"/></p>  
-
+<p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/20e470e0-42f8-4701-800d-4255ba834806" height="250px"/></p>
 
 > 사용시간 DB를 조회하여 일주일 통계 데이터 시각화
 
@@ -54,8 +81,20 @@
 
 ### 원하는 youtube music 플레이리스트 자동생성
 
-<p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/80120658-d4f8-4e9a-9209-d86aa14f397d" height="300"/></p>  
+<p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/80120658-d4f8-4e9a-9209-d86aa14f397d" height="300"/></p>
 
 > Openai chatcompletion 프롬프트 작성을 통해 Json 데이터 생성
 
 > Youtube data api와 google oauth2를 활용하여 실제 플레이리스트 생성
+
+## 알게된 점
+
+> electron은 main 프로세스와 renderer 프로세스로 구분됨.
+
+> renderer 프로세스에서 NodeJS.API 에 접근하려면 nodeIntegration설정을 true로 해야 됨.
+
+> 각각의 renderer 프로세스들은 독립적으로 작동하기 때문에, 다른 renderer 프로세스에게 영향을 주지 않음.
+
+## 아키텍처
+
+<p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/eb66b7a1-3959-4e70-a633-8dcb8d32343d"/></p>
