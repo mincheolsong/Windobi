@@ -54,6 +54,7 @@
 ### 원하는 youtube music 플레이리스트 자동생성
 
 ### 메일 알림(다음, 네이버)
+
 - 메일 수신시 알림
 - 수신메일 내용보기 기능 제공
 
@@ -75,7 +76,7 @@
 
 <p align="center"><img src="https://github.com/mincheolsong/Windobi/assets/80660585/20e470e0-42f8-4701-800d-4255ba834806" height="250px"/></p>
 
-> 사용시간 DB를 조회하여 일주일 통계 데이터 시각화
+> 사용시간 DB를 조회하여 일 별 데이터 정리
 
 > nivo chart를 활용한 일주일간 사용시간, 90일간 개발 시간 데이터 시각화
 
