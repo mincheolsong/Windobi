@@ -5,8 +5,8 @@
 > 팀 구성 : 4명  
 > **담당역할 : 프론트엔드 & 백엔드**  
 > 다운 링크 : https://drive.google.com/file/d/1ahEa0zZijW29Q4WNW0t11D4psnjLvgTB/view?usp=sharing  
-> UCC 링크 : https://www.youtube.com/watch?v=UjIa21FY2bo
 
+## 프로젝트 소개영상
 [![Video Label](http://img.youtube.com/vi/UjIa21FY2bo/2.jpg)](https://www.youtube.com/watch?v=UjIa21FY2bo)
 
 ## 사용 기술 및 라이브러리
